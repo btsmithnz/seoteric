@@ -21,7 +21,30 @@ This is a Next.js 16 app with:
 
 ### Key Patterns
 
-- **UI Components**: Use `@base-ui/react` primitives with `class-variance-authority` for variants
+- **UI Components**: Use `shadcn/ui` with `class-variance-authority` for variants
 - **Styling**: Use `cn()` from `@/lib/utils` to merge Tailwind classes
 - **Icons**: Use `lucide-react`
 - **Path aliases**: `@/*` maps to project root
+
+### AI Elements (`components/ai-elements/`)
+
+Pre-built chat UI components that compose Shadcn UI primitives:
+
+- **`conversation`** - Auto-scrolling message container with `StickToBottom`
+- **`message`** - Message rendering with `MessageResponse` (markdown via Streamdown)
+- **`prompt-input`** - Chat input with submit button, status handling, stop functionality
+
+### AI SDK
+
+Uses Vercel AI SDK v6 with AI Gateway. Specify models as strings:
+
+```ts
+import { streamText } from "ai";
+
+const result = streamText({
+  model: "anthropic/claude-sonnet-4.5",
+  // ...
+});
+```
+
+Do not import provider packages (e.g., `@ai-sdk/anthropic`) - use string model identifiers instead.
