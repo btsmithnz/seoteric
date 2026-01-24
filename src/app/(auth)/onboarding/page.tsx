@@ -22,8 +22,6 @@ import {
 } from "@/components/ui/field";
 import { z } from "zod";
 import { FieldErrorZod } from "@/components/input/field-error-zod";
-import { api } from "@/convex/_generated/api";
-import { useMutation } from "convex/react";
 import { useTransition } from "react";
 import { toast } from "sonner";
 import { useSearchParams } from "next/navigation";
@@ -32,7 +30,6 @@ export default function OnboardingPage() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [isPending, startTransition] = useTransition();
-  const createSiteMutation = useMutation(api.site.create);
 
   const form = useForm({
     defaultValues: {
@@ -64,13 +61,11 @@ export default function OnboardingPage() {
         toast.error(result.error.message ?? "Failed to create account");
       }
 
-      const siteId = await createSiteMutation({
-        name: value.websiteName,
-        domain: value.websiteDomain,
-      });
-
       startTransition(() => {
-        router.push(`/sites/${siteId}`);
+        const params = new URLSearchParams();
+        params.set("websiteName", value.websiteName);
+        params.set("websiteDomain", value.websiteDomain);
+        router.push(`/onboarding/complete?${params}`);
       });
     },
   });
