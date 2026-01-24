@@ -63,8 +63,8 @@ export default function OnboardingPage() {
 
       startTransition(() => {
         const params = new URLSearchParams();
-        params.set("websiteName", value.websiteName);
-        params.set("websiteDomain", value.websiteDomain);
+        params.set("name", value.websiteName);
+        params.set("domain", value.websiteDomain);
         router.push(`/onboarding/complete?${params}`);
       });
     },
