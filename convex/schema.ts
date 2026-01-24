@@ -9,4 +9,13 @@ export default defineSchema({
   })
     .index("by_user", ["userId"])
     .index("by_domain", ["domain"]),
+  chats: defineTable({
+    siteId: v.id("sites"),
+    name: v.string(),
+  }).index("by_site", ["siteId"]),
+  messages: defineTable({
+    chatId: v.id("chats"),
+    init: v.optional(v.string()),
+    messages: v.array(v.any()),
+  }).index("by_chat", ["chatId"]),
 });

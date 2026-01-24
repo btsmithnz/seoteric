@@ -9,6 +9,7 @@
  */
 
 import type * as auth from "../auth.js";
+import type * as chat from "../chat.js";
 import type * as http from "../http.js";
 import type * as site from "../site.js";
 import type * as utils from "../utils.js";
@@ -21,6 +22,7 @@ import type {
 
 declare const fullApi: ApiFromModules<{
   auth: typeof auth;
+  chat: typeof chat;
   http: typeof http;
   site: typeof site;
   utils: typeof utils;

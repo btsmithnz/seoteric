@@ -20,7 +20,7 @@ import {
 } from "@/components/ai-elements/prompt-input";
 import { useState } from "react";
 
-export function Chat() {
+export function ChatOnboarding() {
   const [input, setInput] = useState("");
   const { messages, sendMessage, status, stop } = useChat();
 

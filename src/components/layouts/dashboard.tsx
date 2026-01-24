@@ -45,7 +45,7 @@ export function DashboardNav() {
               <Button
                 variant="ghost"
                 size="sm"
-                render={<Link href={`/sites/${domain}`} />}
+                render={<Link href={`/sites/${domain}/chats`} />}
                 nativeButton={false}
                 className={cn(!isConfigPage && "bg-muted")}
               >

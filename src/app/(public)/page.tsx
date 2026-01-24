@@ -1,4 +1,4 @@
-import { Chat } from "@/components/chat";
+import { ChatOnboarding } from "@/components/chats/onboarding";
 
 export default function Page() {
   return (
@@ -9,7 +9,7 @@ export default function Page() {
           AI-powered SEO insights
         </p>
       </header>
-      <Chat />
+      <ChatOnboarding />
       <footer className="mt-8 text-xs text-muted-foreground">
         No sign-in required to start
       </footer>
