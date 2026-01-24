@@ -1,0 +1,136 @@
+"use client";
+
+import { useChat } from "@ai-sdk/react";
+import {
+  Conversation,
+  ConversationContent,
+  ConversationEmptyState,
+  ConversationScrollButton,
+} from "@/components/ai-elements/conversation";
+import {
+  Message,
+  MessageContent,
+  MessageResponse,
+} from "@/components/ai-elements/message";
+import {
+  PromptInput,
+  PromptInputTextarea,
+  PromptInputFooter,
+  PromptInputSubmit,
+} from "@/components/ai-elements/prompt-input";
+import { useCallback, useState, useTransition } from "react";
+import { DefaultChatTransport, UIMessage } from "ai";
+import { useRouter } from "next/navigation";
+
+const transport = new DefaultChatTransport({
+  api: `/api/chat/onboarding`,
+});
+
+const initialMessages: UIMessage[] = [
+  {
+    id: "welcome",
+    role: "assistant",
+    parts: [
+      {
+        type: "text",
+        text: `Hey, hope you're doing well! 👋
+
+I'm the onboarding agent for **Seoteric**, an AI assistant that specializes in SEO (Search Engine Optimization). I'm here to help you get set up with an account so we can start optimizing your website's search engine presence.
+
+To get started, I'll need to gather some information from you:
+
+1. **Your Name** - What's your name?
+2. **Your Email** - What's your email?
+3. **Website Name** - What's the name of your website?
+4. **Website Domain** - What's your website's domain (e.g., example.com)?
+
+Once I have these details, we can create your account and get you on your way! What would you like to share first?`,
+      },
+    ],
+  },
+];
+
+export function ChatOnboarding() {
+  const [input, setInput] = useState("");
+  const [isPending, startTransition] = useTransition();
+  const router = useRouter();
+
+  const onboardingTool = useCallback(
+    (input: Record<string, string>) => {
+      startTransition(() => {
+        const params = new URLSearchParams(input);
+        router.push(`/onboarding?${params}`);
+      });
+    },
+    [router]
+  );
+
+  const { messages, sendMessage, status, stop } = useChat({
+    transport,
+    messages: initialMessages,
+    onToolCall: ({ toolCall }) => {
+      switch (toolCall.toolName) {
+        case "createAccount":
+          onboardingTool(toolCall.input as Record<string, string>);
+          return;
+        default:
+          break;
+      }
+    },
+  });
+
+  const handleSend = (text: string) => {
+    sendMessage({ text });
+    setInput("");
+  };
+
+  return (
+    <div className="flex h-[600px] w-full max-w-2xl flex-col border">
+      <Conversation>
+        <ConversationContent>
+          {messages.length === 0 ? (
+            <ConversationEmptyState
+              title="Welcome to Seoteric"
+              description="Ask me anything about SEO optimization"
+            />
+          ) : (
+            messages.map((message) => (
+              <Message key={message.id} from={message.role}>
+                <MessageContent>
+                  {message.role === "user" ? (
+                    message.parts
+                      .filter((p) => p.type === "text")
+                      .map((p, i) => <span key={i}>{p.text}</span>)
+                  ) : (
+                    <MessageResponse>
+                      {message.parts
+                        .filter((p) => p.type === "text")
+                        .map((p) => p.text)
+                        .join("")}
+                    </MessageResponse>
+                  )}
+                </MessageContent>
+              </Message>
+            ))
+          )}
+        </ConversationContent>
+        <ConversationScrollButton />
+      </Conversation>
+
+      <PromptInput onSubmit={(msg) => handleSend(msg.text)}>
+        <PromptInputTextarea
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          placeholder="Ask about SEO..."
+        />
+        <PromptInputFooter>
+          <div />
+          <PromptInputSubmit
+            status={isPending ? "streaming" : status}
+            onStop={stop}
+          />
+        </PromptInputFooter>
+      </PromptInput>
+    </div>
+  );
+}

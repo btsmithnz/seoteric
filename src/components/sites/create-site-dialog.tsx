@@ -48,7 +48,9 @@ export function CreateSiteDialog({ onSuccess }: CreateSiteDialogProps) {
     validators: {
       onSubmit: z.object({
         name: z.string().min(1, "Name is required"),
-        domain: z.string().regex(z.regexes.domain, "Enter a valid domain"),
+        domain: z
+          .string()
+          .regex(z.regexes.domain, { error: "Invalid domain" }),
       }),
     },
     onSubmit: async ({ value }) => {

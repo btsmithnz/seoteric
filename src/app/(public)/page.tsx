@@ -1,4 +1,4 @@
-import { ChatOnboarding } from "@/components/chats/onboarding";
+import { ChatOnboarding } from "./chat";
 
 export default function Page() {
   return (

@@ -26,19 +26,21 @@ import { api } from "@/convex/_generated/api";
 import { useMutation } from "convex/react";
 import { useTransition } from "react";
 import { toast } from "sonner";
+import { useSearchParams } from "next/navigation";
 
 export default function OnboardingPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [isPending, startTransition] = useTransition();
   const createSiteMutation = useMutation(api.site.create);
 
   const form = useForm({
     defaultValues: {
-      name: "",
-      email: "",
+      name: searchParams.get("name") ?? "",
+      email: searchParams.get("email") ?? "",
       password: "",
-      websiteName: "",
-      websiteDomain: "",
+      websiteName: searchParams.get("websiteName") ?? "",
+      websiteDomain: searchParams.get("websiteDomain") ?? "",
     },
     validators: {
       onSubmit: z.object({
@@ -46,7 +48,9 @@ export default function OnboardingPage() {
         email: z.email(),
         password: z.string().min(8),
         websiteName: z.string().min(1),
-        websiteDomain: z.string().regex(z.regexes.domain),
+        websiteDomain: z
+          .string()
+          .regex(z.regexes.domain, { error: "Invalid domain" }),
       }),
     },
     onSubmit: async ({ value }) => {
