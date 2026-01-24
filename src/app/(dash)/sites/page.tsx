@@ -70,7 +70,7 @@ export default function SitesPage() {
                   <Button
                     variant="outline"
                     size="sm"
-                    render={<Link href={`/sites/${site._id}`} />}
+                    render={<Link href={`/sites/${site._id}/chats`} />}
                     nativeButton={false}
                   >
                     Open
