@@ -3,9 +3,9 @@
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useForm } from "@tanstack/react-form";
-import { authClient } from "@/src/lib/auth-client";
-import { Button } from "@/src/components/ui/button";
-import { Input } from "@/src/components/ui/input";
+import { authClient } from "@/lib/auth-client";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
   Card,
   CardContent,
@@ -13,15 +13,15 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/src/components/ui/card";
+} from "@/components/ui/card";
 import {
   Field,
   FieldLabel,
   FieldGroup,
   FieldDescription,
-} from "@/src/components/ui/field";
+} from "@/components/ui/field";
 import { z } from "zod";
-import { FieldErrorZod } from "@/src/components/input/field-error-zod";
+import { FieldErrorZod } from "@/components/input/field-error-zod";
 
 export default function OnboardingPage() {
   const router = useRouter();

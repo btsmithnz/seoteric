@@ -1,7 +1,7 @@
 import Link from "next/link";
-import { Check } from "lucide-react";
-import { Badge } from "@/src/components/ui/badge";
-import { Button } from "@/src/components/ui/button";
+import { CheckIcon } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -9,7 +9,7 @@ import {
   CardFooter,
   CardHeader,
   CardTitle,
-} from "@/src/components/ui/card";
+} from "@/components/ui/card";
 
 export default function PricingPage() {
   return (
@@ -32,19 +32,19 @@ export default function PricingPage() {
         <CardContent>
           <ul className="space-y-2">
             <li className="flex items-center gap-2">
-              <Check className="size-3.5 text-muted-foreground" />
+              <CheckIcon className="size-3.5 text-muted-foreground" />
               <span>Unlimited site analysis</span>
             </li>
             <li className="flex items-center gap-2">
-              <Check className="size-3.5 text-muted-foreground" />
+              <CheckIcon className="size-3.5 text-muted-foreground" />
               <span>AI-powered SEO insights</span>
             </li>
             <li className="flex items-center gap-2">
-              <Check className="size-3.5 text-muted-foreground" />
+              <CheckIcon className="size-3.5 text-muted-foreground" />
               <span>Keyword tracking</span>
             </li>
             <li className="flex items-center gap-2">
-              <Check className="size-3.5 text-muted-foreground" />
+              <CheckIcon className="size-3.5 text-muted-foreground" />
               <span>Competitor analysis</span>
             </li>
           </ul>

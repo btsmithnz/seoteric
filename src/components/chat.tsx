@@ -6,18 +6,18 @@ import {
   ConversationContent,
   ConversationEmptyState,
   ConversationScrollButton,
-} from "@/src/components/ai-elements/conversation";
+} from "@/components/ai-elements/conversation";
 import {
   Message,
   MessageContent,
   MessageResponse,
-} from "@/src/components/ai-elements/message";
+} from "@/components/ai-elements/message";
 import {
   PromptInput,
   PromptInputTextarea,
   PromptInputFooter,
   PromptInputSubmit,
-} from "@/src/components/ai-elements/prompt-input";
+} from "@/components/ai-elements/prompt-input";
 import { useState } from "react";
 
 export function Chat() {
