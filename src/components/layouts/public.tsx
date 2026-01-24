@@ -34,14 +34,14 @@ export function PublicLayout({
         </nav>
       </header>
       {children}
-      <footer className="flex items-center justify-between px-6 py-4 border-t text-sm text-muted-foreground">
-        <div className="flex items-center gap-4">
+      <footer className="flex flex-col gap-4 px-6 py-4 border-t text-sm text-muted-foreground sm:flex-row sm:items-center sm:justify-between">
+        <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:gap-4">
           <span className="font-semibold text-foreground">Seoteric</span>
           <span>
             © {new Date().getFullYear()} Seoteric. All rights reserved.
           </span>
         </div>
-        <nav className="flex items-center gap-4">
+        <nav className="flex flex-wrap items-center gap-4">
           <Link href="/pricing" className="hover:text-foreground">
             Pricing
           </Link>
