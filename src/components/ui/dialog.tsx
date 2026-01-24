@@ -137,6 +137,8 @@ function DialogDescription({
   )
 }
 
+const createDialogHandle = DialogPrimitive.createHandle
+
 export {
   Dialog,
   DialogClose,
@@ -148,4 +150,5 @@ export {
   DialogPortal,
   DialogTitle,
   DialogTrigger,
+  createDialogHandle,
 }

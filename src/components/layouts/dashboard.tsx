@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";
 import { useQuery } from "convex/react";
-import { ChevronDownIcon } from "lucide-react";
+import { ChevronDownIcon, PlusIcon } from "lucide-react";
 
 import { api } from "@/convex/_generated/api";
 import { cn } from "@/lib/utils";
@@ -19,6 +19,8 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { ThemeSwitcher } from "@/components/theme-switcher";
 import { LogoutMenuItem } from "../elements/logout-button";
+import { createSiteDialog } from "@/components/sites/create-site-dialog";
+import { DialogTrigger } from "../ui/dialog";
 
 export function DashboardNav() {
   const params = useParams<{ domain?: string }>();
@@ -87,6 +89,16 @@ export function DashboardNav() {
                     <span className="text-muted-foreground">{site.domain}</span>
                   </DropdownMenuItem>
                 ))}
+
+                <DialogTrigger
+                  handle={createSiteDialog}
+                  render={<DropdownMenuItem />}
+                  nativeButton={false}
+                >
+                  <PlusIcon className="mr-1" />
+                  New site
+                </DialogTrigger>
+
                 <DropdownMenuSeparator />
               </DropdownMenuGroup>
 
