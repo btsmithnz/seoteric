@@ -23,12 +23,12 @@ import { createSiteDialog } from "@/components/sites/create-site-dialog";
 import { DialogTrigger } from "../ui/dialog";
 
 export function DashboardNav() {
-  const params = useParams<{ domain?: string }>();
+  const params = useParams<{ site?: string }>();
   const pathname = usePathname();
   const sites = useQuery(api.site.list);
 
-  const domain = params?.domain;
-  const currentSite = sites?.find((s) => s.domain === domain);
+  const siteId = params?.site;
+  const currentSite = sites?.find((s) => s._id === siteId);
   const isConfigPage = pathname?.endsWith("/config");
 
   return (
@@ -40,12 +40,12 @@ export function DashboardNav() {
 
         <nav className="flex items-center gap-2">
           <ThemeSwitcher />
-          {domain && (
+          {siteId && (
             <div className="flex items-center gap-1 mr-2">
               <Button
                 variant="ghost"
                 size="sm"
-                render={<Link href={`/sites/${domain}/chats`} />}
+                render={<Link href={`/sites/${siteId}/chats`} />}
                 nativeButton={false}
                 className={cn(!isConfigPage && "bg-muted")}
               >
@@ -54,7 +54,7 @@ export function DashboardNav() {
               <Button
                 variant="ghost"
                 size="sm"
-                render={<Link href={`/sites/${domain}/config`} />}
+                render={<Link href={`/sites/${siteId}/config`} />}
                 nativeButton={false}
                 className={cn(isConfigPage && "bg-muted")}
               >
