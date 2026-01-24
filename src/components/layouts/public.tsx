@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { ThemeSwitcher } from "@/components/theme-switcher";
 
 export function PublicLayout({
   children,
@@ -50,6 +51,7 @@ export function PublicLayout({
           <Link href="/terms" className="hover:text-foreground">
             Terms of Service
           </Link>
+          <ThemeSwitcher />
         </nav>
       </footer>
     </div>

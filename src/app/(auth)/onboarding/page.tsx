@@ -25,6 +25,7 @@ import { FieldErrorZod } from "@/components/input/field-error-zod";
 import { api } from "@/convex/_generated/api";
 import { useMutation } from "convex/react";
 import { useTransition } from "react";
+import { toast } from "sonner";
 
 export default function OnboardingPage() {
   const router = useRouter();
@@ -56,8 +57,7 @@ export default function OnboardingPage() {
       });
 
       if (result.error) {
-        console.error(result.error);
-        throw new Error(result.error.message ?? "Failed to create account");
+        toast.error(result.error.message ?? "Failed to create account");
       }
 
       const siteId = await createSiteMutation({

@@ -1,4 +1,5 @@
 import { ConvexProvider } from "@/components/providers/convex";
+import { DashboardNav } from "@/components/layouts/dashboard";
 import { getToken } from "@/lib/auth-server";
 
 export default async function DashboardLayout({
@@ -8,5 +9,10 @@ export default async function DashboardLayout({
 }) {
   const token = await getToken();
 
-  return <ConvexProvider initialToken={token}>{children}</ConvexProvider>;
+  return (
+    <ConvexProvider initialToken={token}>
+      <DashboardNav />
+      {children}
+    </ConvexProvider>
+  );
 }

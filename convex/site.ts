@@ -1,20 +1,16 @@
 import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
-import { paginationOptsValidator } from "convex/server";
 import { getUser } from "./utils";
 
 export const list = query({
-  args: {
-    paginationOpts: paginationOptsValidator,
-  },
-  handler: async (ctx, args) => {
+  handler: async (ctx) => {
     const user = await getUser(ctx);
 
     const sites = await ctx.db
       .query("sites")
       .withIndex("by_user", (q) => q.eq("userId", user._id))
       .order("desc")
-      .paginate(args.paginationOpts);
+      .collect();
 
     return sites;
   },

@@ -18,6 +18,7 @@ import { Field, FieldLabel, FieldGroup } from "@/components/ui/field";
 import { z } from "zod";
 import { FieldErrorZod } from "@/components/input/field-error-zod";
 import { useTransition } from "react";
+import { toast } from "sonner";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -41,7 +42,7 @@ export default function LoginPage() {
       });
 
       if (result.error) {
-        throw new Error(result.error.message ?? "Failed to sign in");
+        toast.error(result.error.message ?? "Failed to sign in");
       }
 
       startTransition(() => {
