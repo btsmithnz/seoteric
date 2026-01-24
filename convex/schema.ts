@@ -5,7 +5,7 @@ export default defineSchema({
   sites: defineTable({
     name: v.string(),
     domain: v.string(),
-    userId: v.id("users"),
+    userId: v.string(),
   })
     .index("by_user", ["userId"])
     .index("by_domain", ["domain"]),

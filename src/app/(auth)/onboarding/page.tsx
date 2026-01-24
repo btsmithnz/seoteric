@@ -22,9 +22,14 @@ import {
 } from "@/components/ui/field";
 import { z } from "zod";
 import { FieldErrorZod } from "@/components/input/field-error-zod";
+import { api } from "@/convex/_generated/api";
+import { useMutation } from "convex/react";
+import { useTransition } from "react";
 
 export default function OnboardingPage() {
   const router = useRouter();
+  const [isPending, startTransition] = useTransition();
+  const createSiteMutation = useMutation(api.site.create);
 
   const form = useForm({
     defaultValues: {
@@ -40,7 +45,7 @@ export default function OnboardingPage() {
         email: z.email(),
         password: z.string().min(8),
         websiteName: z.string().min(1),
-        websiteDomain: z.string().min(1),
+        websiteDomain: z.string().regex(z.regexes.domain),
       }),
     },
     onSubmit: async ({ value }) => {
@@ -51,11 +56,18 @@ export default function OnboardingPage() {
       });
 
       if (result.error) {
+        console.error(result.error);
         throw new Error(result.error.message ?? "Failed to create account");
       }
 
-      // TODO: Store website info after signup
-      router.push("/");
+      const siteId = await createSiteMutation({
+        name: value.websiteName,
+        domain: value.websiteDomain,
+      });
+
+      startTransition(() => {
+        router.push(`/sites/${siteId}`);
+      });
     },
   });
 
@@ -162,7 +174,7 @@ export default function OnboardingPage() {
             </form.Field>
           </FieldGroup>
         </CardContent>
-        
+
         <CardFooter className="flex-col gap-3">
           <form.Subscribe
             selector={(state) => ({
@@ -174,9 +186,11 @@ export default function OnboardingPage() {
               <Button
                 type="submit"
                 className="w-full"
-                disabled={!canSubmit || isSubmitting}
+                disabled={!canSubmit || isSubmitting || isPending}
               >
-                {isSubmitting ? "Creating account..." : "Create account"}
+                {isSubmitting || isPending
+                  ? "Creating account..."
+                  : "Create account"}
               </Button>
             )}
           </form.Subscribe>

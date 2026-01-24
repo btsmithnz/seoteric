@@ -17,9 +17,11 @@ import {
 import { Field, FieldLabel, FieldGroup } from "@/components/ui/field";
 import { z } from "zod";
 import { FieldErrorZod } from "@/components/input/field-error-zod";
+import { useTransition } from "react";
 
 export default function LoginPage() {
   const router = useRouter();
+  const [isPending, startTransition] = useTransition();
 
   const form = useForm({
     defaultValues: {
@@ -42,7 +44,9 @@ export default function LoginPage() {
         throw new Error(result.error.message ?? "Failed to sign in");
       }
 
-      router.push("/");
+      startTransition(() => {
+        router.push("/sites");
+      });
     },
   });
 
@@ -108,9 +112,9 @@ export default function LoginPage() {
               <Button
                 type="submit"
                 className="w-full"
-                disabled={!canSubmit || isSubmitting}
+                disabled={!canSubmit || isSubmitting || isPending}
               >
-                {isSubmitting ? "Signing in..." : "Sign in"}
+                {isSubmitting || isPending ? "Signing in..." : "Sign in"}
               </Button>
             )}
           </form.Subscribe>

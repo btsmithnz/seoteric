@@ -6,7 +6,11 @@ import { query } from "./_generated/server";
 import { betterAuth } from "better-auth";
 import authConfig from "./auth.config";
 
-const siteUrl = process.env.SITE_URL!;
+const vercelUrl =
+  process.env.VERCEL_ENV === "production"
+    ? process.env.VERCEL_PROJECT_PRODUCTION_URL!
+    : process.env.VERCEL_BRANCH_URL!;
+const siteUrl = vercelUrl || "http://localhost:3000";
 
 // The component client has methods needed for integrating Convex with Better Auth,
 // as well as helper methods for general use.
