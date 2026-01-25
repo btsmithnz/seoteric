@@ -19,6 +19,41 @@ import {
 } from "@/components/sites/create-site-dialog";
 import { DialogTrigger } from "@/components/ui/dialog";
 
+function LoadingState() {
+  return (
+    <>
+      {[1, 2, 3].map((i) => (
+        <Card key={i} size="sm" className="animate-pulse">
+          <CardHeader>
+            <div className="h-4 bg-muted rounded w-32" />
+            <div className="h-3 bg-muted rounded w-24 mt-1" />
+          </CardHeader>
+        </Card>
+      ))}
+    </>
+  );
+}
+
+function EmptyState() {
+  return (
+    <Card className="flex flex-col items-center justify-center py-12 text-center">
+      <GlobeIcon className="h-10 w-10 text-muted-foreground mb-3" />
+      <CardTitle className="mb-1">No sites yet</CardTitle>
+      <CardDescription className="mb-4">
+        Create your first site to get started
+      </CardDescription>
+      <CreateSiteDialog
+        trigger={
+          <Button>
+            <PlusIcon className="mr-1" />
+            Create site
+          </Button>
+        }
+      />
+    </Card>
+  );
+}
+
 export default function SitesPage() {
   const sites = useQuery(api.site.list);
 
@@ -32,55 +67,30 @@ export default function SitesPage() {
         </DialogTrigger>
       </div>
 
-      {sites === undefined ? (
-        <div className="grid gap-3">
-          {[1, 2, 3].map((i) => (
-            <Card key={i} size="sm" className="animate-pulse">
-              <CardHeader>
-                <div className="h-4 bg-muted rounded w-32" />
-                <div className="h-3 bg-muted rounded w-24 mt-1" />
-              </CardHeader>
-            </Card>
-          ))}
-        </div>
-      ) : sites.length === 0 ? (
-        <Card className="flex flex-col items-center justify-center py-12 text-center">
-          <GlobeIcon className="h-10 w-10 text-muted-foreground mb-3" />
-          <CardTitle className="mb-1">No sites yet</CardTitle>
-          <CardDescription className="mb-4">
-            Create your first site to get started
-          </CardDescription>
-          <CreateSiteDialog
-            trigger={
-              <Button>
-                <PlusIcon className="mr-1" />
-                Create site
-              </Button>
-            }
-          />
-        </Card>
-      ) : (
-        <div className="grid gap-3">
-          {sites.map((site) => (
-            <Card key={site._id} size="sm">
-              <CardHeader>
-                <CardTitle>{site.name}</CardTitle>
-                <CardDescription>{site.domain}</CardDescription>
-                <CardAction>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    render={<Link href={`/sites/${site._id}/chats`} />}
-                    nativeButton={false}
-                  >
-                    Open
-                  </Button>
-                </CardAction>
-              </CardHeader>
-            </Card>
-          ))}
-        </div>
-      )}
+      <div className="grid gap-3">
+        {sites === undefined && <LoadingState />}
+
+        {sites?.length === 0 && <EmptyState />}
+
+        {sites?.map((site) => (
+          <Card key={site._id} size="sm">
+            <CardHeader>
+              <CardTitle>{site.name}</CardTitle>
+              <CardDescription>{site.domain}</CardDescription>
+              <CardAction>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  render={<Link href={`/sites/${site._id}/chats`} />}
+                  nativeButton={false}
+                >
+                  Open
+                </Button>
+              </CardAction>
+            </CardHeader>
+          </Card>
+        ))}
+      </div>
     </div>
   );
 }

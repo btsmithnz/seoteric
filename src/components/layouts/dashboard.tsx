@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";
-import { useQuery } from "convex/react";
+import { Preloaded, usePreloadedQuery } from "convex/react";
 import { ChevronDownIcon, PlusIcon } from "lucide-react";
 
 import { api } from "@/convex/_generated/api";
@@ -22,10 +22,14 @@ import { LogoutMenuItem } from "../elements/logout-button";
 import { createSiteDialog } from "@/components/sites/create-site-dialog";
 import { DialogTrigger } from "../ui/dialog";
 
-export function DashboardNav() {
+export function DashboardNav({
+  preloadedSites,
+}: {
+  preloadedSites: Preloaded<typeof api.site.list>;
+}) {
   const params = useParams<{ site?: string }>();
   const pathname = usePathname();
-  const sites = useQuery(api.site.list);
+  const sites = usePreloadedQuery(preloadedSites);
 
   const siteId = params?.site;
   const currentSite = sites?.find((s) => s._id === siteId);
