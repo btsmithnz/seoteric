@@ -33,8 +33,8 @@ export const update = mutation({
     siteId: v.id("sites"),
     name: v.string(),
     domain: v.string(),
-    country: v.optional(v.string()),
-    industry: v.optional(v.string()),
+    country: v.string(),
+    industry: v.string(),
   },
   handler: async (ctx, args) => {
     const user = await getUser(ctx);

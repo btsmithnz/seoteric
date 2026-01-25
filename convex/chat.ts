@@ -141,6 +141,8 @@ export const seoChat = httpAction(async (ctx, req) => {
     options: {
       siteDomain: site.domain,
       siteName: site.name,
+      siteCountry: site.country,
+      siteIndustry: site.industry,
     },
   });
 

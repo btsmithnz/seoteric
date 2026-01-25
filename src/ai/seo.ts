@@ -17,6 +17,8 @@ export const seoAgent = new ToolLoopAgent({
   callOptionsSchema: z.object({
     siteDomain: z.string(),
     siteName: z.string(),
+    siteCountry: z.string(),
+    siteIndustry: z.string(),
   }),
   prepareCall: ({ options, ...settings }) => ({
     ...settings,
@@ -24,6 +26,8 @@ export const seoAgent = new ToolLoopAgent({
       settings.instructions +
       `\nSite context:
 - Site Name: ${options.siteName}
-- Site Domain: ${options.siteDomain}`,
+- Site Domain: ${options.siteDomain}
+- Site Country: ${options.siteCountry}
+- Site Industry: ${options.siteIndustry}`,
   }),
 });

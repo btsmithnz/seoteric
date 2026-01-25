@@ -44,8 +44,8 @@ export function SiteConfigForm({ preloadedSite }: SiteConfigFormProps) {
     defaultValues: {
       name: site.name,
       domain: site.domain,
-      country: site.country ?? "",
-      industry: site.industry ?? "",
+      country: site.country,
+      industry: site.industry,
     },
     validators: {
       onSubmit: z.object({
@@ -61,8 +61,8 @@ export function SiteConfigForm({ preloadedSite }: SiteConfigFormProps) {
           siteId: site._id,
           name: value.name,
           domain: value.domain,
-          country: value.country || undefined,
-          industry: value.industry || undefined,
+          country: value.country,
+          industry: value.industry,
         });
 
         toast.success("Site settings updated successfully");
