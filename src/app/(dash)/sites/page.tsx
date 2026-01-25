@@ -58,7 +58,7 @@ export default function SitesPage() {
   const sites = useQuery(api.site.list);
 
   return (
-    <div className="p-6 max-w-4xl mx-auto">
+    <div className="p-6 w-full max-w-4xl mx-auto">
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-lg font-semibold">Sites</h1>
         <DialogTrigger handle={createSiteDialog} render={<Button size="sm" />}>
@@ -69,7 +69,6 @@ export default function SitesPage() {
 
       <div className="grid gap-3">
         {sites === undefined && <LoadingState />}
-
         {sites?.length === 0 && <EmptyState />}
 
         {sites?.map((site) => (
