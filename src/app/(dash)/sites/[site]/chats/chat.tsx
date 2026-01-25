@@ -42,7 +42,7 @@ export function ChatSeoCreate(props: {
   };
 
   return (
-    <div className="flex h-full w-full max-w-2xl flex-col border">
+    <div className="flex size-full flex-col border">
       <Conversation>
         <ConversationContent>
           <ConversationEmptyState

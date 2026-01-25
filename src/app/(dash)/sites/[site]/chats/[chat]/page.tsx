@@ -14,9 +14,5 @@ export default async function SiteChatPage(
     chatId,
   });
 
-  return (
-    <div>
-      <ChatSeo siteId={siteId} preloadedChat={preloadedChat} />
-    </div>
-  );
+  return <ChatSeo siteId={siteId} preloadedChat={preloadedChat} />;
 }

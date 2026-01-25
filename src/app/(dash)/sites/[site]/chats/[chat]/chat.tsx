@@ -55,9 +55,9 @@ export function ChatSeo(props: {
   };
 
   return (
-    <div>
-      <h1 className="font-bold">{chat.name}</h1>
-      <div className="flex size-full flex-col border">
+    <div className="flex flex-col h-full">
+      <h1 className="font-bold mb-1">{chat.name}</h1>
+      <div className="flex flex-1 flex-col border">
         <Conversation>
           <ConversationContent>
             {messages.length === 0 ? (
