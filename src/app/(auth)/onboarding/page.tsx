@@ -20,11 +20,19 @@ import {
   FieldGroup,
   FieldDescription,
 } from "@/components/ui/field";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { z } from "zod";
 import { FieldErrorZod } from "@/components/input/field-error-zod";
 import { useTransition } from "react";
 import { toast } from "sonner";
 import { useSearchParams } from "next/navigation";
+import { countries } from "@/lib/countries";
 
 export default function OnboardingPage() {
   const router = useRouter();
@@ -36,18 +44,22 @@ export default function OnboardingPage() {
       name: searchParams.get("name") ?? "",
       email: searchParams.get("email") ?? "",
       password: "",
-      websiteName: searchParams.get("websiteName") ?? "",
-      websiteDomain: searchParams.get("websiteDomain") ?? "",
+      siteName: searchParams.get("siteName") ?? "",
+      siteDomain: searchParams.get("siteDomain") ?? "",
+      siteCountry: searchParams.get("siteCountry") ?? "",
+      siteIndustry: searchParams.get("siteIndustry") ?? "",
     },
     validators: {
       onSubmit: z.object({
         name: z.string().min(1),
         email: z.email(),
         password: z.string().min(8),
-        websiteName: z.string().min(1),
-        websiteDomain: z
+        siteName: z.string().min(1),
+        siteDomain: z
           .string()
           .regex(z.regexes.domain, { error: "Invalid domain" }),
+        siteCountry: z.string().min(1, "Please select a country"),
+        siteIndustry: z.string().min(1, "Please enter an industry"),
       }),
     },
     onSubmit: async ({ value }) => {
@@ -63,8 +75,10 @@ export default function OnboardingPage() {
 
       startTransition(() => {
         const params = new URLSearchParams();
-        params.set("name", value.websiteName);
-        params.set("domain", value.websiteDomain);
+        params.set("name", value.siteName);
+        params.set("domain", value.siteDomain);
+        params.set("country", value.siteCountry);
+        params.set("industry", value.siteIndustry);
         router.push(`/onboarding/complete?${params}`);
       });
     },
@@ -138,7 +152,7 @@ export default function OnboardingPage() {
                 </Field>
               )}
             </form.Field>
-            <form.Field name="websiteName">
+            <form.Field name="siteName">
               {(field) => (
                 <Field data-invalid={field.state.meta.errors.length > 0}>
                   <FieldLabel>Website name</FieldLabel>
@@ -153,7 +167,7 @@ export default function OnboardingPage() {
                 </Field>
               )}
             </form.Field>
-            <form.Field name="websiteDomain">
+            <form.Field name="siteDomain">
               {(field) => (
                 <Field data-invalid={field.state.meta.errors.length > 0}>
                   <FieldLabel>Website domain</FieldLabel>
@@ -167,6 +181,44 @@ export default function OnboardingPage() {
                   <FieldDescription>
                     Enter without http:// or https://
                   </FieldDescription>
+                  <FieldErrorZod field={field} />
+                </Field>
+              )}
+            </form.Field>
+            <form.Field name="siteCountry">
+              {(field) => (
+                <Field data-invalid={field.state.meta.errors.length > 0}>
+                  <FieldLabel>Country</FieldLabel>
+                  <Select
+                    value={field.state.value}
+                    onValueChange={(value) => field.handleChange(value ?? "")}
+                  >
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Select a country" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {countries.map((country) => (
+                        <SelectItem key={country.value} value={country.value}>
+                          {country.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FieldErrorZod field={field} />
+                </Field>
+              )}
+            </form.Field>
+            <form.Field name="siteIndustry">
+              {(field) => (
+                <Field data-invalid={field.state.meta.errors.length > 0}>
+                  <FieldLabel>Industry</FieldLabel>
+                  <Input
+                    type="text"
+                    placeholder="e.g., E-commerce, Healthcare, Finance"
+                    value={field.state.value}
+                    onChange={(e) => field.handleChange(e.target.value)}
+                    onBlur={field.handleBlur}
+                  />
                   <FieldErrorZod field={field} />
                 </Field>
               )}

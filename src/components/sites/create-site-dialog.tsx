@@ -25,7 +25,15 @@ import {
   FieldGroup,
   FieldDescription,
 } from "@/components/ui/field";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { FieldErrorZod } from "@/components/input/field-error-zod";
+import { countries } from "@/lib/countries";
 
 interface CreateSiteDialogProps {
   trigger?: React.ReactElement;
@@ -44,6 +52,8 @@ export function CreateSiteDialog({ onSuccess }: CreateSiteDialogProps) {
     defaultValues: {
       name: "",
       domain: "",
+      country: "",
+      industry: "",
     },
     validators: {
       onSubmit: z.object({
@@ -51,6 +61,8 @@ export function CreateSiteDialog({ onSuccess }: CreateSiteDialogProps) {
         domain: z
           .string()
           .regex(z.regexes.domain, { error: "Invalid domain" }),
+        country: z.string().min(1, "Please select a country"),
+        industry: z.string().min(1, "Please enter an industry"),
       }),
     },
     onSubmit: async ({ value }) => {
@@ -58,6 +70,8 @@ export function CreateSiteDialog({ onSuccess }: CreateSiteDialogProps) {
         const siteId = await createSiteMutation({
           name: value.name,
           domain: value.domain,
+          country: value.country,
+          industry: value.industry,
         });
 
         toast.success("Site created successfully");
@@ -123,6 +137,44 @@ export function CreateSiteDialog({ onSuccess }: CreateSiteDialogProps) {
                   <FieldDescription>
                     Enter without http:// or https://
                   </FieldDescription>
+                  <FieldErrorZod field={field} />
+                </Field>
+              )}
+            </form.Field>
+            <form.Field name="country">
+              {(field) => (
+                <Field data-invalid={field.state.meta.errors.length > 0}>
+                  <FieldLabel>Country</FieldLabel>
+                  <Select
+                    value={field.state.value}
+                    onValueChange={(value) => field.handleChange(value ?? "")}
+                  >
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Select a country" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {countries.map((country) => (
+                        <SelectItem key={country.value} value={country.value}>
+                          {country.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <FieldErrorZod field={field} />
+                </Field>
+              )}
+            </form.Field>
+            <form.Field name="industry">
+              {(field) => (
+                <Field data-invalid={field.state.meta.errors.length > 0}>
+                  <FieldLabel>Industry</FieldLabel>
+                  <Input
+                    type="text"
+                    placeholder="e.g., E-commerce, Healthcare, Finance"
+                    value={field.state.value}
+                    onChange={(e) => field.handleChange(e.target.value)}
+                    onBlur={field.handleBlur}
+                  />
                   <FieldErrorZod field={field} />
                 </Field>
               )}

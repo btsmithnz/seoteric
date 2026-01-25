@@ -6,6 +6,8 @@ export default defineSchema({
     name: v.string(),
     domain: v.string(),
     userId: v.string(),
+    country: v.optional(v.string()),
+    industry: v.optional(v.string()),
   })
     .index("by_user", ["userId"])
     .index("by_domain", ["domain"]),

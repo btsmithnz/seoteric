@@ -1,27 +1,33 @@
 import { tool, ToolLoopAgent } from "ai";
 import { z } from "zod";
+import { getWebsiteName, getWebsiteText } from "./tools/website";
 
 export const onboardingAgent = new ToolLoopAgent({
-  model: "anthropic/claude-haiku-4.5",
-  instructions: `You are the onboarding agent for Seoteric, an AI assistant specializing in SEO (Search Engine Optimization). You want to gain information about the user and their website so we can set up their account. We require the following information:
-  - Name
-  - Email
-  - Website name
-  - Website domain
-  
-  Domains can include subdomains (e.g., www.example.com, blog.example.com, etc.)`,
+  model: "openai/gpt-5-mini",
+  instructions: `You are the onboarding agent for Seoteric, an AI assistant specializing in SEO (Search Engine Optimization). You want to gain information about the user and their website so we can set up their account.`,
   tools: {
     createAccount: tool({
       description:
         "Once you have all the information you need, you can create the account for the user.",
       inputSchema: z.object({
-        name: z.string(),
-        email: z.email(),
-        websiteName: z.string(),
-        websiteDomain: z
+        name: z.string().describe("The name of the user"),
+        email: z.email().describe("The email address of the user"),
+        siteName: z.string().describe("The name of the website"),
+        siteDomain: z
           .string()
-          .regex(z.regexes.domain, { error: "Invalid domain" }),
+          .regex(z.regexes.domain, { error: "Invalid domain" })
+          .describe("The domain of the website (may include subdomains)"),
+        siteCountry: z
+          .string()
+          .describe(
+            "ISO country code (e.g., US, GB, DE) of where the business is primarily based"
+          ),
+        siteIndustry: z
+          .string()
+          .describe("The industry or sector the website serves"),
       }),
     }),
+    getWebsiteName: getWebsiteName,
+    getWebsiteText: getWebsiteText,
   },
 });

@@ -21,6 +21,8 @@ import {
 import { useCallback, useState, useTransition } from "react";
 import { DefaultChatTransport, UIMessage } from "ai";
 import { useRouter } from "next/navigation";
+import { BrainIcon, GlobeIcon, HammerIcon, UserIcon } from "lucide-react";
+import { Spinner } from "@/components/ui/spinner";
 
 const transport = new DefaultChatTransport({
   api: `/api/chat/onboarding`,
@@ -35,14 +37,16 @@ const initialMessages: UIMessage[] = [
         type: "text",
         text: `Hey, hope you're doing well! 👋
 
-I'm the onboarding agent for **Seoteric**, an AI assistant that specializes in SEO (Search Engine Optimization). I'm here to help you get set up with an account so we can start optimizing your website's search engine presence.
+I'm **Seoteric**, an AI assistant that specializes in SEO (Search Engine Optimization). Lets get you set up with an account so we can start optimizing your website's search engine presence.
 
 To get started, I'll need to gather some information from you:
 
 1. **Your Name** - What's your name?
 2. **Your Email** - What's your email?
 3. **Website Name** - What's the name of your website?
-4. **Website Domain** - What's your website's domain (e.g., example.com)?
+4. **Website Domain** - What's your website's domain (e.g., www.example.com)?
+5. **Website Country** - What's the country where your business is primarily based?
+6. **Website Industry** - What's the industry or sector the website serves?
 
 Once I have these details, we can create your account and get you on your way! What would you like to share first?`,
       },
@@ -95,22 +99,57 @@ export function ChatOnboarding() {
             />
           ) : (
             messages.map((message) => (
-              <Message key={message.id} from={message.role}>
-                <MessageContent>
-                  {message.role === "user" ? (
-                    message.parts
-                      .filter((p) => p.type === "text")
-                      .map((p, i) => <span key={i}>{p.text}</span>)
-                  ) : (
-                    <MessageResponse>
-                      {message.parts
-                        .filter((p) => p.type === "text")
-                        .map((p) => p.text)
-                        .join("")}
-                    </MessageResponse>
-                  )}
-                </MessageContent>
-              </Message>
+              <div key={message.id}>
+                {message.parts.map((part, idx) => {
+                  const partId = `${message.id}-${idx}`;
+
+                  switch (part.type) {
+                    case "text":
+                      return (
+                        <Message key={partId} from={message.role}>
+                          <MessageContent>
+                            <MessageResponse>{part.text}</MessageResponse>
+                          </MessageContent>
+                        </Message>
+                      );
+
+                    case "reasoning":
+                      return (
+                        <p key={partId} className="text-sm text-gray-500">
+                          <BrainIcon className="size-4 inline" />{" "}
+                          {part.text || "Reasoning"}
+                        </p>
+                      );
+
+                    case "tool-createAccount":
+                      return (
+                        <p key={partId} className="text-sm text-gray-500">
+                          <Spinner className="size-4 inline" /> Creating your
+                          account
+                        </p>
+                      );
+
+                    case "tool-getWebsiteName":
+                      return (
+                        <p key={partId} className="text-sm text-gray-500">
+                          <GlobeIcon className="size-4 inline" /> Looking at
+                          your website
+                        </p>
+                      );
+
+                    case "tool-getWebsiteText":
+                      return (
+                        <p key={partId} className="text-sm text-gray-500">
+                          <GlobeIcon className="size-4 inline" /> Reading your
+                          website
+                        </p>
+                      );
+
+                    default:
+                      return null;
+                  }
+                })}
+              </div>
             ))
           )}
         </ConversationContent>
@@ -121,7 +160,7 @@ export function ChatOnboarding() {
         <PromptInputTextarea
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          placeholder="Ask about SEO..."
+          placeholder="Tell me about your website..."
         />
         <PromptInputFooter>
           <div />

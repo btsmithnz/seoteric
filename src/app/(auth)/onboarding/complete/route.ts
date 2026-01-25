@@ -11,10 +11,14 @@ export async function GET(req: NextRequest) {
     .object({
       name: z.string(),
       domain: z.string(),
+      country: z.string(),
+      industry: z.string(),
     })
     .parse({
       name: searchParams.get("name") ?? "",
       domain: searchParams.get("domain") ?? "",
+      country: searchParams.get("country") ?? "",
+      industry: searchParams.get("industry") ?? "",
     });
 
   const siteId = await fetchAuthMutation(api.site.create, data);

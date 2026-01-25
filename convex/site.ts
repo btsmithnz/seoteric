@@ -20,6 +20,8 @@ export const create = mutation({
   args: {
     name: v.string(),
     domain: v.string(),
+    country: v.string(),
+    industry: v.string(),
   },
   handler: async (ctx, args) => {
     const user = await getUser(ctx);
