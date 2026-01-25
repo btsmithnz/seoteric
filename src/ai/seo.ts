@@ -1,5 +1,10 @@
 import { ToolLoopAgent } from "ai";
-import { getWebsiteNameTool, getWebsiteTextTool } from "./tools/website";
+import {
+  getWebsiteNameTool,
+  getWebsiteTextTool,
+  inspectDomTool,
+} from "./tools/website";
+import { z } from "zod";
 
 export const seoAgent = new ToolLoopAgent({
   model: "anthropic/claude-haiku-4.5",
@@ -7,6 +12,18 @@ export const seoAgent = new ToolLoopAgent({
   tools: {
     getWebsiteName: getWebsiteNameTool,
     getWebsiteText: getWebsiteTextTool,
+    inspectDom: inspectDomTool,
   },
+  callOptionsSchema: z.object({
+    siteDomain: z.string(),
+    siteName: z.string(),
+  }),
+  prepareCall: ({ options, ...settings }) => ({
+    ...settings,
+    instructions:
+      settings.instructions +
+      `\nSite context:
+- Site Name: ${options.siteName}
+- Site Domain: ${options.siteDomain}`,
+  }),
 });
-

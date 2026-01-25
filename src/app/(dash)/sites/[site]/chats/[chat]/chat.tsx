@@ -8,11 +8,6 @@ import {
   ConversationScrollButton,
 } from "@/components/ai-elements/conversation";
 import {
-  Message,
-  MessageContent,
-  MessageResponse,
-} from "@/components/ai-elements/message";
-import {
   PromptInput,
   PromptInputTextarea,
   PromptInputFooter,
@@ -24,6 +19,7 @@ import { DefaultChatTransport } from "ai";
 import { convexSiteUrl } from "@/lib/env";
 import { Preloaded, usePreloadedQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
+import { SeotericMessages } from "@/components/chat/seoteric-messages";
 
 const transport = new DefaultChatTransport({
   api: `${convexSiteUrl}/chat/seo`,
@@ -70,24 +66,7 @@ export function ChatSeo(props: {
                 description="Ask me anything about SEO optimization"
               />
             ) : (
-              messages.map((message) => (
-                <Message key={message.id} from={message.role}>
-                  <MessageContent>
-                    {message.role === "user" ? (
-                      message.parts
-                        .filter((p) => p.type === "text")
-                        .map((p, i) => <span key={i}>{p.text}</span>)
-                    ) : (
-                      <MessageResponse>
-                        {message.parts
-                          .filter((p) => p.type === "text")
-                          .map((p) => p.text)
-                          .join("")}
-                      </MessageResponse>
-                    )}
-                  </MessageContent>
-                </Message>
-              ))
+              <SeotericMessages messages={messages} />
             )}
           </ConversationContent>
           <ConversationScrollButton />

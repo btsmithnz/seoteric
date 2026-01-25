@@ -43,3 +43,22 @@ export const getWebsiteTextTool = tool({
   }),
   execute: async ({ url, length }) => getWebsiteText(url, length),
 });
+
+export async function inspectDom(url: string, selector: string) {
+  const $ = await loadSiteDom(url);
+  return $(selector)
+    .map((_, el) => $(el).prop("outerHTML"))
+    .slice(0, 20)
+    .get();
+}
+
+export const inspectDomTool = tool({
+  description: "Inspect a website and return the text of a selector.",
+  inputSchema: z.object({
+    url: z.url().describe("The URL of the website to load"),
+    selector: z
+      .string()
+      .describe("The selector to inspect. Use the jQuery syntax."),
+  }),
+  execute: async ({ url, selector }) => inspectDom(url, selector),
+});

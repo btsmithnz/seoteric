@@ -8,11 +8,6 @@ import {
   ConversationScrollButton,
 } from "@/components/ai-elements/conversation";
 import {
-  Message,
-  MessageContent,
-  MessageResponse,
-} from "@/components/ai-elements/message";
-import {
   PromptInput,
   PromptInputTextarea,
   PromptInputFooter,
@@ -21,8 +16,7 @@ import {
 import { useCallback, useState, useTransition } from "react";
 import { DefaultChatTransport, UIMessage } from "ai";
 import { useRouter } from "next/navigation";
-import { BrainIcon, GlobeIcon } from "lucide-react";
-import { Spinner } from "@/components/ui/spinner";
+import { SeotericMessages } from "@/components/chat/seoteric-messages";
 
 const transport = new DefaultChatTransport({
   api: `/api/chat/onboarding`,
@@ -95,59 +89,7 @@ export function ChatOnboarding() {
               description="Ask me anything about SEO optimization"
             />
           ) : (
-            messages.map((message) => (
-              <div key={message.id}>
-                {message.parts.map((part, idx) => {
-                  const partId = `${message.id}-${idx}`;
-
-                  switch (part.type) {
-                    case "text":
-                      return (
-                        <Message key={partId} from={message.role}>
-                          <MessageContent>
-                            <MessageResponse>{part.text}</MessageResponse>
-                          </MessageContent>
-                        </Message>
-                      );
-
-                    case "reasoning":
-                      return (
-                        <p key={partId} className="text-sm text-gray-500">
-                          <BrainIcon className="size-4 inline" />{" "}
-                          {part.text || "Reasoning"}
-                        </p>
-                      );
-
-                    case "tool-createAccount":
-                      return (
-                        <p key={partId} className="text-sm text-gray-500">
-                          <Spinner className="size-4 inline" /> Creating your
-                          account
-                        </p>
-                      );
-
-                    case "tool-getWebsiteName":
-                      return (
-                        <p key={partId} className="text-sm text-gray-500">
-                          <GlobeIcon className="size-4 inline" /> Looking at
-                          your website
-                        </p>
-                      );
-
-                    case "tool-getWebsiteText":
-                      return (
-                        <p key={partId} className="text-sm text-gray-500">
-                          <GlobeIcon className="size-4 inline" /> Reading your
-                          website
-                        </p>
-                      );
-
-                    default:
-                      return null;
-                  }
-                })}
-              </div>
-            ))
+            <SeotericMessages messages={messages} />
           )}
         </ConversationContent>
         <ConversationScrollButton />

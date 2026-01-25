@@ -3,6 +3,7 @@ import {
   httpAction,
   internalAction,
   internalMutation,
+  internalQuery,
   mutation,
   query,
 } from "./_generated/server";
@@ -112,12 +113,35 @@ export const updateChatMessagesInternal = internalMutation({
   },
 });
 
+export const getChatContextInternal = internalQuery({
+  args: { chatId: v.id("chats") },
+  handler: async (ctx, args) => {
+    const chat = await ctx.db.get(args.chatId);
+    if (!chat) {
+      throw new ConvexError("Chat not found");
+    }
+    const site = await ctx.db.get(chat.siteId);
+    if (!site) {
+      throw new ConvexError("Site not found");
+    }
+    return { chat, site };
+  },
+});
+
 export const seoChat = httpAction(async (ctx, req) => {
   const { id: chatId, messages }: { id: Id<"chats">; messages: UIMessage[] } =
     await req.json();
 
+  const { site } = await ctx.runQuery(internal.chat.getChatContextInternal, {
+    chatId,
+  });
+
   const res = await seoAgent.stream({
     messages: await convertToModelMessages(messages),
+    options: {
+      siteDomain: site.domain,
+      siteName: site.name,
+    },
   });
 
   return res.toUIMessageStreamResponse({
