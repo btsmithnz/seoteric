@@ -122,7 +122,7 @@ export const seoChat = httpAction(async (ctx, req) => {
 
   return res.toUIMessageStreamResponse({
     headers: {
-      "Access-Control-Allow-Origin": "http://localhost:3000",
+      "Access-Control-Allow-Origin": process.env.SITE_URL!,
       Vary: "origin",
     },
     originalMessages: messages,

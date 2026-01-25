@@ -29,8 +29,7 @@ http.route({
     ) {
       return new Response(null, {
         headers: new Headers({
-          // e.g. https://mywebsite.com, configured on your Convex dashboard
-          "Access-Control-Allow-Origin": "http://localhost:3000",
+          "Access-Control-Allow-Origin": process.env.SITE_URL!,
           "Access-Control-Allow-Methods": "POST",
           "Access-Control-Allow-Headers": "Content-Type, Digest",
           "Access-Control-Max-Age": "86400",
