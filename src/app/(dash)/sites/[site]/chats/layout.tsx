@@ -1,7 +1,7 @@
 import { Id } from "@/convex/_generated/dataModel";
 import { ChatSidebar } from "./sidebar";
-import { SidebarProvider, SidebarInset } from "@/components/ui/sidebar";
-import { MobileTrigger } from "./mobile-trigger";
+import { SidebarProvider } from "@/components/providers/sidebar";
+import { ChatSidebarMobileTrigger } from "./sidebar/mobile-trigger";
 
 export default async function ChatsLayout({
   children,
@@ -14,16 +14,14 @@ export default async function ChatsLayout({
   const siteId = site as Id<"sites">;
 
   return (
-    <SidebarProvider
-      className="h-[calc(100vh-49px)] min-h-0"
-      style={{ "--sidebar-top": "49px" } as React.CSSProperties}
-      sidebarTop="49px"
-    >
-      <ChatSidebar siteId={siteId} />
-      <SidebarInset className="overflow-auto p-4">
-        <MobileTrigger />
-        {children}
-      </SidebarInset>
+    <SidebarProvider>
+      <div className="flex-1 flex flex-row">
+        <ChatSidebar siteId={siteId} />
+        <div className="flex min-w-0 flex-1 flex-col gap-1 p-4 pt-1 md:pt-4">
+          <ChatSidebarMobileTrigger />
+          <div className="h-full">{children}</div>
+        </div>
+      </div>
     </SidebarProvider>
   );
 }

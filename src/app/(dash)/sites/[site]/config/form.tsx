@@ -30,7 +30,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { FieldErrorZod } from "@/components/input/field-error-zod";
-import { countries } from "@/lib/countries";
+import { countries, renderCountryLabel } from "@/lib/countries";
 
 interface SiteConfigFormProps {
   preloadedSite: Preloaded<typeof api.site.get>;
@@ -73,20 +73,20 @@ export function SiteConfigForm({ preloadedSite }: SiteConfigFormProps) {
   });
 
   return (
-    <Card>
-      <CardHeader>
-        <CardTitle>General Settings</CardTitle>
-        <CardDescription>
-          Update your site information and preferences
-        </CardDescription>
-      </CardHeader>
-      <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          e.stopPropagation();
-          form.handleSubmit();
-        }}
-      >
+    <form
+      onSubmit={(e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        form.handleSubmit();
+      }}
+    >
+      <Card>
+        <CardHeader>
+          <CardTitle>General Settings</CardTitle>
+          <CardDescription>
+            Update your site information and preferences
+          </CardDescription>
+        </CardHeader>
         <CardContent>
           <FieldGroup>
             <form.Field name="name">
@@ -131,7 +131,7 @@ export function SiteConfigForm({ preloadedSite }: SiteConfigFormProps) {
                     onValueChange={(value) => field.handleChange(value ?? "")}
                   >
                     <SelectTrigger className="w-full">
-                      <SelectValue placeholder="Select a country" />
+                      <SelectValue>{renderCountryLabel}</SelectValue>
                     </SelectTrigger>
                     <SelectContent>
                       {countries.map((country) => (
@@ -162,6 +162,7 @@ export function SiteConfigForm({ preloadedSite }: SiteConfigFormProps) {
             </form.Field>
           </FieldGroup>
         </CardContent>
+
         <CardFooter className="justify-end">
           <form.Subscribe
             selector={(state) => ({
@@ -176,7 +177,7 @@ export function SiteConfigForm({ preloadedSite }: SiteConfigFormProps) {
             )}
           </form.Subscribe>
         </CardFooter>
-      </form>
-    </Card>
+      </Card>
+    </form>
   );
 }

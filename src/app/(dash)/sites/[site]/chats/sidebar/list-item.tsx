@@ -3,7 +3,8 @@
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { Id, Doc } from "@/convex/_generated/dataModel";
-import { SidebarMenuButton, useSidebar } from "@/components/ui/sidebar";
+import { Button } from "@/components/ui/button";
+import { useSidebar } from "@/components/providers/sidebar";
 
 type ChatListItemProps = {
   chat: Doc<"chats">;
@@ -12,20 +13,22 @@ type ChatListItemProps = {
 
 export function ChatListItem({ chat, siteId }: ChatListItemProps) {
   const params = useParams<{ chat?: string }>();
+  const { setMobileOpen } = useSidebar();
   const isActive = params.chat === chat._id;
-  const { setOpenMobile } = useSidebar();
 
   return (
-    <SidebarMenuButton
+    <Button
+      className="w-full justify-start"
       render={
         <Link
           href={`/sites/${siteId}/chats/${chat._id}`}
-          onClick={() => setOpenMobile(false)}
+          onClick={() => setMobileOpen(false)}
         />
       }
-      isActive={isActive}
+      variant={isActive ? "default" : "ghost"}
+      nativeButton={false}
     >
       <span className="truncate">{chat.name || "Untitled"}</span>
-    </SidebarMenuButton>
+    </Button>
   );
 }

@@ -52,20 +52,20 @@ export default function LoginPage() {
   });
 
   return (
-    <Card className="w-full max-w-sm">
-      <CardHeader>
-        <CardTitle>Sign in</CardTitle>
-        <CardDescription>
-          Enter your credentials to access your account
-        </CardDescription>
-      </CardHeader>
-      <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          e.stopPropagation();
-          form.handleSubmit();
-        }}
-      >
+    <form
+      onSubmit={(e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        form.handleSubmit();
+      }}
+    >
+      <Card className="w-full max-w-sm">
+        <CardHeader>
+          <CardTitle>Sign in</CardTitle>
+          <CardDescription>
+            Enter your credentials to access your account
+          </CardDescription>
+        </CardHeader>
         <CardContent>
           <FieldGroup>
             <form.Field name="email">
@@ -126,7 +126,7 @@ export default function LoginPage() {
             </Link>
           </p>
         </CardFooter>
-      </form>
-    </Card>
+      </Card>
+    </form>
   );
 }

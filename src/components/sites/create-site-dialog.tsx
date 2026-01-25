@@ -33,7 +33,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { FieldErrorZod } from "@/components/input/field-error-zod";
-import { countries } from "@/lib/countries";
+import { countries, renderCountryLabel } from "@/lib/countries";
 
 interface CreateSiteDialogProps {
   trigger?: React.ReactElement;
@@ -58,9 +58,7 @@ export function CreateSiteDialog({ onSuccess }: CreateSiteDialogProps) {
     validators: {
       onSubmit: z.object({
         name: z.string().min(1, "Name is required"),
-        domain: z
-          .string()
-          .regex(z.regexes.domain, { error: "Invalid domain" }),
+        domain: z.string().regex(z.regexes.domain, { error: "Invalid domain" }),
         country: z.string().min(1, "Please select a country"),
         industry: z.string().min(1, "Please enter an industry"),
       }),
@@ -150,7 +148,7 @@ export function CreateSiteDialog({ onSuccess }: CreateSiteDialogProps) {
                     onValueChange={(value) => field.handleChange(value ?? "")}
                   >
                     <SelectTrigger className="w-full">
-                      <SelectValue placeholder="Select a country" />
+                      <SelectValue>{renderCountryLabel}</SelectValue>
                     </SelectTrigger>
                     <SelectContent>
                       {countries.map((country) => (

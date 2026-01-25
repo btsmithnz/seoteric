@@ -12,12 +12,9 @@ export default defineSchema({
     .index("by_user", ["userId"])
     .index("by_domain", ["domain"]),
   chats: defineTable({
-    slug: v.string(),
     siteId: v.id("sites"),
     name: v.string(),
-  })
-    .index("by_slug", ["slug"])
-    .index("by_site", ["siteId"]),
+  }).index("by_site", ["siteId"]),
   messages: defineTable({
     chatId: v.id("chats"),
     init: v.optional(v.string()),

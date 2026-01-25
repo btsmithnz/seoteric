@@ -12,7 +12,7 @@ export default async function ConfigPage(
   const preloadedSite = await preloadAuthQuery(api.site.get, { siteId });
 
   return (
-    <div className="p-6 max-w-2xl mx-auto">
+    <div className="p-6 w-lg max-w-full mx-auto">
       <h1 className="text-xl font-semibold mb-6">Site Configuration</h1>
       <SiteConfigForm preloadedSite={preloadedSite} />
     </div>

@@ -85,20 +85,20 @@ export default function OnboardingPage() {
   });
 
   return (
-    <Card className="w-full max-w-sm">
-      <CardHeader>
-        <CardTitle>Get started</CardTitle>
-        <CardDescription>
-          Create your account and add your first website
-        </CardDescription>
-      </CardHeader>
-      <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          e.stopPropagation();
-          form.handleSubmit();
-        }}
-      >
+    <form
+      onSubmit={(e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        form.handleSubmit();
+      }}
+    >
+      <Card className="w-full max-w-sm">
+        <CardHeader>
+          <CardTitle>Get started</CardTitle>
+          <CardDescription>
+            Create your account and add your first website
+          </CardDescription>
+        </CardHeader>
         <CardContent>
           <FieldGroup>
             <form.Field name="name">
@@ -252,7 +252,7 @@ export default function OnboardingPage() {
             </Link>
           </p>
         </CardFooter>
-      </form>
-    </Card>
+      </Card>
+    </form>
   );
 }

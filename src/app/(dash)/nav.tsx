@@ -18,9 +18,9 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { ThemeSwitcher } from "@/components/theme-switcher";
-import { LogoutMenuItem } from "../elements/logout-button";
+import { LogoutMenuItem } from "@/components/elements/logout-button";
 import { createSiteDialog } from "@/components/sites/create-site-dialog";
-import { DialogTrigger } from "../ui/dialog";
+import { DialogTrigger } from "@/components/ui/dialog";
 
 export function DashboardNav({
   preloadedSites,
@@ -36,7 +36,7 @@ export function DashboardNav({
   const isConfigPage = pathname?.endsWith("/config");
 
   return (
-    <header className="border-b border-border bg-background">
+    <header className="sticky top-0 z-20 w-full border-b border-border bg-background">
       <div className="flex h-12 items-center justify-between px-4">
         <Link href="/sites" className="text-xl font-semibold">
           Seoteric
@@ -71,7 +71,9 @@ export function DashboardNav({
             <DropdownMenuTrigger
               render={
                 <Button variant="outline" size="sm">
-                  {currentSite?.name ?? "Sites"}
+                  <span className="hidden md:block">
+                    {currentSite?.name ?? "Sites"}
+                  </span>
                   <ChevronDownIcon className="ml-1" />
                 </Button>
               }
