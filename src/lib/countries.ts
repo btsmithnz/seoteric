@@ -250,4 +250,13 @@ export const countries = [
   { label: "Zimbabwe", value: "ZW" },
 ] as const;
 
+export function renderCountryLabel(
+  code: string | null | undefined,
+  fallback: string = "Select a country"
+) {
+  if (!code) return fallback;
+  const country = countries.find((country) => country.value === code);
+  return country?.label ?? fallback;
+}
+
 export type CountryCode = (typeof countries)[number]["value"];

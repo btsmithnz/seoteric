@@ -1,6 +1,6 @@
 import { tool } from "ai";
 import { z } from "zod";
-import { JSDOM } from "jsdom";
+import { load } from "cheerio";
 
 async function loadSiteHtml(url: string) {
   const response = await fetch(url);
@@ -8,22 +8,30 @@ async function loadSiteHtml(url: string) {
 }
 
 async function loadSiteDom(url: string) {
-  const document = await loadSiteHtml(url);
-  return new JSDOM(document).window.document;
+  const html = await loadSiteHtml(url);
+  return load(html);
 }
 
-export const getWebsiteName = tool({
+async function getWebsiteName(url: string) {
+  const $ = await loadSiteDom(url);
+  return $("title").text();
+}
+
+export const getWebsiteNameTool = tool({
   description: "Load a website and return the name (title)",
   inputSchema: z.object({
     url: z.url().describe("The URL of the website to load"),
   }),
-  execute: async ({ url }) => {
-    const document = await loadSiteDom(url);
-    return document.title;
-  },
+  execute: async ({ url }) => getWebsiteName(url),
 });
 
-export const getWebsiteText = tool({
+export async function getWebsiteText(url: string, length: number) {
+  const $ = await loadSiteDom(url);
+  const text = $("body").text();
+  return text.slice(0, length);
+}
+
+export const getWebsiteTextTool = tool({
   description: "Load a website and return the text",
   inputSchema: z.object({
     url: z.url().describe("The URL of the website to load"),
@@ -33,8 +41,5 @@ export const getWebsiteText = tool({
       .describe("The length of the text to return")
       .default(1000),
   }),
-  execute: async ({ url }) => {
-    const document = await loadSiteDom(url);
-    return document.body.textContent;
-  },
+  execute: async ({ url, length }) => getWebsiteText(url, length),
 });

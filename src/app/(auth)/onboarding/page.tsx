@@ -32,7 +32,7 @@ import { FieldErrorZod } from "@/components/input/field-error-zod";
 import { useTransition } from "react";
 import { toast } from "sonner";
 import { useSearchParams } from "next/navigation";
-import { countries } from "@/lib/countries";
+import { countries, renderCountryLabel } from "@/lib/countries";
 
 export default function OnboardingPage() {
   const router = useRouter();
@@ -194,7 +194,7 @@ export default function OnboardingPage() {
                     onValueChange={(value) => field.handleChange(value ?? "")}
                   >
                     <SelectTrigger className="w-full">
-                      <SelectValue placeholder="Select a country" />
+                      <SelectValue>{renderCountryLabel}</SelectValue>
                     </SelectTrigger>
                     <SelectContent>
                       {countries.map((country) => (

@@ -21,7 +21,7 @@ import {
 import { useCallback, useState, useTransition } from "react";
 import { DefaultChatTransport, UIMessage } from "ai";
 import { useRouter } from "next/navigation";
-import { BrainIcon, GlobeIcon, HammerIcon, UserIcon } from "lucide-react";
+import { BrainIcon, GlobeIcon } from "lucide-react";
 import { Spinner } from "@/components/ui/spinner";
 
 const transport = new DefaultChatTransport({
@@ -43,10 +43,7 @@ To get started, I'll need to gather some information from you:
 
 1. **Your Name** - What's your name?
 2. **Your Email** - What's your email?
-3. **Website Name** - What's the name of your website?
-4. **Website Domain** - What's your website's domain (e.g., www.example.com)?
-5. **Website Country** - What's the country where your business is primarily based?
-6. **Website Industry** - What's the industry or sector the website serves?
+3. **Website Domain** - What's your website's domain (e.g., www.example.com)?
 
 Once I have these details, we can create your account and get you on your way! What would you like to share first?`,
       },
