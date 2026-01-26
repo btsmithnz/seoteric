@@ -1,5 +1,6 @@
 import { convexBetterAuthNextJs } from "@convex-dev/better-auth/nextjs";
 import { convexSiteUrl, convexUrl } from "./env";
+import { isAuthError } from "./utils";
 
 export const {
   handler,
@@ -9,4 +10,11 @@ export const {
   fetchAuthQuery,
   fetchAuthMutation,
   fetchAuthAction,
-} = convexBetterAuthNextJs({ convexUrl, convexSiteUrl });
+} = convexBetterAuthNextJs({
+  convexUrl,
+  convexSiteUrl,
+  jwtCache: {
+    enabled: true,
+    isAuthError,
+  },
+});
