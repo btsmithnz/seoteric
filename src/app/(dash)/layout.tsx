@@ -13,7 +13,7 @@ export default async function DashboardLayout({
 }) {
   const authenticated = await isAuthenticated();
   if (!authenticated) {
-    redirect("/sign-in");
+    redirect("/login");
   }
 
   const token = await getToken();

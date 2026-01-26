@@ -13,6 +13,8 @@
     "@ai-sdk/react": "^3.0.51",
     "@base-ui/react": "^1.1.0",
     "@convex-dev/better-auth": "^0.10.10",
+    "@convex-dev/polar": "^0.7.3",
+    "@polar-sh/nextjs": "^0.9.3",
     "@streamdown/cjk": "^1.0.1",
     "@streamdown/code": "^1.0.1",
     "@streamdown/math": "^1.0.1",
