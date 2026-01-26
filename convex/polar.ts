@@ -19,9 +19,6 @@ export const polar = new Polar(components.polar, {
   },
 });
 
-export const MAX_FREE_TODOS = 3;
-export const MAX_PREMIUM_TODOS = 6;
-
 export const {
   // If you configure your products by key in the Polar constructor,
   // this query provides a keyed object of the products.

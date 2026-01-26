@@ -14,7 +14,7 @@ export function ChatSidebar({ siteId }: { siteId: Id<"sites"> }) {
   return (
     <div
       className={cn(
-        "absolute md:sticky top-0 md:block flex flex-col border-r border-border bg-background h-[calc(100vh-3rem)] md:h-auto w-full z-10 md:w-64",
+        "absolute md:relative md:block flex flex-col border-r border-border bg-background h-[calc(100vh-3rem)] md:h-auto w-full z-10 md:w-64",
         !mobileOpen && "hidden"
       )}
     >
