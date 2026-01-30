@@ -53,13 +53,14 @@ export default function LoginPage() {
 
   return (
     <form
+      className="w-full max-w-sm"
       onSubmit={(e) => {
         e.preventDefault();
         e.stopPropagation();
         form.handleSubmit();
       }}
     >
-      <Card className="w-full max-w-sm">
+      <Card>
         <CardHeader>
           <CardTitle>Sign in</CardTitle>
           <CardDescription>

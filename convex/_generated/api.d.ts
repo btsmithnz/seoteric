@@ -12,6 +12,7 @@ import type * as auth from "../auth.js";
 import type * as chat from "../chat.js";
 import type * as http from "../http.js";
 import type * as polar from "../polar.js";
+import type * as recommendations from "../recommendations.js";
 import type * as site from "../site.js";
 import type * as utils from "../utils.js";
 
@@ -26,6 +27,7 @@ declare const fullApi: ApiFromModules<{
   chat: typeof chat;
   http: typeof http;
   polar: typeof polar;
+  recommendations: typeof recommendations;
   site: typeof site;
   utils: typeof utils;
 }>;

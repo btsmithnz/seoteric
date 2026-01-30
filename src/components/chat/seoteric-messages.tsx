@@ -1,8 +1,10 @@
 import { UIMessage } from "ai";
 import { Message, MessageResponse } from "../ai-elements/message";
 import { MessageContent } from "../ai-elements/message";
-import { BrainIcon, GlobeIcon, SearchIcon } from "lucide-react";
+import { BrainIcon, GlobeIcon, SearchIcon, LightbulbIcon, CheckCircleIcon } from "lucide-react";
 import { Spinner } from "../ui/spinner";
+import { RecommendationCard } from "../recommendations/card";
+import { CreateRecommendationOutput } from "@/ai/tools/recommendations";
 
 function ToolCall({
   icon,
@@ -81,6 +83,46 @@ export function SeotericMessages({ messages }: { messages: UIMessage[] }) {
                     icon={<SearchIcon className="size-4 inline" />}
                   >
                     Inspecting your website
+                  </ToolCall>
+                );
+
+              case "tool-createRecommendation":
+                if (part.state === "output-available") {
+                  const output = part.output as CreateRecommendationOutput;
+                  return (
+                    <div key={partId} className="my-2 max-w-md">
+                      <RecommendationCard
+                        recommendation={{
+                          title: output.title,
+                          description: output.description,
+                          category: output.category,
+                          priority: output.priority,
+                          pageUrl: output.pageUrl,
+                        }}
+                        compact
+                        showActions={false}
+                      />
+                    </div>
+                  );
+                }
+                return (
+                  <ToolCall
+                    key={partId}
+                    icon={<LightbulbIcon className="size-4 inline" />}
+                  >
+                    Creating recommendation...
+                  </ToolCall>
+                );
+
+              case "tool-updateRecommendation":
+                return (
+                  <ToolCall
+                    key={partId}
+                    icon={<CheckCircleIcon className="size-4 inline" />}
+                  >
+                    {part.state === "output-available"
+                      ? "Updated recommendation"
+                      : "Updating recommendation..."}
                   </ToolCall>
                 );
 

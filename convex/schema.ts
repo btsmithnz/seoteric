@@ -20,4 +20,33 @@ export default defineSchema({
     init: v.optional(v.string()),
     messages: v.array(v.any()),
   }).index("by_chat", ["chatId"]),
+  recommendations: defineTable({
+    siteId: v.id("sites"),
+    title: v.string(),
+    description: v.string(),
+    category: v.union(
+      v.literal("technical"),
+      v.literal("content"),
+      v.literal("on-page"),
+      v.literal("off-page"),
+      v.literal("performance")
+    ),
+    priority: v.union(
+      v.literal("critical"),
+      v.literal("high"),
+      v.literal("medium"),
+      v.literal("low")
+    ),
+    status: v.union(
+      v.literal("open"),
+      v.literal("in_progress"),
+      v.literal("completed"),
+      v.literal("dismissed")
+    ),
+    pageUrl: v.optional(v.string()),
+    createdAt: v.number(),
+    completedAt: v.optional(v.number()),
+  })
+    .index("by_site", ["siteId"])
+    .index("by_site_status", ["siteId", "status"]),
 });

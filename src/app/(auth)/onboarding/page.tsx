@@ -86,13 +86,14 @@ export default function OnboardingPage() {
 
   return (
     <form
+      className="w-full max-w-sm"
       onSubmit={(e) => {
         e.preventDefault();
         e.stopPropagation();
         form.handleSubmit();
       }}
     >
-      <Card className="w-full max-w-sm">
+      <Card>
         <CardHeader>
           <CardTitle>Get started</CardTitle>
           <CardDescription>

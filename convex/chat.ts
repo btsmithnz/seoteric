@@ -12,6 +12,10 @@ import { internal } from "./_generated/api";
 import { seoAgent } from "@/ai/seo";
 import { convertToModelMessages, streamText, UIMessage } from "ai";
 import { Id } from "./_generated/dataModel";
+import {
+  CreateRecommendationOutput,
+  UpdateRecommendationOutput,
+} from "@/ai/tools/recommendations";
 
 export const generateChatNameInternal = internalAction({
   args: { chatId: v.id("chats"), message: v.string() },
@@ -136,6 +140,11 @@ export const seoChat = httpAction(async (ctx, req) => {
     chatId,
   });
 
+  const existingRecommendations = await ctx.runQuery(
+    internal.recommendations.getOpenBySiteInternal,
+    { siteId: site._id }
+  );
+
   const res = await seoAgent.stream({
     messages: await convertToModelMessages(messages),
     options: {
@@ -143,6 +152,15 @@ export const seoChat = httpAction(async (ctx, req) => {
       siteName: site.name,
       siteCountry: site.country,
       siteIndustry: site.industry,
+      existingRecommendations: existingRecommendations.map((r) => ({
+        _id: r._id,
+        title: r.title,
+        description: r.description,
+        category: r.category,
+        priority: r.priority,
+        status: r.status,
+        pageUrl: r.pageUrl,
+      })),
     },
   });
 
@@ -157,6 +175,31 @@ export const seoChat = httpAction(async (ctx, req) => {
         chatId,
         messages,
       });
+
+      // Process recommendation tool calls
+      for (const message of messages) {
+        if (message.role !== "assistant") continue;
+        for (const part of message.parts) {
+          if (part.type === "tool-createRecommendation" && part.state === "output-available") {
+            const output = part.output as CreateRecommendationOutput;
+            await ctx.runMutation(internal.recommendations.createInternal, {
+              siteId: site._id,
+              title: output.title,
+              description: output.description,
+              category: output.category,
+              priority: output.priority,
+              pageUrl: output.pageUrl,
+            });
+          } else if (part.type === "tool-updateRecommendation" && part.state === "output-available") {
+            const output = part.output as UpdateRecommendationOutput;
+            await ctx.runMutation(internal.recommendations.updateInternal, {
+              recommendationId: output.recommendationId as Id<"recommendations">,
+              status: output.status,
+              priority: output.priority,
+            });
+          }
+        }
+      }
     },
   });
 });
