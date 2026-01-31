@@ -1,5 +1,12 @@
+import { SpeedTestRegionResult } from "@/app/api/speed-test/_lib/speed-test";
 import { tool } from "ai";
 import { z } from "zod";
+
+export interface SpeedTestOutput {
+  url: string;
+  results: SpeedTestRegionResult[];
+  error?: string;
+}
 
 const REGIONS = ["iad1", "sfo1", "lhr1", "hnd1", "sin1", "syd1"] as const;
 
@@ -41,7 +48,7 @@ export const runSpeedTestTool = tool({
       return await response.json();
     } catch (error) {
       return {
-        error: `Speed test failed: ${error instanceof Error ? error.message : "Unknown error"}`,
+        error: error instanceof Error ? error.message : "Unknown error",
       };
     }
   },
