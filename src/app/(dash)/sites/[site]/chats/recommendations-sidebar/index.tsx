@@ -1,6 +1,6 @@
 "use client";
 
-import { useQuery, useMutation } from "convex/react";
+import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { RecommendationCard } from "./card";
@@ -17,19 +17,6 @@ interface Props {
 
 export function RecommendationsSidebar({ siteId }: Props) {
   const recommendations = useQuery(api.recommendations.listBySite, { siteId });
-  const updateStatus = useMutation(api.recommendations.updateStatus);
-
-  const handleComplete = async (id: Id<"recommendations">) => {
-    await updateStatus({ recommendationId: id, status: "completed" });
-  };
-
-  const handleDismiss = async (id: Id<"recommendations">) => {
-    await updateStatus({ recommendationId: id, status: "dismissed" });
-  };
-
-  const handleReopen = async (id: Id<"recommendations">) => {
-    await updateStatus({ recommendationId: id, status: "open" });
-  };
 
   if (!recommendations) {
     return (
@@ -77,8 +64,6 @@ export function RecommendationsSidebar({ siteId }: Props) {
             key={rec._id}
             recommendation={rec}
             showActions
-            onComplete={handleComplete}
-            onDismiss={handleDismiss}
           />
         ))}
 
@@ -94,7 +79,6 @@ export function RecommendationsSidebar({ siteId }: Props) {
                   recommendation={rec}
                   compact
                   showActions
-                  onReopen={handleReopen}
                 />
               ))}
             </div>

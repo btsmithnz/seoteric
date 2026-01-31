@@ -1,8 +1,11 @@
 "use client";
 
+import { useState } from "react";
+import { useMutation } from "convex/react";
+import { api } from "@/convex/_generated/api";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { LoadingButton } from "@/components/elements/loading-button";
 import { cn } from "@/lib/utils";
 import { CheckIcon, XIcon, ExternalLinkIcon, Undo2Icon } from "lucide-react";
 import { Id } from "@/convex/_generated/dataModel";
@@ -36,21 +39,48 @@ interface RecommendationCardProps {
   recommendation: RecommendationData;
   showActions?: boolean;
   compact?: boolean;
-  onComplete?: (id: Id<"recommendations">) => void;
-  onDismiss?: (id: Id<"recommendations">) => void;
-  onReopen?: (id: Id<"recommendations">) => void;
 }
 
 export function RecommendationCard({
   recommendation,
   showActions = false,
   compact = false,
-  onComplete,
-  onDismiss,
-  onReopen,
 }: RecommendationCardProps) {
+  const [loadingAction, setLoadingAction] = useState<'complete' | 'dismiss' | 'reopen' | null>(null);
+  const updateStatus = useMutation(api.recommendations.updateStatus);
+
   const priority = recommendation.priority as keyof typeof priorityColors;
   const category = recommendation.category as keyof typeof categoryLabels;
+
+  const handleComplete = async () => {
+    if (!recommendation._id) return;
+    setLoadingAction('complete');
+    try {
+      await updateStatus({ recommendationId: recommendation._id, status: "completed" });
+    } finally {
+      setLoadingAction(null);
+    }
+  };
+
+  const handleDismiss = async () => {
+    if (!recommendation._id) return;
+    setLoadingAction('dismiss');
+    try {
+      await updateStatus({ recommendationId: recommendation._id, status: "dismissed" });
+    } finally {
+      setLoadingAction(null);
+    }
+  };
+
+  const handleReopen = async () => {
+    if (!recommendation._id) return;
+    setLoadingAction('reopen');
+    try {
+      await updateStatus({ recommendationId: recommendation._id, status: "open" });
+    } finally {
+      setLoadingAction(null);
+    }
+  };
 
   return (
     <Card size={compact ? "sm" : "default"} className={cn(compact && "border-l-2 border-l-primary")}>
@@ -76,32 +106,38 @@ export function RecommendationCard({
           {showActions && recommendation._id && (
             <div className="flex gap-1 shrink-0">
               {recommendation.status === "completed" || recommendation.status === "dismissed" ? (
-                <Button
+                <LoadingButton
                   size="icon-xs"
                   variant="ghost"
-                  onClick={() => onReopen?.(recommendation._id!)}
+                  onClick={handleReopen}
+                  disabled={loadingAction !== null}
+                  loading={loadingAction === 'reopen'}
+                  icon={<Undo2Icon className="size-3" />}
+                  spinnerClassName="size-3"
                   title="Reopen"
-                >
-                  <Undo2Icon className="size-3" />
-                </Button>
+                />
               ) : (
                 <>
-                  <Button
+                  <LoadingButton
                     size="icon-xs"
                     variant="ghost"
-                    onClick={() => onComplete?.(recommendation._id!)}
+                    onClick={handleComplete}
+                    disabled={loadingAction !== null}
+                    loading={loadingAction === 'complete'}
+                    icon={<CheckIcon className="size-3" />}
+                    spinnerClassName="size-3"
                     title="Mark as complete"
-                  >
-                    <CheckIcon className="size-3" />
-                  </Button>
-                  <Button
+                  />
+                  <LoadingButton
                     size="icon-xs"
                     variant="ghost"
-                    onClick={() => onDismiss?.(recommendation._id!)}
+                    onClick={handleDismiss}
+                    disabled={loadingAction !== null}
+                    loading={loadingAction === 'dismiss'}
+                    icon={<XIcon className="size-3" />}
+                    spinnerClassName="size-3"
                     title="Dismiss"
-                  >
-                    <XIcon className="size-3" />
-                  </Button>
+                  />
                 </>
               )}
             </div>
