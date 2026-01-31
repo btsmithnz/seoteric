@@ -7,7 +7,7 @@ export const checkUrlStatusTool = tool({
   description:
     "Check if a URL is accessible by making a HEAD request. Returns status code, redirects, and response time. Useful for broken link detection.",
   inputSchema: z.object({
-    url: z.string().url().describe("The URL to check"),
+    url: z.url().describe("The URL to check"),
   }),
   execute: async ({ url }) => {
     const startTime = Date.now();

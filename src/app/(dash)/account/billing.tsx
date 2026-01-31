@@ -3,10 +3,10 @@
 import { Skeleton } from "@/components/ui/skeleton";
 import { api } from "@/convex/_generated/api";
 import { CheckoutLink, CustomerPortalLink } from "@convex-dev/polar/react";
-import { useQuery } from "convex/react";
+import { useAuthenticatedQuery } from "@/lib/hooks";
 
 function Subscription() {
-  const products = useQuery(api.polar.getConfiguredProducts);
+  const products = useAuthenticatedQuery(api.polar.getConfiguredProducts);
 
   if (!products) {
     return (

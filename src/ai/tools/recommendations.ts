@@ -15,7 +15,7 @@ const statusSchema = z.enum(["open", "in_progress", "completed", "dismissed"]);
 
 export const createRecommendationTool = tool({
   description:
-    "Create a new SEO recommendation for the site. Use this to track actionable improvements the user should make.",
+    "Create a new SEO recommendation for the site. Use this to track actionable improvements the user should make. Recommendations are displayed to the user so just summarise the response.",
   inputSchema: z.object({
     title: z
       .string()
@@ -41,11 +41,15 @@ export const updateRecommendationTool = tool({
   description:
     "Update an existing recommendation's status or priority. Use this when the user indicates they've fixed an issue or want to change its priority.",
   inputSchema: z.object({
-    recommendationId: z.string().describe("The ID of the recommendation to update"),
+    recommendationId: z
+      .string()
+      .describe("The ID of the recommendation to update"),
     status: statusSchema
       .optional()
       .describe("New status: completed when fixed, dismissed if not relevant"),
-    priority: prioritySchema.optional().describe("New priority level if changing"),
+    priority: prioritySchema
+      .optional()
+      .describe("New priority level if changing"),
   }),
   execute: async (input) => {
     return { action: "update" as const, ...input };

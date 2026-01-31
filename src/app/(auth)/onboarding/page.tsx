@@ -71,16 +71,16 @@ export default function OnboardingPage() {
 
       if (result.error) {
         toast.error(result.error.message ?? "Failed to create account");
+      } else {
+        startTransition(() => {
+          const params = new URLSearchParams();
+          params.set("name", value.siteName);
+          params.set("domain", value.siteDomain);
+          params.set("country", value.siteCountry);
+          params.set("industry", value.siteIndustry);
+          router.push(`/onboarding/complete?${params}`);
+        });
       }
-
-      startTransition(() => {
-        const params = new URLSearchParams();
-        params.set("name", value.siteName);
-        params.set("domain", value.siteDomain);
-        params.set("country", value.siteCountry);
-        params.set("industry", value.siteIndustry);
-        router.push(`/onboarding/complete?${params}`);
-      });
     },
   });
 

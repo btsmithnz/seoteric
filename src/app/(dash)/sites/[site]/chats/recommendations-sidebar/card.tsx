@@ -56,7 +56,7 @@ export function RecommendationCard({
     if (!recommendation._id) return;
     setLoadingAction('complete');
     try {
-      await updateStatus({ recommendationId: recommendation._id, status: "completed" });
+      await updateStatus({ id: recommendation._id, status: "completed" });
     } finally {
       setLoadingAction(null);
     }
@@ -66,7 +66,7 @@ export function RecommendationCard({
     if (!recommendation._id) return;
     setLoadingAction('dismiss');
     try {
-      await updateStatus({ recommendationId: recommendation._id, status: "dismissed" });
+      await updateStatus({ id: recommendation._id, status: "dismissed" });
     } finally {
       setLoadingAction(null);
     }
@@ -76,7 +76,7 @@ export function RecommendationCard({
     if (!recommendation._id) return;
     setLoadingAction('reopen');
     try {
-      await updateStatus({ recommendationId: recommendation._id, status: "open" });
+      await updateStatus({ id: recommendation._id, status: "open" });
     } finally {
       setLoadingAction(null);
     }

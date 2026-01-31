@@ -1,21 +1,34 @@
 import { ConvexError, v } from "convex/values";
 import {
-  httpAction,
   internalAction,
   internalMutation,
-  internalQuery,
   mutation,
+  MutationCtx,
   query,
+  QueryCtx,
 } from "./_generated/server";
 import { paginationOptsValidator } from "convex/server";
 import { internal } from "./_generated/api";
-import { seoAgent } from "@/ai/seo";
-import { convertToModelMessages, streamText, UIMessage } from "ai";
+import { streamText } from "ai";
 import { Id } from "./_generated/dataModel";
 import {
   CreateRecommendationOutput,
   UpdateRecommendationOutput,
 } from "@/ai/tools/recommendations";
+import { getSite } from "./site";
+import { PRIORITY_ORDER } from "./recommendations";
+
+async function getChatSite(ctx: QueryCtx | MutationCtx, chatId: Id<"chats">) {
+  const chat = await ctx.db.get(chatId);
+  if (!chat) {
+    throw new ConvexError("Chat not found");
+  }
+  const site = await getSite(ctx, chat.siteId);
+  if (!site) {
+    throw new ConvexError("Chat not found"); // User doesn't have access to site
+  }
+  return { chat, site };
+}
 
 export const generateChatNameInternal = internalAction({
   args: { chatId: v.id("chats"), message: v.string() },
@@ -41,8 +54,9 @@ export const create = mutation({
     message: v.string(),
   },
   handler: async (ctx, args) => {
+    const site = await getSite(ctx, args.siteId);
     const chatId = await ctx.db.insert("chats", {
-      siteId: args.siteId,
+      siteId: site._id,
       name: args.name,
     });
     await ctx.db.insert("messages", {
@@ -60,10 +74,11 @@ export const create = mutation({
 
 export const list = query({
   args: { siteId: v.id("sites"), paginationOpts: paginationOptsValidator },
-  handler: (ctx, args) => {
+  handler: async (ctx, args) => {
+    const site = await getSite(ctx, args.siteId);
     return ctx.db
       .query("chats")
-      .withIndex("by_site", (q) => q.eq("siteId", args.siteId))
+      .withIndex("by_site", (q) => q.eq("siteId", site._id))
       .order("desc")
       .paginate(args.paginationOpts);
   },
@@ -72,13 +87,13 @@ export const list = query({
 export const getWithMessages = query({
   args: { chatId: v.id("chats") },
   handler: async (ctx, args) => {
-    const chat = await ctx.db.get(args.chatId);
+    const { chat } = await getChatSite(ctx, args.chatId);
     const messages = await ctx.db
       .query("messages")
-      .withIndex("by_chat", (q) => q.eq("chatId", args.chatId))
+      .withIndex("by_chat", (q) => q.eq("chatId", chat._id))
       .first();
 
-    if (!chat || !messages) {
+    if (!messages) {
       throw new ConvexError("Chat not found");
     }
 
@@ -93,113 +108,94 @@ export const getWithMessages = query({
 export const updateChatNameInternal = internalMutation({
   args: { chatId: v.id("chats"), name: v.string() },
   handler: async (ctx, args) => {
-    return ctx.db.patch("chats", args.chatId, {
+    const chat = await ctx.db.get(args.chatId);
+
+    if (!chat) {
+      throw new ConvexError("Chat not found");
+    }
+
+    return ctx.db.patch("chats", chat._id, {
       name: args.name,
     });
   },
 });
 
-export const updateChatMessagesInternal = internalMutation({
-  args: { chatId: v.id("chats"), messages: v.array(v.any()) },
+export const getChatContext = query({
+  args: { chatId: v.id("chats") },
   handler: async (ctx, args) => {
+    const { site, chat } = await getChatSite(ctx, args.chatId);
+    const recommendations = await ctx.db
+      .query("recommendations")
+      .withIndex("by_site", (q) => q.eq("siteId", site._id))
+      .filter((q) =>
+        q.or(
+          q.eq(q.field("status"), "open"),
+          q.eq(q.field("status"), "in_progress")
+        )
+      )
+      .collect();
+    recommendations.sort(
+      (a, b) => PRIORITY_ORDER[a.priority] - PRIORITY_ORDER[b.priority]
+    );
+
+    return {
+      site,
+      chat,
+      recommendations,
+    };
+  },
+});
+
+export const updateChatState = mutation({
+  args: {
+    chatId: v.id("chats"),
+    messages: v.array(v.any()),
+  },
+  handler: async (ctx, args) => {
+    const { site, chat } = await getChatSite(ctx, args.chatId);
+
     const current = await ctx.db
       .query("messages")
-      .withIndex("by_chat", (q) => q.eq("chatId", args.chatId))
+      .withIndex("by_chat", (q) => q.eq("chatId", chat._id))
       .first();
 
     if (!current) {
       throw new ConvexError("Chat not found");
     }
 
-    return ctx.db.patch("messages", current._id, {
+    await ctx.db.patch("messages", current._id, {
       messages: args.messages,
     });
-  },
-});
 
-export const getChatContextInternal = internalQuery({
-  args: { chatId: v.id("chats") },
-  handler: async (ctx, args) => {
-    const chat = await ctx.db.get(args.chatId);
-    if (!chat) {
-      throw new ConvexError("Chat not found");
-    }
-    const site = await ctx.db.get(chat.siteId);
-    if (!site) {
-      throw new ConvexError("Site not found");
-    }
-    return { chat, site };
-  },
-});
-
-export const seoChat = httpAction(async (ctx, req) => {
-  const { id: chatId, messages }: { id: Id<"chats">; messages: UIMessage[] } =
-    await req.json();
-
-  const { site } = await ctx.runQuery(internal.chat.getChatContextInternal, {
-    chatId,
-  });
-
-  const existingRecommendations = await ctx.runQuery(
-    internal.recommendations.getOpenBySiteInternal,
-    { siteId: site._id }
-  );
-
-  const res = await seoAgent.stream({
-    messages: await convertToModelMessages(messages),
-    options: {
-      siteDomain: site.domain,
-      siteName: site.name,
-      siteCountry: site.country,
-      siteIndustry: site.industry,
-      existingRecommendations: existingRecommendations.map((r) => ({
-        _id: r._id,
-        title: r.title,
-        description: r.description,
-        category: r.category,
-        priority: r.priority,
-        status: r.status,
-        pageUrl: r.pageUrl,
-      })),
-    },
-  });
-
-  return res.toUIMessageStreamResponse({
-    headers: {
-      "Access-Control-Allow-Origin": process.env.SITE_URL!,
-      Vary: "origin",
-    },
-    originalMessages: messages,
-    onFinish: async ({ messages }) => {
-      await ctx.runMutation(internal.chat.updateChatMessagesInternal, {
-        chatId,
-        messages,
-      });
-
-      // Process recommendation tool calls
-      for (const message of messages) {
-        if (message.role !== "assistant") continue;
-        for (const part of message.parts) {
-          if (part.type === "tool-createRecommendation" && part.state === "output-available") {
-            const output = part.output as CreateRecommendationOutput;
-            await ctx.runMutation(internal.recommendations.createInternal, {
-              siteId: site._id,
-              title: output.title,
-              description: output.description,
-              category: output.category,
-              priority: output.priority,
-              pageUrl: output.pageUrl,
-            });
-          } else if (part.type === "tool-updateRecommendation" && part.state === "output-available") {
-            const output = part.output as UpdateRecommendationOutput;
-            await ctx.runMutation(internal.recommendations.updateInternal, {
-              recommendationId: output.recommendationId as Id<"recommendations">,
-              status: output.status,
-              priority: output.priority,
-            });
-          }
+    for (const message of args.messages) {
+      if (message.role !== "assistant") continue;
+      for (const part of message.parts) {
+        if (
+          part.type === "tool-createRecommendation" &&
+          part.state === "output-available"
+        ) {
+          const output = part.output as CreateRecommendationOutput;
+          await ctx.db.insert("recommendations", {
+            siteId: site._id,
+            title: output.title,
+            description: output.description,
+            category: output.category,
+            priority: output.priority,
+            pageUrl: output.pageUrl,
+            status: "open",
+          });
+        } else if (
+          part.type === "tool-updateRecommendation" &&
+          part.state === "output-available"
+        ) {
+          const output = part.output as UpdateRecommendationOutput;
+          await ctx.runMutation(internal.recommendations.updateInternal, {
+            id: output.recommendationId as Id<"recommendations">,
+            status: output.status,
+            priority: output.priority,
+          });
         }
       }
-    },
-  });
+    }
+  },
 });

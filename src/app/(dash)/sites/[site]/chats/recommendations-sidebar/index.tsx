@@ -1,6 +1,5 @@
 "use client";
 
-import { useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { RecommendationCard } from "./card";
@@ -10,31 +9,26 @@ import {
   SidebarMobileToggleButton,
   SidebarMobileToggleIcon,
 } from "@/components/elements/sidebar";
+import { useMemo } from "react";
+import { useAuthenticatedQuery } from "@/lib/hooks";
 
 interface Props {
   siteId: Id<"sites">;
 }
 
 export function RecommendationsSidebar({ siteId }: Props) {
-  const recommendations = useQuery(api.recommendations.listBySite, { siteId });
-
-  if (!recommendations) {
-    return (
-      <div className="p-4 text-sm text-muted-foreground">
-        Loading recommendations...
-      </div>
-    );
-  }
+  const query = useAuthenticatedQuery(api.recommendations.listBySite, { siteId });
+  const recommendations = useMemo(() => query ?? [], [query]);
 
   const openRecommendations = recommendations.filter(
-    (r) => r.status === "open" || r.status === "in_progress",
+    (r) => r.status === "open" || r.status === "in_progress"
   );
   const completedRecommendations = recommendations.filter(
-    (r) => r.status === "completed" || r.status === "dismissed",
+    (r) => r.status === "completed" || r.status === "dismissed"
   );
 
   return (
-    <Sidebar side="right" className="w-80" selector="recommendations">
+    <Sidebar side="right" className="md:w-80" selector="recommendations">
       <div className="flex items-center justify-between border-b">
         <div className="flex items-center gap-2">
           <LightbulbIcon className="size-4 text-primary" />
@@ -47,7 +41,10 @@ export function RecommendationsSidebar({ siteId }: Props) {
         </div>
 
         <SidebarMobileToggleButton selector="recommendations" variant="outline">
-          <SidebarMobileToggleIcon selector="recommendations" className="rotate-180" />
+          <SidebarMobileToggleIcon
+            selector="recommendations"
+            className="rotate-180"
+          />
         </SidebarMobileToggleButton>
       </div>
 
@@ -60,11 +57,7 @@ export function RecommendationsSidebar({ siteId }: Props) {
           )}
 
         {openRecommendations.map((rec) => (
-          <RecommendationCard
-            key={rec._id}
-            recommendation={rec}
-            showActions
-          />
+          <RecommendationCard key={rec._id} recommendation={rec} showActions />
         ))}
 
         {completedRecommendations.length > 0 && (

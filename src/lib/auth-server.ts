@@ -16,5 +16,6 @@ export const {
   jwtCache: {
     enabled: true,
     isAuthError,
+    expirationToleranceSeconds: 60 * 60 * 24 * 7, // 7 days
   },
 });

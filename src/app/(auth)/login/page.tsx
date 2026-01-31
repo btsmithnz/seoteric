@@ -43,11 +43,11 @@ export default function LoginPage() {
 
       if (result.error) {
         toast.error(result.error.message ?? "Failed to sign in");
+      } else {
+        startTransition(() => {
+          router.push("/sites");
+        });
       }
-
-      startTransition(() => {
-        router.push("/sites");
-      });
     },
   });
 

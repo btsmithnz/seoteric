@@ -1,7 +1,6 @@
 "use client";
 
 import Link from "next/link";
-import { useQuery } from "convex/react";
 import { GlobeIcon, PlusIcon } from "lucide-react";
 
 import { api } from "@/convex/_generated/api";
@@ -18,6 +17,7 @@ import {
   CreateSiteDialog,
 } from "@/components/sites/create-site-dialog";
 import { DialogTrigger } from "@/components/ui/dialog";
+import { useAuthenticatedQuery } from "@/lib/hooks";
 
 function LoadingState() {
   return (
@@ -55,7 +55,7 @@ function EmptyState() {
 }
 
 export default function SitesPage() {
-  const sites = useQuery(api.site.list);
+  const sites = useAuthenticatedQuery(api.site.list);
 
   return (
     <div className="p-6 w-full max-w-4xl mx-auto">

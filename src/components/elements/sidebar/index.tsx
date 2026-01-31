@@ -64,7 +64,7 @@ export function Sidebar({
   return (
     <div
       className={cn(
-        "fixed md:sticky md:block flex flex-col top-[calc(var(--spacing-dashboard-nav)+1px)] h-[calc(100vh-var(--spacing-dashboard-nav))] w-full z-10 md:w-64 border-border bg-background overflow-y-auto",
+        "fixed md:sticky md:block top-[calc(var(--spacing-dashboard-nav)+1px)] h-[calc(100vh-var(--spacing-dashboard-nav))] w-full z-10 md:w-64 border-border bg-background overflow-y-auto",
         side === "right" ? "right-0 border-l" : "left-0 border-r",
         !mobileOpen && "hidden",
         className,

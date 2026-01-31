@@ -1,12 +1,9 @@
 import { v } from "convex/values";
-import {
-  internalMutation,
-  internalQuery,
-  mutation,
-  query,
-} from "./_generated/server";
+import { internalMutation, mutation, query } from "./_generated/server";
+import { recommendationsFields } from "./schema";
+import { getSite } from "./site";
 
-const priorityOrder = {
+export const PRIORITY_ORDER = {
   critical: 0,
   high: 1,
   medium: 2,
@@ -16,30 +13,31 @@ const priorityOrder = {
 export const listBySite = query({
   args: { siteId: v.id("sites") },
   handler: async (ctx, args) => {
+    const site = await getSite(ctx, args.siteId);
     const recommendations = await ctx.db
       .query("recommendations")
-      .withIndex("by_site", (q) => q.eq("siteId", args.siteId))
+      .withIndex("by_site", (q) => q.eq("siteId", site._id))
       .collect();
 
     return recommendations.sort((a, b) => {
       if (a.status !== b.status) {
-        const statusOrder = { open: 0, in_progress: 1, completed: 2, dismissed: 3 };
+        const statusOrder = {
+          open: 0,
+          in_progress: 1,
+          completed: 2,
+          dismissed: 3,
+        };
         return statusOrder[a.status] - statusOrder[b.status];
       }
-      return priorityOrder[a.priority] - priorityOrder[b.priority];
+      return PRIORITY_ORDER[a.priority] - PRIORITY_ORDER[b.priority];
     });
   },
 });
 
 export const updateStatus = mutation({
   args: {
-    recommendationId: v.id("recommendations"),
-    status: v.union(
-      v.literal("open"),
-      v.literal("in_progress"),
-      v.literal("completed"),
-      v.literal("dismissed")
-    ),
+    id: v.id("recommendations"),
+    status: recommendationsFields.status,
   },
   handler: async (ctx, args) => {
     const updates: {
@@ -51,75 +49,35 @@ export const updateStatus = mutation({
       updates.completedAt = Date.now();
     }
 
-    await ctx.db.patch(args.recommendationId, updates);
-  },
-});
-
-export const getOpenBySiteInternal = internalQuery({
-  args: { siteId: v.id("sites") },
-  handler: async (ctx, args) => {
-    const recommendations = await ctx.db
-      .query("recommendations")
-      .withIndex("by_site", (q) => q.eq("siteId", args.siteId))
-      .collect();
-
-    return recommendations
-      .filter((r) => r.status === "open" || r.status === "in_progress")
-      .sort((a, b) => priorityOrder[a.priority] - priorityOrder[b.priority]);
+    await ctx.db.patch(args.id, updates);
   },
 });
 
 export const createInternal = internalMutation({
   args: {
-    siteId: v.id("sites"),
-    title: v.string(),
-    description: v.string(),
-    category: v.union(
-      v.literal("technical"),
-      v.literal("content"),
-      v.literal("on-page"),
-      v.literal("off-page"),
-      v.literal("performance")
-    ),
-    priority: v.union(
-      v.literal("critical"),
-      v.literal("high"),
-      v.literal("medium"),
-      v.literal("low")
-    ),
-    pageUrl: v.optional(v.string()),
+    siteId: recommendationsFields.siteId,
+    title: recommendationsFields.title,
+    description: recommendationsFields.description,
+    category: recommendationsFields.category,
+    priority: recommendationsFields.priority,
+    pageUrl: recommendationsFields.pageUrl,
   },
   handler: async (ctx, args) => {
     return ctx.db.insert("recommendations", {
       ...args,
       status: "open",
-      createdAt: Date.now(),
     });
   },
 });
 
 export const updateInternal = internalMutation({
   args: {
-    recommendationId: v.id("recommendations"),
-    status: v.optional(
-      v.union(
-        v.literal("open"),
-        v.literal("in_progress"),
-        v.literal("completed"),
-        v.literal("dismissed")
-      )
-    ),
-    priority: v.optional(
-      v.union(
-        v.literal("critical"),
-        v.literal("high"),
-        v.literal("medium"),
-        v.literal("low")
-      )
-    ),
+    id: v.id("recommendations"),
+    status: v.optional(recommendationsFields.status),
+    priority: v.optional(recommendationsFields.priority),
   },
   handler: async (ctx, args) => {
-    const { recommendationId, ...updates } = args;
+    const { id, ...updates } = args;
     const filteredUpdates: Record<string, unknown> = {};
 
     if (updates.status !== undefined) {
@@ -133,7 +91,7 @@ export const updateInternal = internalMutation({
     }
 
     if (Object.keys(filteredUpdates).length > 0) {
-      await ctx.db.patch(recommendationId, filteredUpdates);
+      await ctx.db.patch(id, filteredUpdates);
     }
   },
 });

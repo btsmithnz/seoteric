@@ -1,6 +1,16 @@
 import { v } from "convex/values";
-import { mutation, query } from "./_generated/server";
+import { mutation, MutationCtx, query, QueryCtx } from "./_generated/server";
 import { getUser } from "./utils";
+import { Id } from "./_generated/dataModel";
+
+export async function getSite(ctx: QueryCtx | MutationCtx, siteId: Id<"sites">) {
+  const user = await getUser(ctx);
+  const site = await ctx.db.get(siteId);
+  if (!site || site.userId !== user._id) {
+    throw new Error("Site not found");
+  }
+  return site;
+}
 
 export const list = query({
   handler: async (ctx) => {
@@ -19,12 +29,7 @@ export const list = query({
 export const get = query({
   args: { siteId: v.id("sites") },
   handler: async (ctx, args) => {
-    const user = await getUser(ctx);
-    const site = await ctx.db.get(args.siteId);
-    if (!site || site.userId !== user._id) {
-      throw new Error("Site not found");
-    }
-    return site;
+    return getSite(ctx, args.siteId);
   },
 });
 
@@ -37,12 +42,8 @@ export const update = mutation({
     industry: v.string(),
   },
   handler: async (ctx, args) => {
-    const user = await getUser(ctx);
-    const site = await ctx.db.get(args.siteId);
-    if (!site || site.userId !== user._id) {
-      throw new Error("Not authorized");
-    }
-    await ctx.db.patch(args.siteId, {
+    const site = await getSite(ctx, args.siteId);
+    await ctx.db.patch(site._id, {
       name: args.name,
       domain: args.domain,
       country: args.country,

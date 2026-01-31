@@ -16,13 +16,12 @@ import {
 import { useEffect, useRef, useState } from "react";
 import { Id } from "@/convex/_generated/dataModel";
 import { DefaultChatTransport } from "ai";
-import { convexSiteUrl } from "@/lib/env";
 import { Preloaded, usePreloadedQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { SeotericMessages } from "@/components/chat/seoteric-messages";
 
 const transport = new DefaultChatTransport({
-  api: `${convexSiteUrl}/chat/seo`,
+  api: "/api/chat/seo",
 });
 
 export function ChatSeo(props: {
