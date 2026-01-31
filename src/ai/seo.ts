@@ -12,6 +12,7 @@ import {
   createRecommendationTool,
   updateRecommendationTool,
 } from "./tools/recommendations";
+import { runSpeedTestTool } from "./tools/speed-test";
 import { z } from "zod";
 
 const existingRecommendationSchema = z.object({
@@ -37,6 +38,7 @@ export const seoAgent = new ToolLoopAgent({
     getPageSeoData: getPageSeoDataTool,
     createRecommendation: createRecommendationTool,
     updateRecommendation: updateRecommendationTool,
+    runSpeedTest: runSpeedTestTool,
   },
   callOptionsSchema: z.object({
     siteDomain: z.string(),
