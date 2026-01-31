@@ -37,7 +37,7 @@ export function DashboardNav({
 
   return (
     <header className="sticky top-0 z-20 w-full border-b border-border bg-background">
-      <div className="flex h-12 items-center justify-between px-4">
+      <div className="flex h-dashboard-nav items-center justify-between px-4">
         <Link href="/sites" className="text-xl font-semibold">
           Seoteric
         </Link>

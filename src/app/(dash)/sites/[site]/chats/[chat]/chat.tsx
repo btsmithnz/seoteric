@@ -20,7 +20,6 @@ import { convexSiteUrl } from "@/lib/env";
 import { Preloaded, usePreloadedQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import { SeotericMessages } from "@/components/chat/seoteric-messages";
-import { RecommendationsPanel } from "@/components/recommendations/panel";
 
 const transport = new DefaultChatTransport({
   api: `${convexSiteUrl}/chat/seo`,
@@ -86,9 +85,6 @@ export function ChatSeo(props: {
             </PromptInputFooter>
           </PromptInput>
         </div>
-      </div>
-      <div className="w-80 flex-shrink-0 border-l pl-4 overflow-y-auto hidden lg:block">
-        <RecommendationsPanel siteId={props.siteId} />
       </div>
     </div>
   );

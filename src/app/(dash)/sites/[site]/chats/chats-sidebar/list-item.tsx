@@ -4,16 +4,17 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { Id, Doc } from "@/convex/_generated/dataModel";
 import { Button } from "@/components/ui/button";
-import { useSidebar } from "@/components/providers/sidebar";
+import { useSidebar } from "@/components/elements/sidebar";
 
 type ChatListItemProps = {
   chat: Doc<"chats">;
   siteId: Id<"sites">;
 };
 
-export function ChatListItem({ chat, siteId }: ChatListItemProps) {
+export function ChatsListItem({ chat, siteId }: ChatListItemProps) {
   const params = useParams<{ chat?: string }>();
-  const { setMobileOpen } = useSidebar();
+  const sidebar = useSidebar();
+  const { setMobileOpen } = sidebar.pick("chats");
   const isActive = params.chat === chat._id;
 
   return (

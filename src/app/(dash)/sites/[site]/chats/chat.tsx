@@ -13,7 +13,6 @@ import {
   PromptInputFooter,
   PromptInputSubmit,
 } from "@/components/ai-elements/prompt-input";
-import { RecommendationsPanel } from "@/components/recommendations/panel";
 import { useState, useTransition } from "react";
 import { Id } from "@/convex/_generated/dataModel";
 import { useMutation } from "convex/react";
@@ -66,9 +65,6 @@ export function ChatSeoCreate(props: {
             <PromptInputSubmit status={isPending ? "streaming" : undefined} />
           </PromptInputFooter>
         </PromptInput>
-      </div>
-      <div className="w-80 flex-shrink-0 border-l pl-4 overflow-y-auto hidden lg:block">
-        <RecommendationsPanel siteId={props.siteId} />
       </div>
     </div>
   );

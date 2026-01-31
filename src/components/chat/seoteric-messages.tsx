@@ -3,7 +3,7 @@ import { Message, MessageResponse } from "../ai-elements/message";
 import { MessageContent } from "../ai-elements/message";
 import { BrainIcon, GlobeIcon, SearchIcon, LightbulbIcon, CheckCircleIcon } from "lucide-react";
 import { Spinner } from "../ui/spinner";
-import { RecommendationCard } from "../recommendations/card";
+import { RecommendationCard } from "../../app/(dash)/sites/[site]/chats/recommendations-sidebar/card";
 import { CreateRecommendationOutput } from "@/ai/tools/recommendations";
 
 function ToolCall({
