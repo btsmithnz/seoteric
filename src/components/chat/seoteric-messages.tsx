@@ -1,7 +1,6 @@
-import { UIMessage } from "ai";
+import { ChatStatus, UIMessage } from "ai";
 import { Message, MessageResponse } from "../ai-elements/message";
 import { MessageContent } from "../ai-elements/message";
-import { BrainIcon } from "lucide-react";
 import { CreateRecommendationOutput } from "@/ai/tools/recommendations";
 import { SpeedTestOutput } from "@/ai/tools/speed-test";
 import {
@@ -13,29 +12,43 @@ import {
   UpdateRecommendationTool,
   SpeedTestTool,
 } from "./tools";
+import {
+  Reasoning,
+  ReasoningContent,
+  ReasoningTrigger,
+} from "../ai-elements/reasoning";
 
-function SeotericMessage({ id, message }: { id: string; message: UIMessage }) {
+function MessageRender({
+  id,
+  message,
+  status,
+  isLast,
+}: {
+  id: string;
+  message: UIMessage;
+  status: ChatStatus;
+  isLast: boolean;
+}) {
   return (
-    <div>
+    <>
       {message.parts.map((part, idx) => {
         const partId = `${id}-${idx}`;
+        const isLastPart = idx === message.parts.length - 1;
 
         switch (part.type) {
           case "text":
-            return (
-              <Message key={partId} from={message.role}>
-                <MessageContent>
-                  <MessageResponse>{part.text}</MessageResponse>
-                </MessageContent>
-              </Message>
-            );
+            return <MessageResponse key={partId}>{part.text}</MessageResponse>;
 
           case "reasoning":
             return (
-              <p key={partId} className="text-sm text-gray-500">
-                <BrainIcon className="size-4 inline" />{" "}
-                {part.text || "Reasoning"}
-              </p>
+              <Reasoning
+                key={partId}
+                className="w-full"
+                isStreaming={status === "streaming" && isLast && isLastPart}
+              >
+                <ReasoningTrigger />
+                <ReasoningContent>{part.text}</ReasoningContent>
+              </Reasoning>
             );
 
           case "tool-createAccount":
@@ -75,18 +88,32 @@ function SeotericMessage({ id, message }: { id: string; message: UIMessage }) {
             return null;
         }
       })}
-    </div>
+    </>
   );
 }
 
-export function SeotericMessages({ messages }: { messages: UIMessage[] }) {
-  console.log(messages);
+export function SeotericMessages({
+  messages,
+  status,
+}: {
+  messages: UIMessage[];
+  status: ChatStatus;
+}) {
   return (
     <>
       {messages.map((message, messageIdx) => {
         const messageId = message.id || `message-${messageIdx}`;
         return (
-          <SeotericMessage key={messageId} id={messageId} message={message} />
+          <Message from={message.role} key={messageId}>
+            <MessageContent>
+              <MessageRender
+                id={messageId}
+                message={message}
+                status={status}
+                isLast={messageIdx === messages.length - 1}
+              />
+            </MessageContent>
+          </Message>
         );
       })}
     </>

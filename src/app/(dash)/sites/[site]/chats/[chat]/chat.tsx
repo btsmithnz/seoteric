@@ -66,7 +66,7 @@ export function ChatSeo(props: {
                   description="Ask me anything about SEO optimization"
                 />
               ) : (
-                <SeotericMessages messages={messages} />
+                <SeotericMessages messages={messages} status={status} />
               )}
             </ConversationContent>
             <ConversationScrollButton />
