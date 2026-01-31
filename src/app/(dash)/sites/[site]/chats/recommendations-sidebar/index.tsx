@@ -34,7 +34,7 @@ export function RecommendationsSidebar({ siteId }: Props) {
   );
 
   return (
-    <Sidebar side="right" selector="recommendations">
+    <Sidebar side="right" className="w-80" selector="recommendations">
       <div className="flex items-center justify-between border-b">
         <div className="flex items-center gap-2">
           <LightbulbIcon className="size-4 text-primary" />
