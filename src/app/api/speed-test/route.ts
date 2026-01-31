@@ -9,6 +9,7 @@ import {
 } from "./_lib/speed-test";
 
 export const preferredRegion = ["iad1"];
+export const runtime = "edge";
 
 interface RegionalResult extends SpeedTestResult {
   region: RegionCode;

@@ -7,6 +7,7 @@ import {
 } from "../_lib/speed-test";
 
 export const preferredRegion = ["sin1"];
+export const runtime = "edge";
 
 export async function POST(req: Request) {
   if (!checkAuth(req)) {
