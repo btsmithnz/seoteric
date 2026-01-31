@@ -11,6 +11,12 @@ export interface SpeedTestResult {
     cacheControl: string | null;
     server: string | null;
   };
+  error?: string;
+}
+
+export interface SpeedTestRegionResult extends SpeedTestResult {
+  region: string;
+  regionInfo: { name: string; country: string };
 }
 
 export const REGIONS = {
