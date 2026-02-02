@@ -1,5 +1,7 @@
 import { ToolLoopAgent } from "ai";
 import { z } from "zod";
+import { analyzeContentQualityTool } from "./tools/content-quality";
+import { checkIndexabilityTool } from "./tools/indexability";
 import { checkUrlStatusTool } from "./tools/link-checker";
 import { runPageSpeedTool } from "./tools/pagespeed";
 import {
@@ -7,14 +9,11 @@ import {
   updateRecommendationTool,
 } from "./tools/recommendations";
 import { fetchRobotsTxtTool } from "./tools/robots";
+import { checkSecurityHeadersTool } from "./tools/security-headers";
 import { getPageSeoDataTool } from "./tools/seo-analysis";
 import { fetchSitemapTool } from "./tools/sitemap";
 import { runSpeedTestTool } from "./tools/speed-test";
-import {
-  getWebsiteNameTool,
-  getWebsiteTextTool,
-  inspectDomTool,
-} from "./tools/website";
+import { validateStructuredDataTool } from "./tools/structured-data";
 
 const existingRecommendationSchema = z.object({
   _id: z.string(),
@@ -27,12 +26,9 @@ const existingRecommendationSchema = z.object({
 });
 
 export const seoAgent = new ToolLoopAgent({
-  model: "anthropic/claude-haiku-4.5",
+  model: "anthropic/claude-sonnet-4.5",
   instructions: `You are Seoteric, an AI assistant specializing in SEO (Search Engine Optimization). You help users understand and improve their website's search engine visibility. You provide clear, actionable advice on topics like keyword research, on-page optimization, technical SEO, content strategy, and link building. Keep responses concise and practical. Summarise tool call results instead of returning all the data - we visualise the data in the UI.`,
   tools: {
-    getWebsiteName: getWebsiteNameTool,
-    getWebsiteText: getWebsiteTextTool,
-    inspectDom: inspectDomTool,
     fetchRobotsTxt: fetchRobotsTxtTool,
     fetchSitemap: fetchSitemapTool,
     checkUrlStatus: checkUrlStatusTool,
@@ -41,6 +37,10 @@ export const seoAgent = new ToolLoopAgent({
     updateRecommendation: updateRecommendationTool,
     runSpeedTest: runSpeedTestTool,
     runPageSpeed: runPageSpeedTool,
+    checkIndexability: checkIndexabilityTool,
+    checkSecurityHeaders: checkSecurityHeadersTool,
+    validateStructuredData: validateStructuredDataTool,
+    analyzeContentQuality: analyzeContentQualityTool,
   },
   callOptionsSchema: z.object({
     siteDomain: z.string(),
