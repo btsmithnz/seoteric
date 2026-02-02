@@ -6,3 +6,4 @@ export { InspectDomTool } from "./inspect-dom";
 export { CreateRecommendationTool } from "./create-recommendation";
 export { UpdateRecommendationTool } from "./update-recommendation";
 export { SpeedTestTool } from "./speed-test";
+export { PageSpeedTool } from "./pagespeed";

@@ -13,6 +13,7 @@ import {
   updateRecommendationTool,
 } from "./tools/recommendations";
 import { runSpeedTestTool } from "./tools/speed-test";
+import { runPageSpeedTool } from "./tools/pagespeed";
 import { z } from "zod";
 
 const existingRecommendationSchema = z.object({
@@ -27,7 +28,7 @@ const existingRecommendationSchema = z.object({
 
 export const seoAgent = new ToolLoopAgent({
   model: "anthropic/claude-haiku-4.5",
-  instructions: `You are Seoteric, an AI assistant specializing in SEO (Search Engine Optimization). You help users understand and improve their website's search engine visibility. You provide clear, actionable advice on topics like keyword research, on-page optimization, technical SEO, content strategy, and link building. Keep responses concise and practical.`,
+  instructions: `You are Seoteric, an AI assistant specializing in SEO (Search Engine Optimization). You help users understand and improve their website's search engine visibility. You provide clear, actionable advice on topics like keyword research, on-page optimization, technical SEO, content strategy, and link building. Keep responses concise and practical. Summarise tool call results instead of returning all the data - we visualise the data in the UI.`,
   tools: {
     getWebsiteName: getWebsiteNameTool,
     getWebsiteText: getWebsiteTextTool,
@@ -39,6 +40,7 @@ export const seoAgent = new ToolLoopAgent({
     createRecommendation: createRecommendationTool,
     updateRecommendation: updateRecommendationTool,
     runSpeedTest: runSpeedTestTool,
+    runPageSpeed: runPageSpeedTool,
   },
   callOptionsSchema: z.object({
     siteDomain: z.string(),

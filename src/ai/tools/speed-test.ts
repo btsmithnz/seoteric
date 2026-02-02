@@ -13,7 +13,7 @@ const REGIONS = ["iad1", "sfo1", "lhr1", "hnd1", "sin1", "syd1"] as const;
 
 export const runSpeedTestTool = tool({
   description:
-    "Run a speed test on a URL from multiple global regions. Returns TTFB (Time to First Byte), total load time, response size, and headers. Useful for diagnosing performance issues and CDN effectiveness. Results are displayed to the user so just summarise the response.",
+    "Run a quick network speed test on a URL from multiple global regions. Returns TTFB (Time to First Byte), total load time, response size, and headers. Good for diagnosing CDN effectiveness and basic network latency (~500ms). For detailed Core Web Vitals and full page load analysis, use runPageSpeed instead.",
   inputSchema: z.object({
     url: z.url().describe("The URL to test"),
     regions: z

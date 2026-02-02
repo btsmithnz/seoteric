@@ -3,6 +3,7 @@ import { Message, MessageResponse } from "../ai-elements/message";
 import { MessageContent } from "../ai-elements/message";
 import { CreateRecommendationOutput } from "@/ai/tools/recommendations";
 import { SpeedTestOutput } from "@/ai/tools/speed-test";
+import { PageSpeedOutput } from "@/ai/tools/pagespeed";
 import {
   CreateAccountTool,
   WebsiteNameTool,
@@ -11,6 +12,7 @@ import {
   CreateRecommendationTool,
   UpdateRecommendationTool,
   SpeedTestTool,
+  PageSpeedTool,
 } from "./tools";
 import {
   Reasoning,
@@ -81,6 +83,15 @@ function MessageRender({
                 key={partId}
                 state={part.state}
                 output={part.output as SpeedTestOutput}
+              />
+            );
+
+          case "tool-runPageSpeed":
+            return (
+              <PageSpeedTool
+                key={partId}
+                state={part.state}
+                output={part.output as PageSpeedOutput}
               />
             );
 
