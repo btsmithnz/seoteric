@@ -1,8 +1,8 @@
 "use client";
 
-import { MouseEventHandler, useState } from "react";
-import { authClient } from "@/lib/auth-client";
+import { type MouseEventHandler, useState } from "react";
 import { toast } from "sonner";
+import { authClient } from "@/lib/auth-client";
 
 export function LogoutMenuItem() {
   const [loading, setLoading] = useState(false);
@@ -10,7 +10,9 @@ export function LogoutMenuItem() {
   const handleLogout: MouseEventHandler<HTMLSpanElement> = async (evt) => {
     evt.stopPropagation();
 
-    if (loading) return;
+    if (loading) {
+      return;
+    }
 
     setLoading(true);
     try {
@@ -23,5 +25,7 @@ export function LogoutMenuItem() {
     }
   };
 
+  // biome-ignore lint/a11y/noNoninteractiveElementInteractions: <used as child>
+  // biome-ignore lint/a11y/noStaticElementInteractions: <used as child>
   return <span onClick={handleLogout}>Logout{loading ? "..." : ""}</span>;
 }

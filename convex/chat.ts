@@ -1,22 +1,22 @@
-import { ConvexError, v } from "convex/values";
-import {
-  internalAction,
-  internalMutation,
-  mutation,
-  MutationCtx,
-  query,
-  QueryCtx,
-} from "./_generated/server";
-import { paginationOptsValidator } from "convex/server";
-import { internal } from "./_generated/api";
 import { streamText } from "ai";
-import { Id } from "./_generated/dataModel";
-import {
+import { paginationOptsValidator } from "convex/server";
+import { ConvexError, v } from "convex/values";
+import type {
   CreateRecommendationOutput,
   UpdateRecommendationOutput,
 } from "@/ai/tools/recommendations";
-import { getSite } from "./site";
+import { internal } from "./_generated/api";
+import type { Id } from "./_generated/dataModel";
+import {
+  internalAction,
+  internalMutation,
+  type MutationCtx,
+  mutation,
+  type QueryCtx,
+  query,
+} from "./_generated/server";
 import { PRIORITY_ORDER } from "./recommendations";
+import { getSite } from "./site";
 
 async function getChatSite(ctx: QueryCtx | MutationCtx, chatId: Id<"chats">) {
   const chat = await ctx.db.get(chatId);
@@ -168,7 +168,9 @@ export const updateChatState = mutation({
     });
 
     for (const message of args.messages) {
-      if (message.role !== "assistant") continue;
+      if (message.role !== "assistant") {
+        continue;
+      }
       for (const part of message.parts) {
         if (
           part.type === "tool-createRecommendation" &&

@@ -1,6 +1,9 @@
 "use client";
 
 import { useChat } from "@ai-sdk/react";
+import { DefaultChatTransport } from "ai";
+import { type Preloaded, usePreloadedQuery } from "convex/react";
+import { useEffect, useRef, useState } from "react";
 import {
   Conversation,
   ConversationContent,
@@ -9,16 +12,13 @@ import {
 } from "@/components/ai-elements/conversation";
 import {
   PromptInput,
-  PromptInputTextarea,
   PromptInputFooter,
   PromptInputSubmit,
+  PromptInputTextarea,
 } from "@/components/ai-elements/prompt-input";
-import { useEffect, useRef, useState } from "react";
-import { Id } from "@/convex/_generated/dataModel";
-import { DefaultChatTransport } from "ai";
-import { Preloaded, usePreloadedQuery } from "convex/react";
-import { api } from "@/convex/_generated/api";
 import { SeotericMessages } from "@/components/chat/seoteric-messages";
+import type { api } from "@/convex/_generated/api";
+import type { Id } from "@/convex/_generated/dataModel";
 
 const transport = new DefaultChatTransport({
   api: "/api/chat/seo",
@@ -55,15 +55,15 @@ export function ChatSeo(props: {
 
   return (
     <div className="flex h-full gap-4">
-      <div className="flex flex-col flex-1 min-w-0">
-        <h1 className="font-bold mb-1">{chat.name}</h1>
+      <div className="flex min-w-0 flex-1 flex-col">
+        <h1 className="mb-1 font-bold">{chat.name}</h1>
         <div className="flex flex-1 flex-col border">
           <Conversation>
             <ConversationContent>
               {messages.length === 0 ? (
                 <ConversationEmptyState
-                  title="Welcome to Seoteric"
                   description="Ask me anything about SEO optimization"
+                  title="Welcome to Seoteric"
                 />
               ) : (
                 <SeotericMessages messages={messages} status={status} />
@@ -74,13 +74,13 @@ export function ChatSeo(props: {
 
           <PromptInput onSubmit={(msg) => handleSend(msg.text)}>
             <PromptInputTextarea
-              value={input}
               onChange={(e) => setInput(e.target.value)}
               placeholder="Ask about SEO..."
+              value={input}
             />
             <PromptInputFooter>
               <div />
-              <PromptInputSubmit status={status} onStop={stop} />
+              <PromptInputSubmit onStop={stop} status={status} />
             </PromptInputFooter>
           </PromptInput>
         </div>

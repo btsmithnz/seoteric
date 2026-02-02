@@ -1,27 +1,26 @@
 "use client";
 
 import { useForm } from "@tanstack/react-form";
-import { Preloaded, usePreloadedQuery, useMutation } from "convex/react";
-import { z } from "zod";
+import { type Preloaded, useMutation, usePreloadedQuery } from "convex/react";
 import { toast } from "sonner";
-
-import { api } from "@/convex/_generated/api";
+import { z } from "zod";
+import { FieldErrorZod } from "@/components/input/field-error-zod";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import {
   Card,
   CardContent,
+  CardDescription,
   CardFooter,
   CardHeader,
   CardTitle,
-  CardDescription,
 } from "@/components/ui/card";
 import {
   Field,
-  FieldLabel,
-  FieldGroup,
   FieldDescription,
+  FieldGroup,
+  FieldLabel,
 } from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
@@ -29,7 +28,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { FieldErrorZod } from "@/components/input/field-error-zod";
+import { api } from "@/convex/_generated/api";
 import { countries, renderCountryLabel } from "@/lib/countries";
 
 interface SiteConfigFormProps {
@@ -94,11 +93,11 @@ export function SiteConfigForm({ preloadedSite }: SiteConfigFormProps) {
                 <Field data-invalid={field.state.meta.errors.length > 0}>
                   <FieldLabel>Site name</FieldLabel>
                   <Input
-                    type="text"
-                    placeholder="My Website"
-                    value={field.state.value}
-                    onChange={(e) => field.handleChange(e.target.value)}
                     onBlur={field.handleBlur}
+                    onChange={(e) => field.handleChange(e.target.value)}
+                    placeholder="My Website"
+                    type="text"
+                    value={field.state.value}
                   />
                   <FieldErrorZod field={field} />
                 </Field>
@@ -109,11 +108,11 @@ export function SiteConfigForm({ preloadedSite }: SiteConfigFormProps) {
                 <Field data-invalid={field.state.meta.errors.length > 0}>
                   <FieldLabel>Domain</FieldLabel>
                   <Input
-                    type="text"
-                    placeholder="example.com"
-                    value={field.state.value}
-                    onChange={(e) => field.handleChange(e.target.value)}
                     onBlur={field.handleBlur}
+                    onChange={(e) => field.handleChange(e.target.value)}
+                    placeholder="example.com"
+                    type="text"
+                    value={field.state.value}
                   />
                   <FieldDescription>
                     Enter without http:// or https://
@@ -127,8 +126,8 @@ export function SiteConfigForm({ preloadedSite }: SiteConfigFormProps) {
                 <Field data-invalid={field.state.meta.errors.length > 0}>
                   <FieldLabel>Country</FieldLabel>
                   <Select
-                    value={field.state.value}
                     onValueChange={(value) => field.handleChange(value ?? "")}
+                    value={field.state.value}
                   >
                     <SelectTrigger className="w-full">
                       <SelectValue>{renderCountryLabel}</SelectValue>
@@ -150,11 +149,11 @@ export function SiteConfigForm({ preloadedSite }: SiteConfigFormProps) {
                 <Field data-invalid={field.state.meta.errors.length > 0}>
                   <FieldLabel>Industry</FieldLabel>
                   <Input
-                    type="text"
-                    placeholder="e.g., E-commerce, Healthcare, Finance"
-                    value={field.state.value}
-                    onChange={(e) => field.handleChange(e.target.value)}
                     onBlur={field.handleBlur}
+                    onChange={(e) => field.handleChange(e.target.value)}
+                    placeholder="e.g., E-commerce, Healthcare, Finance"
+                    type="text"
+                    value={field.state.value}
                   />
                   <FieldErrorZod field={field} />
                 </Field>
@@ -171,7 +170,7 @@ export function SiteConfigForm({ preloadedSite }: SiteConfigFormProps) {
             })}
           >
             {({ canSubmit, isSubmitting }) => (
-              <Button type="submit" disabled={!canSubmit || isSubmitting}>
+              <Button disabled={!canSubmit || isSubmitting} type="submit">
                 {isSubmitting ? "Saving..." : "Save changes"}
               </Button>
             )}

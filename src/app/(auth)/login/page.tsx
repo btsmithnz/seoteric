@@ -1,11 +1,13 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-import Link from "next/link";
 import { useForm } from "@tanstack/react-form";
-import { authClient } from "@/lib/auth-client";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { useTransition } from "react";
+import { toast } from "sonner";
+import { z } from "zod";
+import { FieldErrorZod } from "@/components/input/field-error-zod";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import {
   Card,
   CardContent,
@@ -14,11 +16,9 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Field, FieldLabel, FieldGroup } from "@/components/ui/field";
-import { z } from "zod";
-import { FieldErrorZod } from "@/components/input/field-error-zod";
-import { useTransition } from "react";
-import { toast } from "sonner";
+import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
+import { authClient } from "@/lib/auth-client";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -74,12 +74,12 @@ export default function LoginPage() {
                 <Field data-invalid={field.state.meta.errors.length > 0}>
                   <FieldLabel>Email</FieldLabel>
                   <Input
-                    type="email"
-                    placeholder="you@example.com"
-                    value={field.state.value}
-                    onChange={(e) => field.handleChange(e.target.value)}
-                    onBlur={field.handleBlur}
                     autoComplete="email"
+                    onBlur={field.handleBlur}
+                    onChange={(e) => field.handleChange(e.target.value)}
+                    placeholder="you@example.com"
+                    type="email"
+                    value={field.state.value}
                   />
                   <FieldErrorZod field={field} />
                 </Field>
@@ -90,12 +90,12 @@ export default function LoginPage() {
                 <Field data-invalid={field.state.meta.errors.length > 0}>
                   <FieldLabel>Password</FieldLabel>
                   <Input
-                    type="password"
-                    placeholder="Your password"
-                    value={field.state.value}
-                    onChange={(e) => field.handleChange(e.target.value)}
-                    onBlur={field.handleBlur}
                     autoComplete="current-password"
+                    onBlur={field.handleBlur}
+                    onChange={(e) => field.handleChange(e.target.value)}
+                    placeholder="Your password"
+                    type="password"
+                    value={field.state.value}
                   />
                   <FieldErrorZod field={field} />
                 </Field>
@@ -112,9 +112,9 @@ export default function LoginPage() {
           >
             {({ canSubmit, isSubmitting }) => (
               <Button
-                type="submit"
                 className="w-full"
                 disabled={!canSubmit || isSubmitting || isPending}
+                type="submit"
               >
                 {isSubmitting || isPending ? "Signing in..." : "Sign in"}
               </Button>
@@ -122,7 +122,7 @@ export default function LoginPage() {
           </form.Subscribe>
           <p className="text-muted-foreground text-xs">
             Don&apos;t have an account?{" "}
-            <Link href="/onboarding" className="text-primary hover:underline">
+            <Link className="text-primary hover:underline" href="/onboarding">
               Get started
             </Link>
           </p>

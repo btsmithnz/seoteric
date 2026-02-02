@@ -1,7 +1,7 @@
 import { tool } from "ai";
 import { z } from "zod";
 
-const TIMEOUT_MS = 10000;
+const TIMEOUT_MS = 10_000;
 
 export const checkUrlStatusTool = tool({
   description:

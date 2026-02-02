@@ -1,6 +1,6 @@
 import { tool } from "ai";
-import { z } from "zod";
 import { load } from "cheerio";
+import { z } from "zod";
 
 interface SitemapUrl {
   loc: string;
@@ -48,13 +48,19 @@ function parseSitemap(xml: string): SitemapResult {
       };
 
       const lastmod = $el.find("lastmod").text();
-      if (lastmod) entry.lastmod = lastmod;
+      if (lastmod) {
+        entry.lastmod = lastmod;
+      }
 
       const changefreq = $el.find("changefreq").text();
-      if (changefreq) entry.changefreq = changefreq;
+      if (changefreq) {
+        entry.changefreq = changefreq;
+      }
 
       const priority = $el.find("priority").text();
-      if (priority) entry.priority = priority;
+      if (priority) {
+        entry.priority = priority;
+      }
 
       return entry;
     })
@@ -68,6 +74,9 @@ function parseSitemap(xml: string): SitemapResult {
     truncated: urlElements.length > MAX_URLS,
   };
 }
+
+const DOMAIN_REGEX = /^https?:\/\//;
+const SLASH_REGEX = /\//;
 
 export const fetchSitemapTool = tool({
   description:
@@ -94,7 +103,9 @@ export const fetchSitemapTool = tool({
           error: "Domain is required when url is a relative path",
         };
       }
-      const cleanDomain = domain.replace(/^https?:\/\//, "").replace(/\/$/, "");
+      const cleanDomain = domain
+        .replace(DOMAIN_REGEX, "")
+        .replace(SLASH_REGEX, "");
       fullUrl = `https://${cleanDomain}${url}`;
     }
 

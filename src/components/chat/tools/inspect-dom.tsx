@@ -3,7 +3,7 @@ import { ToolCall } from "./tool-call";
 
 export function InspectDomTool() {
   return (
-    <ToolCall icon={<SearchIcon className="size-4 inline" />}>
+    <ToolCall icon={<SearchIcon className="inline size-4" />}>
       Inspecting your website
     </ToolCall>
   );

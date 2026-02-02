@@ -22,7 +22,9 @@ function parseRobotsTxt(text: string): ParsedRobotsTxt {
   let currentDirective: RobotsDirective | null = null;
 
   for (const line of lines) {
-    if (line.startsWith("#") || line === "") continue;
+    if (line.startsWith("#") || line === "") {
+      continue;
+    }
 
     const [key, ...valueParts] = line.split(":");
     const value = valueParts.join(":").trim();
@@ -49,6 +51,9 @@ function parseRobotsTxt(text: string): ParsedRobotsTxt {
   return { raw: text, directives, sitemaps };
 }
 
+const DOMAIN_REGEX = /^https?:\/\//;
+const SLASH_REGEX = /\//;
+
 export const fetchRobotsTxtTool = tool({
   description:
     "Fetch and parse a site's robots.txt file to see crawling rules and sitemap locations",
@@ -56,7 +61,9 @@ export const fetchRobotsTxtTool = tool({
     domain: z.string().describe("The site domain (e.g., 'example.com')"),
   }),
   execute: async ({ domain }) => {
-    const cleanDomain = domain.replace(/^https?:\/\//, "").replace(/\/$/, "");
+    const cleanDomain = domain
+      .replace(DOMAIN_REGEX, "")
+      .replace(SLASH_REGEX, "");
     const url = `https://${cleanDomain}/robots.txt`;
 
     try {

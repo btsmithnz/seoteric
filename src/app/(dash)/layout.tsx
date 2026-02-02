@@ -1,9 +1,9 @@
-import { ConvexProvider } from "@/components/providers/convex";
-import { DashboardNav } from "@/app/(dash)/nav";
-import { getToken, isAuthenticated } from "@/lib/auth-server";
-import { CreateSiteDialog } from "@/components/sites/create-site-dialog";
 import { redirect } from "next/navigation";
+import { DashboardNav } from "@/app/(dash)/nav";
+import { ConvexProvider } from "@/components/providers/convex";
+import { CreateSiteDialog } from "@/components/sites/create-site-dialog";
 import { ClientAuthBoundary } from "@/lib/auth-client";
+import { getToken, isAuthenticated } from "@/lib/auth-server";
 
 async function InnerLayout({ children }: { children: React.ReactNode }) {
   const authenticated = await isAuthenticated();
@@ -13,7 +13,7 @@ async function InnerLayout({ children }: { children: React.ReactNode }) {
 
   return (
     <ClientAuthBoundary>
-      <div className="flex w-full min-h-screen flex-col">
+      <div className="flex min-h-screen w-full flex-col">
         <DashboardNav />
         <CreateSiteDialog />
         {children}

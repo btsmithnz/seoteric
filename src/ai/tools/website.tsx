@@ -1,6 +1,6 @@
 import { tool } from "ai";
-import { z } from "zod";
 import { load } from "cheerio";
+import { z } from "zod";
 
 async function loadSiteHtml(url: string) {
   const response = await fetch(url);

@@ -2,8 +2,8 @@ import { NextResponse } from "next/server";
 import {
   checkAuth,
   isValidUrl,
+  type PageSpeedError,
   parsePageSpeedResponse,
-  PageSpeedError,
 } from "./_lib/pagespeed";
 
 const PAGESPEED_API_URL =
@@ -17,7 +17,7 @@ export async function POST(request: Request) {
   const body = await request.json();
   const { url, strategy = "mobile" } = body;
 
-  if (!url || !isValidUrl(url)) {
+  if (!(url && isValidUrl(url))) {
     return NextResponse.json(
       { error: "Invalid URL provided" },
       { status: 400 }
@@ -39,7 +39,11 @@ export async function POST(request: Request) {
     });
 
     // Add API key
-    params.append("key", process.env.GCP_API_KEY!);
+    const gcpApikey = process.env.GCP_API_KEY;
+    if (!gcpApikey) {
+      throw new Error("GCP_API_KEY is not set");
+    }
+    params.append("key", gcpApikey);
 
     const response = await fetch(`${PAGESPEED_API_URL}?${params.toString()}`, {
       method: "GET",

@@ -1,20 +1,20 @@
 import { ToolLoopAgent } from "ai";
+import { z } from "zod";
+import { checkUrlStatusTool } from "./tools/link-checker";
+import { runPageSpeedTool } from "./tools/pagespeed";
+import {
+  createRecommendationTool,
+  updateRecommendationTool,
+} from "./tools/recommendations";
+import { fetchRobotsTxtTool } from "./tools/robots";
+import { getPageSeoDataTool } from "./tools/seo-analysis";
+import { fetchSitemapTool } from "./tools/sitemap";
+import { runSpeedTestTool } from "./tools/speed-test";
 import {
   getWebsiteNameTool,
   getWebsiteTextTool,
   inspectDomTool,
 } from "./tools/website";
-import { fetchRobotsTxtTool } from "./tools/robots";
-import { fetchSitemapTool } from "./tools/sitemap";
-import { checkUrlStatusTool } from "./tools/link-checker";
-import { getPageSeoDataTool } from "./tools/seo-analysis";
-import {
-  createRecommendationTool,
-  updateRecommendationTool,
-} from "./tools/recommendations";
-import { runSpeedTestTool } from "./tools/speed-test";
-import { runPageSpeedTool } from "./tools/pagespeed";
-import { z } from "zod";
 
 const existingRecommendationSchema = z.object({
   _id: z.string(),

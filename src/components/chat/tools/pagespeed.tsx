@@ -1,18 +1,26 @@
 import { ActivityIcon, ChevronDownIcon } from "lucide-react";
-import { ToolCall } from "./tool-call";
-import { PageSpeedOutput } from "@/ai/tools/pagespeed";
 import { useState } from "react";
+import type { PageSpeedOutput } from "@/ai/tools/pagespeed";
 import { cn } from "@/lib/utils";
+import { ToolCall } from "./tool-call";
 
 function getScoreColor(score: number): string {
-  if (score >= 90) return "text-green-600 dark:text-green-400";
-  if (score >= 50) return "text-yellow-600 dark:text-yellow-400";
+  if (score >= 90) {
+    return "text-green-600 dark:text-green-400";
+  }
+  if (score >= 50) {
+    return "text-yellow-600 dark:text-yellow-400";
+  }
   return "text-red-600 dark:text-red-400";
 }
 
 function getScoreBgColor(score: number): string {
-  if (score >= 90) return "bg-green-500";
-  if (score >= 50) return "bg-yellow-500";
+  if (score >= 90) {
+    return "bg-green-500";
+  }
+  if (score >= 50) {
+    return "bg-yellow-500";
+  }
   return "bg-red-500";
 }
 
@@ -24,6 +32,8 @@ function getRatingColor(rating: "good" | "needs-improvement" | "poor"): string {
       return "text-yellow-600 dark:text-yellow-400";
     case "poor":
       return "text-red-600 dark:text-red-400";
+    default:
+      return "";
   }
 }
 
@@ -37,6 +47,8 @@ function getRatingBadgeColor(
       return "bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400";
     case "poor":
       return "bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400";
+    default:
+      return "";
   }
 }
 
@@ -48,30 +60,25 @@ function ScoreGauge({ score }: { score: number }) {
     <div className="relative inline-flex items-center justify-center">
       <svg className="size-20 -rotate-90" viewBox="0 0 100 100">
         <circle
+          className="fill-none stroke-gray-200 dark:stroke-gray-700"
           cx="50"
           cy="50"
           r="40"
           strokeWidth="8"
-          className="fill-none stroke-gray-200 dark:stroke-gray-700"
         />
         <circle
+          className={cn("fill-none", getScoreBgColor(score))}
           cx="50"
           cy="50"
           r="40"
-          strokeWidth="8"
-          strokeLinecap="round"
           strokeDasharray={circumference}
           strokeDashoffset={offset}
-          className={cn("fill-none", getScoreBgColor(score))}
+          strokeLinecap="round"
+          strokeWidth="8"
           style={{ stroke: "currentColor" }}
         />
       </svg>
-      <span
-        className={cn(
-          "absolute text-xl font-bold",
-          getScoreColor(score)
-        )}
-      >
+      <span className={cn("absolute font-bold text-xl", getScoreColor(score))}>
         {score}
       </span>
     </div>
@@ -89,8 +96,8 @@ function MetricCard({
 }) {
   return (
     <div className="flex flex-col gap-0.5">
-      <span className="text-xs text-gray-500 dark:text-gray-400">{label}</span>
-      <span className={cn("text-sm font-medium", getRatingColor(rating))}>
+      <span className="text-gray-500 text-xs dark:text-gray-400">{label}</span>
+      <span className={cn("font-medium text-sm", getRatingColor(rating))}>
         {value}
       </span>
     </div>
@@ -108,30 +115,30 @@ function ExpandableSection({
 }) {
   const [isOpen, setIsOpen] = useState(defaultOpen);
 
-  if (items.length === 0) return null;
+  if (items.length === 0) {
+    return null;
+  }
 
   return (
-    <div className="border-t border-gray-200 pt-2 dark:border-gray-700">
+    <div className="border-gray-200 border-t pt-2 dark:border-gray-700">
       <button
+        className="flex w-full items-center justify-between text-left font-medium text-gray-600 text-xs hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-200"
         onClick={() => setIsOpen(!isOpen)}
-        className="flex w-full items-center justify-between text-left text-xs font-medium text-gray-600 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-200"
+        type="button"
       >
         <span>
           {title} ({items.length})
         </span>
         <ChevronDownIcon
-          className={cn(
-            "size-4 transition-transform",
-            isOpen && "rotate-180"
-          )}
+          className={cn("size-4 transition-transform", isOpen && "rotate-180")}
         />
       </button>
       {isOpen && (
         <ul className="mt-2 space-y-1.5">
           {items.map((item) => (
             <li
-              key={item.id}
               className="flex items-start justify-between gap-2 text-xs"
+              key={item.id}
             >
               <span className="text-gray-700 dark:text-gray-300">
                 {item.title}
@@ -152,28 +159,33 @@ function ExpandableSection({
 function PageSpeedResults({ output }: { output: PageSpeedOutput }) {
   if (output.error) {
     return (
-      <div className="my-2 rounded-lg border border-red-200 bg-red-50 p-3 text-sm text-red-700 dark:border-red-800 dark:bg-red-950 dark:text-red-300">
+      <div className="my-2 rounded-lg border border-red-200 bg-red-50 p-3 text-red-700 text-sm dark:border-red-800 dark:bg-red-950 dark:text-red-300">
         PageSpeed analysis failed: {output.error}
       </div>
     );
   }
 
-  const { coreWebVitals, performanceScore, strategy, opportunities, diagnostics } =
-    output;
+  const {
+    coreWebVitals,
+    performanceScore,
+    strategy,
+    opportunities,
+    diagnostics,
+  } = output;
 
   return (
     <div className="my-2 max-w-lg space-y-3 rounded-lg border bg-gray-50 p-3 dark:border-gray-700 dark:bg-gray-800">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <div className="text-xs text-gray-500 dark:text-gray-400">
+          <div className="text-gray-500 text-xs dark:text-gray-400">
             PageSpeed analysis for
           </div>
           <div className="font-mono text-sm">{output.url}</div>
         </div>
         <span
           className={cn(
-            "rounded-full px-2 py-0.5 text-xs font-medium",
+            "rounded-full px-2 py-0.5 font-medium text-xs",
             getRatingBadgeColor(
               strategy === "mobile" ? "needs-improvement" : "good"
             )
@@ -190,36 +202,36 @@ function PageSpeedResults({ output }: { output: PageSpeedOutput }) {
           {coreWebVitals.lcp && (
             <MetricCard
               label="LCP"
-              value={coreWebVitals.lcp.displayValue}
               rating={coreWebVitals.lcp.rating}
+              value={coreWebVitals.lcp.displayValue}
             />
           )}
           {coreWebVitals.fcp && (
             <MetricCard
               label="FCP"
-              value={coreWebVitals.fcp.displayValue}
               rating={coreWebVitals.fcp.rating}
+              value={coreWebVitals.fcp.displayValue}
             />
           )}
           {coreWebVitals.cls && (
             <MetricCard
               label="CLS"
-              value={coreWebVitals.cls.displayValue}
               rating={coreWebVitals.cls.rating}
+              value={coreWebVitals.cls.displayValue}
             />
           )}
           {coreWebVitals.inp && (
             <MetricCard
               label="INP"
-              value={coreWebVitals.inp.displayValue}
               rating={coreWebVitals.inp.rating}
+              value={coreWebVitals.inp.displayValue}
             />
           )}
           {coreWebVitals.ttfb && (
             <MetricCard
               label="TTFB"
-              value={coreWebVitals.ttfb.displayValue}
               rating={coreWebVitals.ttfb.rating}
+              value={coreWebVitals.ttfb.displayValue}
             />
           )}
         </div>
@@ -227,13 +239,13 @@ function PageSpeedResults({ output }: { output: PageSpeedOutput }) {
 
       {/* Opportunities */}
       <ExpandableSection
-        title="Opportunities"
-        items={opportunities}
         defaultOpen={opportunities.length > 0 && opportunities.length <= 3}
+        items={opportunities}
+        title="Opportunities"
       />
 
       {/* Diagnostics */}
-      <ExpandableSection title="Diagnostics" items={diagnostics} />
+      <ExpandableSection items={diagnostics} title="Diagnostics" />
     </div>
   );
 }
@@ -249,7 +261,7 @@ export function PageSpeedTool({ state, output }: PageSpeedToolProps) {
   }
 
   return (
-    <ToolCall icon={<ActivityIcon className="size-4 inline animate-pulse" />}>
+    <ToolCall icon={<ActivityIcon className="inline size-4 animate-pulse" />}>
       Running PageSpeed analysis...
     </ToolCall>
   );

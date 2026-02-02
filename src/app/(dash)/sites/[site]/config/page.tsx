@@ -1,5 +1,5 @@
 import { api } from "@/convex/_generated/api";
-import { Id } from "@/convex/_generated/dataModel";
+import type { Id } from "@/convex/_generated/dataModel";
 import { preloadAuthQuery } from "@/lib/auth-server";
 import { SiteConfigForm } from "./form";
 
@@ -12,8 +12,8 @@ export default async function ConfigPage(
   const preloadedSite = await preloadAuthQuery(api.site.get, { siteId });
 
   return (
-    <div className="p-6 w-full max-w-2xl mx-auto">
-      <h1 className="text-xl font-semibold mb-6">Site Configuration</h1>
+    <div className="mx-auto w-full max-w-2xl p-6">
+      <h1 className="mb-6 font-semibold text-xl">Site Configuration</h1>
       <SiteConfigForm preloadedSite={preloadedSite} />
     </div>
   );

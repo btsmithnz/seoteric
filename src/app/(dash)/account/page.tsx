@@ -2,8 +2,8 @@ import { Billing } from "./billing";
 
 export default function AccountPage() {
   return (
-    <div className="p-6 w-full max-w-2xl mx-auto">
-      <h1 className="text-xl font-semibold mb-6">Account</h1>
+    <div className="mx-auto w-full max-w-2xl p-6">
+      <h1 className="mb-6 font-semibold text-xl">Account</h1>
       <Billing />
     </div>
   );

@@ -9,7 +9,7 @@ export function UpdateRecommendationTool({
   state,
 }: UpdateRecommendationToolProps) {
   return (
-    <ToolCall icon={<CheckCircleIcon className="size-4 inline" />}>
+    <ToolCall icon={<CheckCircleIcon className="inline size-4" />}>
       {state === "output-available"
         ? "Updated recommendation"
         : "Updating recommendation..."}

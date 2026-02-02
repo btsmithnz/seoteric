@@ -1,24 +1,27 @@
-import { ChatStatus, UIMessage } from "ai";
-import { Message, MessageResponse } from "../ai-elements/message";
-import { MessageContent } from "../ai-elements/message";
-import { CreateRecommendationOutput } from "@/ai/tools/recommendations";
-import { SpeedTestOutput } from "@/ai/tools/speed-test";
-import { PageSpeedOutput } from "@/ai/tools/pagespeed";
+import type { ChatStatus, UIMessage } from "ai";
+import type { PageSpeedOutput } from "@/ai/tools/pagespeed";
+import type { CreateRecommendationOutput } from "@/ai/tools/recommendations";
+import type { SpeedTestOutput } from "@/ai/tools/speed-test";
 import {
-  CreateAccountTool,
-  WebsiteNameTool,
-  WebsiteTextTool,
-  InspectDomTool,
-  CreateRecommendationTool,
-  UpdateRecommendationTool,
-  SpeedTestTool,
-  PageSpeedTool,
-} from "./tools";
+  Message,
+  MessageContent,
+  MessageResponse,
+} from "../ai-elements/message";
 import {
   Reasoning,
   ReasoningContent,
   ReasoningTrigger,
 } from "../ai-elements/reasoning";
+import {
+  CreateAccountTool,
+  CreateRecommendationTool,
+  InspectDomTool,
+  PageSpeedTool,
+  SpeedTestTool,
+  UpdateRecommendationTool,
+  WebsiteNameTool,
+  WebsiteTextTool,
+} from "./tools";
 
 function MessageRender({
   id,
@@ -44,9 +47,9 @@ function MessageRender({
           case "reasoning":
             return (
               <Reasoning
-                key={partId}
                 className="w-full"
                 isStreaming={status === "streaming" && isLast && isLastPart}
+                key={partId}
               >
                 <ReasoningTrigger />
                 <ReasoningContent>{part.text}</ReasoningContent>
@@ -69,8 +72,8 @@ function MessageRender({
             return (
               <CreateRecommendationTool
                 key={partId}
-                state={part.state}
                 output={part.output as CreateRecommendationOutput}
+                state={part.state}
               />
             );
 
@@ -81,8 +84,8 @@ function MessageRender({
             return (
               <SpeedTestTool
                 key={partId}
-                state={part.state}
                 output={part.output as SpeedTestOutput}
+                state={part.state}
               />
             );
 
@@ -90,8 +93,8 @@ function MessageRender({
             return (
               <PageSpeedTool
                 key={partId}
-                state={part.state}
                 output={part.output as PageSpeedOutput}
+                state={part.state}
               />
             );
 
@@ -119,9 +122,9 @@ export function SeotericMessages({
             <MessageContent>
               <MessageRender
                 id={messageId}
+                isLast={messageIdx === messages.length - 1}
                 message={message}
                 status={status}
-                isLast={messageIdx === messages.length - 1}
               />
             </MessageContent>
           </Message>

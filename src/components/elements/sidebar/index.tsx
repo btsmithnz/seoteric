@@ -1,9 +1,9 @@
 "use client";
 
-import { Button, ButtonProps } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
-import { SidebarSelector, useSidebar } from "./provider";
 import { SidebarCloseIcon, SidebarOpenIcon } from "lucide-react";
+import { Button, type ButtonProps } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+import { type SidebarSelector, useSidebar } from "./provider";
 
 export { SidebarProvider, type SidebarSelector, useSidebar } from "./provider";
 
@@ -39,8 +39,8 @@ export function SidebarMobileToggleButton({
   return (
     <Button
       className={cn("md:hidden", className)}
-      variant={variant}
       onClick={() => setMobileOpen((open) => !open)}
+      variant={variant}
     >
       {children}
     </Button>
@@ -64,10 +64,10 @@ export function Sidebar({
   return (
     <div
       className={cn(
-        "fixed md:sticky md:block top-[calc(var(--spacing-dashboard-nav)+1px)] h-[calc(100vh-var(--spacing-dashboard-nav))] w-full z-10 md:w-64 border-border bg-background overflow-y-auto",
+        "fixed top-[calc(var(--spacing-dashboard-nav)+1px)] z-10 h-[calc(100vh-var(--spacing-dashboard-nav))] w-full overflow-y-auto border-border bg-background md:sticky md:block md:w-64",
         side === "right" ? "right-0 border-l" : "left-0 border-r",
         !mobileOpen && "hidden",
-        className,
+        className
       )}
     >
       {children}

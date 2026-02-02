@@ -1,8 +1,8 @@
+import { convertToModelMessages, generateId, type UIMessage } from "ai";
 import { seoAgent } from "@/ai/seo";
 import { api } from "@/convex/_generated/api";
-import { Id } from "@/convex/_generated/dataModel";
+import type { Id } from "@/convex/_generated/dataModel";
 import { fetchAuthMutation, fetchAuthQuery } from "@/lib/auth-server";
-import { convertToModelMessages, generateId, type UIMessage } from "ai";
 
 export async function POST(req: Request) {
   const { id: chatId, messages }: { id: Id<"chats">; messages: UIMessage[] } =

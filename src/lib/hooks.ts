@@ -1,5 +1,5 @@
 import { useConvexAuth, useQuery } from "convex/react";
-import { FunctionReference } from "convex/server";
+import type { FunctionReference } from "convex/server";
 
 export function useAuthenticatedQuery<Query extends FunctionReference<"query">>(
   query: Query,

@@ -62,7 +62,7 @@ export const createInternal = internalMutation({
     priority: recommendationsFields.priority,
     pageUrl: recommendationsFields.pageUrl,
   },
-  handler: async (ctx, args) => {
+  handler: (ctx, args) => {
     return ctx.db.insert("recommendations", {
       ...args,
       status: "open",

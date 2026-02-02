@@ -1,23 +1,25 @@
 "use client";
 
-import { api } from "@/convex/_generated/api";
-import { Id } from "@/convex/_generated/dataModel";
-import { RecommendationCard } from "./card";
 import { LightbulbIcon } from "lucide-react";
+import { useMemo } from "react";
 import {
   Sidebar,
   SidebarMobileToggleButton,
   SidebarMobileToggleIcon,
 } from "@/components/elements/sidebar";
-import { useMemo } from "react";
+import { api } from "@/convex/_generated/api";
+import type { Id } from "@/convex/_generated/dataModel";
 import { useAuthenticatedQuery } from "@/lib/hooks";
+import { RecommendationCard } from "./card";
 
 interface Props {
   siteId: Id<"sites">;
 }
 
 export function RecommendationsSidebar({ siteId }: Props) {
-  const query = useAuthenticatedQuery(api.recommendations.listBySite, { siteId });
+  const query = useAuthenticatedQuery(api.recommendations.listBySite, {
+    siteId,
+  });
   const recommendations = useMemo(() => query ?? [], [query]);
 
   const openRecommendations = recommendations.filter(
@@ -28,13 +30,13 @@ export function RecommendationsSidebar({ siteId }: Props) {
   );
 
   return (
-    <Sidebar side="right" className="md:w-80" selector="recommendations">
+    <Sidebar className="md:w-80" selector="recommendations" side="right">
       <div className="flex items-center justify-between border-b">
         <div className="flex items-center gap-2">
           <LightbulbIcon className="size-4 text-primary" />
           <h2 className="font-medium text-sm">Recommendations</h2>
           {openRecommendations.length > 0 && (
-            <span className="text-xs text-muted-foreground">
+            <span className="text-muted-foreground text-xs">
               ({openRecommendations.length})
             </span>
           )}
@@ -42,16 +44,16 @@ export function RecommendationsSidebar({ siteId }: Props) {
 
         <SidebarMobileToggleButton selector="recommendations" variant="outline">
           <SidebarMobileToggleIcon
-            selector="recommendations"
             className="rotate-180"
+            selector="recommendations"
           />
         </SidebarMobileToggleButton>
       </div>
 
-      <div className="flex-1 overflow-y-auto space-y-3 p-2">
+      <div className="flex-1 space-y-3 overflow-y-auto p-2">
         {openRecommendations.length === 0 &&
           completedRecommendations.length === 0 && (
-            <p className="text-sm text-muted-foreground py-4 text-center">
+            <p className="py-4 text-center text-muted-foreground text-sm">
               No recommendations yet. Ask the AI to analyze your site.
             </p>
           )}
@@ -62,15 +64,15 @@ export function RecommendationsSidebar({ siteId }: Props) {
 
         {completedRecommendations.length > 0 && (
           <details className="group">
-            <summary className="text-xs text-muted-foreground cursor-pointer hover:text-foreground py-2">
+            <summary className="cursor-pointer py-2 text-muted-foreground text-xs hover:text-foreground">
               Completed ({completedRecommendations.length})
             </summary>
             <div className="space-y-2 pt-2 opacity-60">
               {completedRecommendations.map((rec) => (
                 <RecommendationCard
+                  compact
                   key={rec._id}
                   recommendation={rec}
-                  compact
                   showActions
                 />
               ))}

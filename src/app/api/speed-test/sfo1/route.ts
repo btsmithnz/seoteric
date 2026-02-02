@@ -1,9 +1,9 @@
 import { NextResponse } from "next/server";
 import {
-  runSpeedTest,
   checkAuth,
   isValidUrl,
   REGIONS,
+  runSpeedTest,
 } from "../_lib/speed-test";
 
 export const preferredRegion = ["sfo1"];
@@ -15,7 +15,7 @@ export async function POST(req: Request) {
   }
 
   const { url } = await req.json();
-  if (!url || !isValidUrl(url)) {
+  if (!(url && isValidUrl(url))) {
     return NextResponse.json({ error: "Invalid URL" }, { status: 400 });
   }
 

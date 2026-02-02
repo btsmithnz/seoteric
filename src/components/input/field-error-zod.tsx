@@ -1,4 +1,4 @@
-import { AnyFieldApi, StandardSchemaV1Issue } from "@tanstack/react-form";
+import type { AnyFieldApi, StandardSchemaV1Issue } from "@tanstack/react-form";
 import { FieldError } from "../ui/field";
 
 export function FormErrorZod({

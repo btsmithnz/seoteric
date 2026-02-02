@@ -1,3 +1,4 @@
+/** biome-ignore-all lint/suspicious/noExplicitAny: <api types> */
 export interface CoreWebVitals {
   lcp: {
     value: number;
@@ -54,9 +55,15 @@ export type PageSpeedResponse = PageSpeedResult | PageSpeedError;
 type MetricRating = "good" | "needs-improvement" | "poor";
 
 function getMetricRating(score: number | undefined): MetricRating {
-  if (score === undefined || score === null) return "poor";
-  if (score >= 0.9) return "good";
-  if (score >= 0.5) return "needs-improvement";
+  if (score === undefined || score === null) {
+    return "poor";
+  }
+  if (score >= 0.9) {
+    return "good";
+  }
+  if (score >= 0.5) {
+    return "needs-improvement";
+  }
   return "poor";
 }
 
@@ -67,7 +74,9 @@ function parseMetric(
     score?: number | null;
   } | null
 ): { value: number; displayValue: string; rating: MetricRating } | null {
-  if (!audit || audit.numericValue === undefined) return null;
+  if (!audit || audit.numericValue === undefined) {
+    return null;
+  }
   return {
     value: audit.numericValue,
     displayValue: audit.displayValue || `${Math.round(audit.numericValue)}`,
@@ -97,9 +106,7 @@ export function parsePageSpeedResponse(data: any): PageSpeedResult {
   const opportunities: PageSpeedOpportunity[] = [];
   const opportunityIds =
     categories?.performance?.auditRefs
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       ?.filter((ref: any) => ref.group === "load-opportunities")
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       ?.map((ref: any) => ref.id) ?? [];
 
   for (const id of opportunityIds) {
@@ -122,9 +129,7 @@ export function parsePageSpeedResponse(data: any): PageSpeedResult {
   const diagnostics: PageSpeedOpportunity[] = [];
   const diagnosticIds =
     categories?.performance?.auditRefs
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       ?.filter((ref: any) => ref.group === "diagnostics")
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       ?.map((ref: any) => ref.id) ?? [];
 
   for (const id of diagnosticIds) {

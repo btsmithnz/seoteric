@@ -1,5 +1,5 @@
 import { api } from "@/convex/_generated/api";
-import { Id } from "@/convex/_generated/dataModel";
+import type { Id } from "@/convex/_generated/dataModel";
 import { preloadAuthQuery } from "@/lib/auth-server";
 import { ChatSeo } from "./chat";
 
@@ -14,5 +14,5 @@ export default async function SiteChatPage(
     chatId,
   });
 
-  return <ChatSeo siteId={siteId} preloadedChat={preloadedChat} />;
+  return <ChatSeo preloadedChat={preloadedChat} siteId={siteId} />;
 }

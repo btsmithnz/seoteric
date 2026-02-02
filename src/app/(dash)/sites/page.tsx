@@ -1,32 +1,31 @@
 "use client";
 
-import Link from "next/link";
 import { GlobeIcon, PlusIcon } from "lucide-react";
-
-import { api } from "@/convex/_generated/api";
+import Link from "next/link";
+import {
+  CreateSiteDialog,
+  createSiteDialog,
+} from "@/components/sites/create-site-dialog";
 import { Button } from "@/components/ui/button";
 import {
   Card,
+  CardAction,
+  CardDescription,
   CardHeader,
   CardTitle,
-  CardDescription,
-  CardAction,
 } from "@/components/ui/card";
-import {
-  createSiteDialog,
-  CreateSiteDialog,
-} from "@/components/sites/create-site-dialog";
 import { DialogTrigger } from "@/components/ui/dialog";
+import { api } from "@/convex/_generated/api";
 import { useAuthenticatedQuery } from "@/lib/hooks";
 
 function LoadingState() {
   return (
     <>
       {[1, 2, 3].map((i) => (
-        <Card key={i} size="sm" className="animate-pulse">
+        <Card className="animate-pulse" key={i} size="sm">
           <CardHeader>
-            <div className="h-4 bg-muted rounded w-32" />
-            <div className="h-3 bg-muted rounded w-24 mt-1" />
+            <div className="h-4 w-32 rounded bg-muted" />
+            <div className="mt-1 h-3 w-24 rounded bg-muted" />
           </CardHeader>
         </Card>
       ))}
@@ -37,7 +36,7 @@ function LoadingState() {
 function EmptyState() {
   return (
     <Card className="flex flex-col items-center justify-center py-12 text-center">
-      <GlobeIcon className="h-10 w-10 text-muted-foreground mb-3" />
+      <GlobeIcon className="mb-3 h-10 w-10 text-muted-foreground" />
       <CardTitle className="mb-1">No sites yet</CardTitle>
       <CardDescription className="mb-4">
         Create your first site to get started
@@ -58,9 +57,9 @@ export default function SitesPage() {
   const sites = useAuthenticatedQuery(api.site.list);
 
   return (
-    <div className="p-6 w-full max-w-4xl mx-auto">
-      <div className="flex items-center justify-between mb-6">
-        <h1 className="text-lg font-semibold">Sites</h1>
+    <div className="mx-auto w-full max-w-4xl p-6">
+      <div className="mb-6 flex items-center justify-between">
+        <h1 className="font-semibold text-lg">Sites</h1>
         <DialogTrigger handle={createSiteDialog} render={<Button size="sm" />}>
           <PlusIcon className="mr-1" />
           New site
@@ -78,10 +77,10 @@ export default function SitesPage() {
               <CardDescription>{site.domain}</CardDescription>
               <CardAction>
                 <Button
-                  variant="outline"
-                  size="sm"
-                  render={<Link href={`/sites/${site._id}/chats`} />}
                   nativeButton={false}
+                  render={<Link href={`/sites/${site._id}/chats`} />}
+                  size="sm"
+                  variant="outline"
                 >
                   Open
                 </Button>

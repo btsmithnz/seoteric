@@ -252,9 +252,11 @@ export const countries = [
 
 export function renderCountryLabel(
   code: string | null | undefined,
-  fallback: string = "Select a country"
+  fallback = "Select a country"
 ) {
-  if (!code) return fallback;
+  if (!code) {
+    return fallback;
+  }
   const country = countries.find((country) => country.value === code);
   return country?.label ?? fallback;
 }

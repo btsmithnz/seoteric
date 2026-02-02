@@ -1,7 +1,7 @@
-import { PageSpeedResult } from "@/app/api/pagespeed/_lib/pagespeed";
-import { deploymentUrl } from "@/lib/env";
 import { tool } from "ai";
 import { z } from "zod";
+import type { PageSpeedResult } from "@/app/api/pagespeed/_lib/pagespeed";
+import { deploymentUrl } from "@/lib/env";
 
 export interface PageSpeedOutput extends PageSpeedResult {
   error?: string;

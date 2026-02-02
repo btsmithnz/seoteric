@@ -1,6 +1,6 @@
 import { LightbulbIcon } from "lucide-react";
+import type { CreateRecommendationOutput } from "@/ai/tools/recommendations";
 import { RecommendationCard } from "../../../app/(dash)/sites/[site]/chats/recommendations-sidebar/card";
-import { CreateRecommendationOutput } from "@/ai/tools/recommendations";
 import { ToolCall } from "./tool-call";
 
 interface CreateRecommendationToolProps {
@@ -16,6 +16,7 @@ export function CreateRecommendationTool({
     return (
       <div className="my-2 max-w-md">
         <RecommendationCard
+          compact
           recommendation={{
             title: output.title,
             description: output.description,
@@ -23,7 +24,6 @@ export function CreateRecommendationTool({
             priority: output.priority,
             pageUrl: output.pageUrl,
           }}
-          compact
           showActions={false}
         />
       </div>
@@ -31,7 +31,7 @@ export function CreateRecommendationTool({
   }
 
   return (
-    <ToolCall icon={<LightbulbIcon className="size-4 inline" />}>
+    <ToolCall icon={<LightbulbIcon className="inline size-4" />}>
       Creating recommendation...
     </ToolCall>
   );

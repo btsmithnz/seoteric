@@ -32,7 +32,7 @@ export const createRecommendationTool = tool({
       .optional()
       .describe("Specific page URL this recommendation applies to, if any"),
   }),
-  execute: async (input) => {
+  execute: (input) => {
     return { action: "create" as const, ...input };
   },
 });
@@ -51,23 +51,23 @@ export const updateRecommendationTool = tool({
       .optional()
       .describe("New priority level if changing"),
   }),
-  execute: async (input) => {
+  execute: (input) => {
     return { action: "update" as const, ...input };
   },
 });
 
-export type CreateRecommendationOutput = {
+export interface CreateRecommendationOutput {
   action: "create";
   title: string;
   description: string;
   category: "technical" | "content" | "on-page" | "off-page" | "performance";
   priority: "critical" | "high" | "medium" | "low";
   pageUrl?: string;
-};
+}
 
-export type UpdateRecommendationOutput = {
+export interface UpdateRecommendationOutput {
   action: "update";
   recommendationId: string;
   status?: "open" | "in_progress" | "completed" | "dismissed";
   priority?: "critical" | "high" | "medium" | "low";
-};
+}

@@ -2,14 +2,14 @@
 
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { Id, Doc } from "@/convex/_generated/dataModel";
-import { Button } from "@/components/ui/button";
 import { useSidebar } from "@/components/elements/sidebar";
+import { Button } from "@/components/ui/button";
+import type { Doc, Id } from "@/convex/_generated/dataModel";
 
-type ChatListItemProps = {
+interface ChatListItemProps {
   chat: Doc<"chats">;
   siteId: Id<"sites">;
-};
+}
 
 export function ChatsListItem({ chat, siteId }: ChatListItemProps) {
   const params = useParams<{ chat?: string }>();
@@ -20,6 +20,7 @@ export function ChatsListItem({ chat, siteId }: ChatListItemProps) {
   return (
     <Button
       className="w-full justify-start"
+      nativeButton={false}
       render={
         <Link
           href={`/sites/${siteId}/chats/${chat._id}`}
@@ -27,7 +28,6 @@ export function ChatsListItem({ chat, siteId }: ChatListItemProps) {
         />
       }
       variant={isActive ? "default" : "ghost"}
-      nativeButton={false}
     >
       <span className="truncate">{chat.name || "Untitled"}</span>
     </Button>

@@ -1,11 +1,13 @@
 "use client";
 
-import { useRouter } from "next/navigation";
-import Link from "next/link";
 import { useForm } from "@tanstack/react-form";
-import { authClient } from "@/lib/auth-client";
+import Link from "next/link";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useTransition } from "react";
+import { toast } from "sonner";
+import { z } from "zod";
+import { FieldErrorZod } from "@/components/input/field-error-zod";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import {
   Card,
   CardContent,
@@ -16,10 +18,11 @@ import {
 } from "@/components/ui/card";
 import {
   Field,
-  FieldLabel,
-  FieldGroup,
   FieldDescription,
+  FieldGroup,
+  FieldLabel,
 } from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
@@ -27,11 +30,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { z } from "zod";
-import { FieldErrorZod } from "@/components/input/field-error-zod";
-import { useTransition } from "react";
-import { toast } from "sonner";
-import { useSearchParams } from "next/navigation";
+import { authClient } from "@/lib/auth-client";
 import { countries, renderCountryLabel } from "@/lib/countries";
 
 export default function OnboardingPage() {
@@ -107,12 +106,12 @@ export default function OnboardingPage() {
                 <Field data-invalid={field.state.meta.errors.length > 0}>
                   <FieldLabel>Name</FieldLabel>
                   <Input
-                    type="text"
-                    placeholder="John Doe"
-                    value={field.state.value}
-                    onChange={(e) => field.handleChange(e.target.value)}
-                    onBlur={field.handleBlur}
                     autoComplete="name"
+                    onBlur={field.handleBlur}
+                    onChange={(e) => field.handleChange(e.target.value)}
+                    placeholder="John Doe"
+                    type="text"
+                    value={field.state.value}
                   />
                   <FieldErrorZod field={field} />
                 </Field>
@@ -123,12 +122,12 @@ export default function OnboardingPage() {
                 <Field data-invalid={field.state.meta.errors.length > 0}>
                   <FieldLabel>Email</FieldLabel>
                   <Input
-                    type="email"
-                    placeholder="you@example.com"
-                    value={field.state.value}
-                    onChange={(e) => field.handleChange(e.target.value)}
-                    onBlur={field.handleBlur}
                     autoComplete="email"
+                    onBlur={field.handleBlur}
+                    onChange={(e) => field.handleChange(e.target.value)}
+                    placeholder="you@example.com"
+                    type="email"
+                    value={field.state.value}
                   />
                   <FieldErrorZod field={field} />
                 </Field>
@@ -139,12 +138,12 @@ export default function OnboardingPage() {
                 <Field data-invalid={field.state.meta.errors.length > 0}>
                   <FieldLabel>Password</FieldLabel>
                   <Input
-                    type="password"
-                    placeholder="Create a password"
-                    value={field.state.value}
-                    onChange={(e) => field.handleChange(e.target.value)}
-                    onBlur={field.handleBlur}
                     autoComplete="new-password"
+                    onBlur={field.handleBlur}
+                    onChange={(e) => field.handleChange(e.target.value)}
+                    placeholder="Create a password"
+                    type="password"
+                    value={field.state.value}
                   />
                   <FieldDescription>
                     Must be at least 8 characters
@@ -158,11 +157,11 @@ export default function OnboardingPage() {
                 <Field data-invalid={field.state.meta.errors.length > 0}>
                   <FieldLabel>Website name</FieldLabel>
                   <Input
-                    type="text"
-                    placeholder="My Website"
-                    value={field.state.value}
-                    onChange={(e) => field.handleChange(e.target.value)}
                     onBlur={field.handleBlur}
+                    onChange={(e) => field.handleChange(e.target.value)}
+                    placeholder="My Website"
+                    type="text"
+                    value={field.state.value}
                   />
                   <FieldErrorZod field={field} />
                 </Field>
@@ -173,11 +172,11 @@ export default function OnboardingPage() {
                 <Field data-invalid={field.state.meta.errors.length > 0}>
                   <FieldLabel>Website domain</FieldLabel>
                   <Input
-                    type="text"
-                    placeholder="example.com"
-                    value={field.state.value}
-                    onChange={(e) => field.handleChange(e.target.value)}
                     onBlur={field.handleBlur}
+                    onChange={(e) => field.handleChange(e.target.value)}
+                    placeholder="example.com"
+                    type="text"
+                    value={field.state.value}
                   />
                   <FieldDescription>
                     Enter without http:// or https://
@@ -191,8 +190,8 @@ export default function OnboardingPage() {
                 <Field data-invalid={field.state.meta.errors.length > 0}>
                   <FieldLabel>Country</FieldLabel>
                   <Select
-                    value={field.state.value}
                     onValueChange={(value) => field.handleChange(value ?? "")}
+                    value={field.state.value}
                   >
                     <SelectTrigger className="w-full">
                       <SelectValue>{renderCountryLabel}</SelectValue>
@@ -214,11 +213,11 @@ export default function OnboardingPage() {
                 <Field data-invalid={field.state.meta.errors.length > 0}>
                   <FieldLabel>Industry</FieldLabel>
                   <Input
-                    type="text"
-                    placeholder="e.g., E-commerce, Healthcare, Finance"
-                    value={field.state.value}
-                    onChange={(e) => field.handleChange(e.target.value)}
                     onBlur={field.handleBlur}
+                    onChange={(e) => field.handleChange(e.target.value)}
+                    placeholder="e.g., E-commerce, Healthcare, Finance"
+                    type="text"
+                    value={field.state.value}
                   />
                   <FieldErrorZod field={field} />
                 </Field>
@@ -236,9 +235,9 @@ export default function OnboardingPage() {
           >
             {({ canSubmit, isSubmitting }) => (
               <Button
-                type="submit"
                 className="w-full"
                 disabled={!canSubmit || isSubmitting || isPending}
+                type="submit"
               >
                 {isSubmitting || isPending
                   ? "Creating account..."
@@ -248,7 +247,7 @@ export default function OnboardingPage() {
           </form.Subscribe>
           <p className="text-muted-foreground text-xs">
             Already have an account?{" "}
-            <Link href="/login" className="text-primary hover:underline">
+            <Link className="text-primary hover:underline" href="/login">
               Sign in
             </Link>
           </p>

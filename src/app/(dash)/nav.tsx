@@ -1,12 +1,13 @@
 "use client";
 
+import { ChevronDownIcon, PlusIcon } from "lucide-react";
 import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";
-import { ChevronDownIcon, PlusIcon } from "lucide-react";
-
-import { api } from "@/convex/_generated/api";
-import { cn } from "@/lib/utils";
+import { LogoutMenuItem } from "@/components/elements/logout-button";
+import { createSiteDialog } from "@/components/sites/create-site-dialog";
+import { ThemeSwitcher } from "@/components/theme-switcher";
 import { Button } from "@/components/ui/button";
+import { DialogTrigger } from "@/components/ui/dialog";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -16,11 +17,9 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { ThemeSwitcher } from "@/components/theme-switcher";
-import { LogoutMenuItem } from "@/components/elements/logout-button";
-import { createSiteDialog } from "@/components/sites/create-site-dialog";
-import { DialogTrigger } from "@/components/ui/dialog";
+import { api } from "@/convex/_generated/api";
 import { useAuthenticatedQuery } from "@/lib/hooks";
+import { cn } from "@/lib/utils";
 
 export function DashboardNav() {
   const params = useParams<{ site?: string }>();
@@ -32,31 +31,31 @@ export function DashboardNav() {
   const isConfigPage = pathname?.endsWith("/config");
 
   return (
-    <header className="sticky top-0 z-20 w-full border-b border-border bg-background">
+    <header className="sticky top-0 z-20 w-full border-border border-b bg-background">
       <div className="flex h-dashboard-nav items-center justify-between px-4">
-        <Link href="/sites" className="text-xl font-semibold">
+        <Link className="font-semibold text-xl" href="/sites">
           Seoteric
         </Link>
 
         <nav className="flex items-center gap-2">
           <ThemeSwitcher />
           {siteId && (
-            <div className="flex items-center gap-1 mr-2">
+            <div className="mr-2 flex items-center gap-1">
               <Button
-                variant="ghost"
-                size="sm"
-                render={<Link href={`/sites/${siteId}/chats`} />}
-                nativeButton={false}
                 className={cn(!isConfigPage && "bg-muted")}
+                nativeButton={false}
+                render={<Link href={`/sites/${siteId}/chats`} />}
+                size="sm"
+                variant="ghost"
               >
                 Chat
               </Button>
               <Button
-                variant="ghost"
-                size="sm"
-                render={<Link href={`/sites/${siteId}/config`} />}
-                nativeButton={false}
                 className={cn(isConfigPage && "bg-muted")}
+                nativeButton={false}
+                render={<Link href={`/sites/${siteId}/config`} />}
+                size="sm"
+                variant="ghost"
               >
                 Config
               </Button>
@@ -66,7 +65,7 @@ export function DashboardNav() {
           <DropdownMenu>
             <DropdownMenuTrigger
               render={
-                <Button variant="outline" size="sm">
+                <Button size="sm" variant="outline">
                   <span className="hidden md:block">
                     {currentSite?.name ?? "Sites"}
                   </span>
@@ -94,8 +93,8 @@ export function DashboardNav() {
 
                 <DialogTrigger
                   handle={createSiteDialog}
-                  render={<DropdownMenuItem />}
                   nativeButton={false}
+                  render={<DropdownMenuItem />}
                 >
                   <PlusIcon className="mr-1" />
                   New site

@@ -1,7 +1,7 @@
 "use client";
 
-import { ReactNode } from "react";
-import { Button, ButtonProps } from "@/components/ui/button";
+import type { ReactNode } from "react";
+import { Button, type ButtonProps } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 
 interface LoadingButtonProps extends ButtonProps {
@@ -20,11 +20,7 @@ export function LoadingButton({
 }: LoadingButtonProps) {
   return (
     <Button disabled={disabled || loading} {...props}>
-      {loading ? (
-        <Spinner className={spinnerClassName} />
-      ) : icon ? (
-        icon
-      ) : null}
+      {loading ? <Spinner className={spinnerClassName} /> : icon}
       {children}
     </Button>
   );

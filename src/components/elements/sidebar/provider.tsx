@@ -35,7 +35,7 @@ export function SidebarProvider({ children }: { children: React.ReactNode }) {
         },
       }));
     },
-    [],
+    []
   );
 
   const pick = useCallback(
@@ -47,7 +47,7 @@ export function SidebarProvider({ children }: { children: React.ReactNode }) {
         },
       };
     },
-    [state, setMobileOpen],
+    [state, setMobileOpen]
   );
 
   return (

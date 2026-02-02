@@ -3,7 +3,7 @@ import { ToolCall } from "./tool-call";
 
 export function CreateAccountTool() {
   return (
-    <ToolCall icon={<Spinner className="size-4 inline" />}>
+    <ToolCall icon={<Spinner className="inline size-4" />}>
       Creating your account
     </ToolCall>
   );

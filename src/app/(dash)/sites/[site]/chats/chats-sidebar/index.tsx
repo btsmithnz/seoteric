@@ -1,8 +1,5 @@
 "use client";
 
-import { Id } from "@/convex/_generated/dataModel";
-import { ChatsList } from "./list";
-import { Button } from "@/components/ui/button";
 import { PlusIcon } from "lucide-react";
 import Link from "next/link";
 import {
@@ -11,20 +8,23 @@ import {
   SidebarMobileToggleIcon,
   useSidebar,
 } from "@/components/elements/sidebar";
+import { Button } from "@/components/ui/button";
+import type { Id } from "@/convex/_generated/dataModel";
+import { ChatsList } from "./list";
 
 export function ChatsSidebar({ siteId }: { siteId: Id<"sites"> }) {
   const sidebar = useSidebar();
   const { setMobileOpen } = sidebar.pick("chats");
 
   return (
-    <Sidebar side="left" selector="chats">
+    <Sidebar selector="chats" side="left">
       <div className="flex flex-row">
         <Button
           className="flex-1"
-          render={<Link href={`/sites/${siteId}/chats`} />}
           nativeButton={false}
-          variant="outline"
           onClick={() => setMobileOpen(false)}
+          render={<Link href={`/sites/${siteId}/chats`} />}
+          variant="outline"
         >
           New Chat
           <PlusIcon className="size-4" />

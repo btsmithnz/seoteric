@@ -1,9 +1,17 @@
 import { v } from "convex/values";
-import { mutation, MutationCtx, query, QueryCtx } from "./_generated/server";
+import type { Id } from "./_generated/dataModel";
+import {
+  type MutationCtx,
+  mutation,
+  type QueryCtx,
+  query,
+} from "./_generated/server";
 import { getUser } from "./utils";
-import { Id } from "./_generated/dataModel";
 
-export async function getSite(ctx: QueryCtx | MutationCtx, siteId: Id<"sites">) {
+export async function getSite(
+  ctx: QueryCtx | MutationCtx,
+  siteId: Id<"sites">
+) {
   const user = await getUser(ctx);
   const site = await ctx.db.get(siteId);
   if (!site || site.userId !== user._id) {
@@ -28,7 +36,7 @@ export const list = query({
 
 export const get = query({
   args: { siteId: v.id("sites") },
-  handler: async (ctx, args) => {
+  handler: (ctx, args) => {
     return getSite(ctx, args.siteId);
   },
 });

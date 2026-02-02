@@ -1,6 +1,9 @@
 "use client";
 
 import { useChat } from "@ai-sdk/react";
+import { DefaultChatTransport, type UIMessage } from "ai";
+import { useRouter } from "next/navigation";
+import { useCallback, useState, useTransition } from "react";
 import {
   Conversation,
   ConversationContent,
@@ -9,17 +12,14 @@ import {
 } from "@/components/ai-elements/conversation";
 import {
   PromptInput,
-  PromptInputTextarea,
   PromptInputFooter,
   PromptInputSubmit,
+  PromptInputTextarea,
 } from "@/components/ai-elements/prompt-input";
-import { useCallback, useState, useTransition } from "react";
-import { DefaultChatTransport, UIMessage } from "ai";
-import { useRouter } from "next/navigation";
 import { SeotericMessages } from "@/components/chat/seoteric-messages";
 
 const transport = new DefaultChatTransport({
-  api: `/api/chat/onboarding`,
+  api: "/api/chat/onboarding",
 });
 
 const initialMessages: UIMessage[] = [
@@ -85,8 +85,8 @@ export function ChatOnboarding() {
         <ConversationContent>
           {messages.length === 0 ? (
             <ConversationEmptyState
-              title="Welcome to Seoteric"
               description="Ask me anything about SEO optimization"
+              title="Welcome to Seoteric"
             />
           ) : (
             <SeotericMessages messages={messages} status={status} />
@@ -97,15 +97,15 @@ export function ChatOnboarding() {
 
       <PromptInput onSubmit={(msg) => handleSend(msg.text)}>
         <PromptInputTextarea
-          value={input}
           onChange={(e) => setInput(e.target.value)}
           placeholder="Tell me about your website..."
+          value={input}
         />
         <PromptInputFooter>
           <div />
           <PromptInputSubmit
-            status={isPending ? "streaming" : status}
             onStop={stop}
+            status={isPending ? "streaming" : status}
           />
         </PromptInputFooter>
       </PromptInput>

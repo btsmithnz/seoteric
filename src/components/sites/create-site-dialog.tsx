@@ -1,15 +1,13 @@
 "use client";
 
-import { useState, useTransition } from "react";
-import { useRouter } from "next/navigation";
 import { useForm } from "@tanstack/react-form";
 import { useMutation } from "convex/react";
-import { z } from "zod";
+import { useRouter } from "next/navigation";
+import { useState, useTransition } from "react";
 import { toast } from "sonner";
-
-import { api } from "@/convex/_generated/api";
+import { z } from "zod";
+import { FieldErrorZod } from "@/components/input/field-error-zod";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import {
   createDialogHandle,
   Dialog,
@@ -21,10 +19,11 @@ import {
 } from "@/components/ui/dialog";
 import {
   Field,
-  FieldLabel,
-  FieldGroup,
   FieldDescription,
+  FieldGroup,
+  FieldLabel,
 } from "@/components/ui/field";
+import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
@@ -32,7 +31,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { FieldErrorZod } from "@/components/input/field-error-zod";
+import { api } from "@/convex/_generated/api";
 import { countries, renderCountryLabel } from "@/lib/countries";
 
 interface CreateSiteDialogProps {
@@ -90,7 +89,7 @@ export function CreateSiteDialog({ onSuccess }: CreateSiteDialogProps) {
   });
 
   return (
-    <Dialog handle={createSiteDialog} open={open} onOpenChange={setOpen}>
+    <Dialog handle={createSiteDialog} onOpenChange={setOpen} open={open}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Create a new site</DialogTitle>
@@ -111,11 +110,11 @@ export function CreateSiteDialog({ onSuccess }: CreateSiteDialogProps) {
                 <Field data-invalid={field.state.meta.errors.length > 0}>
                   <FieldLabel>Site name</FieldLabel>
                   <Input
-                    type="text"
-                    placeholder="My Website"
-                    value={field.state.value}
-                    onChange={(e) => field.handleChange(e.target.value)}
                     onBlur={field.handleBlur}
+                    onChange={(e) => field.handleChange(e.target.value)}
+                    placeholder="My Website"
+                    type="text"
+                    value={field.state.value}
                   />
                   <FieldErrorZod field={field} />
                 </Field>
@@ -126,11 +125,11 @@ export function CreateSiteDialog({ onSuccess }: CreateSiteDialogProps) {
                 <Field data-invalid={field.state.meta.errors.length > 0}>
                   <FieldLabel>Domain</FieldLabel>
                   <Input
-                    type="text"
-                    placeholder="example.com"
-                    value={field.state.value}
-                    onChange={(e) => field.handleChange(e.target.value)}
                     onBlur={field.handleBlur}
+                    onChange={(e) => field.handleChange(e.target.value)}
+                    placeholder="example.com"
+                    type="text"
+                    value={field.state.value}
                   />
                   <FieldDescription>
                     Enter without http:// or https://
@@ -144,8 +143,8 @@ export function CreateSiteDialog({ onSuccess }: CreateSiteDialogProps) {
                 <Field data-invalid={field.state.meta.errors.length > 0}>
                   <FieldLabel>Country</FieldLabel>
                   <Select
-                    value={field.state.value}
                     onValueChange={(value) => field.handleChange(value ?? "")}
+                    value={field.state.value}
                   >
                     <SelectTrigger className="w-full">
                       <SelectValue>{renderCountryLabel}</SelectValue>
@@ -167,11 +166,11 @@ export function CreateSiteDialog({ onSuccess }: CreateSiteDialogProps) {
                 <Field data-invalid={field.state.meta.errors.length > 0}>
                   <FieldLabel>Industry</FieldLabel>
                   <Input
-                    type="text"
-                    placeholder="e.g., E-commerce, Healthcare, Finance"
-                    value={field.state.value}
-                    onChange={(e) => field.handleChange(e.target.value)}
                     onBlur={field.handleBlur}
+                    onChange={(e) => field.handleChange(e.target.value)}
+                    placeholder="e.g., E-commerce, Healthcare, Finance"
+                    type="text"
+                    value={field.state.value}
                   />
                   <FieldErrorZod field={field} />
                 </Field>
@@ -187,8 +186,8 @@ export function CreateSiteDialog({ onSuccess }: CreateSiteDialogProps) {
             >
               {({ canSubmit, isSubmitting }) => (
                 <Button
-                  type="submit"
                   disabled={!canSubmit || isSubmitting || isPending}
+                  type="submit"
                 >
                   {isSubmitting || isPending ? "Creating..." : "Create site"}
                 </Button>

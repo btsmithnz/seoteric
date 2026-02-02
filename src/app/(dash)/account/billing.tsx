@@ -1,8 +1,8 @@
 "use client";
 
+import { CheckoutLink, CustomerPortalLink } from "@convex-dev/polar/react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { api } from "@/convex/_generated/api";
-import { CheckoutLink, CustomerPortalLink } from "@convex-dev/polar/react";
 import { useAuthenticatedQuery } from "@/lib/hooks";
 
 function Subscription() {
@@ -17,13 +17,19 @@ function Subscription() {
     );
   }
 
+  const productIds = [products.standardMonthly?.id].filter((p) => p != null);
+
+  if (productIds.length === 0) {
+    return (
+      <div className="flex flex-col gap-2">
+        <p className="text-muted-foreground text-sm">No products found.</p>
+      </div>
+    );
+  }
+
   return (
     <div className="flex flex-col gap-2">
-      <CheckoutLink
-        polarApi={api.polar}
-        productIds={[products.standardMonthly!.id]}
-        embed={false}
-      >
+      <CheckoutLink embed={false} polarApi={api.polar} productIds={productIds}>
         Upgrade to Premium
       </CheckoutLink>
 
@@ -41,8 +47,8 @@ function Subscription() {
 export function Billing() {
   return (
     <div className="flex flex-col gap-2">
-      <h2 className="text-lg font-semibold">Subscription</h2>
-      <p className="text-sm text-muted-foreground">
+      <h2 className="font-semibold text-lg">Subscription</h2>
+      <p className="text-muted-foreground text-sm">
         Manage your subscription and billing details.
       </p>
 

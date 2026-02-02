@@ -1,10 +1,10 @@
 "use client";
 
-import { PropsWithChildren } from "react";
-import { useRouter } from "next/navigation";
-import { createAuthClient } from "better-auth/react";
 import { convexClient } from "@convex-dev/better-auth/client/plugins";
 import { AuthBoundary } from "@convex-dev/better-auth/react";
+import { createAuthClient } from "better-auth/react";
+import { useRouter } from "next/navigation";
+import type { PropsWithChildren } from "react";
 import { api } from "@/convex/_generated/api";
 import { isAuthError } from "./utils";
 
@@ -18,9 +18,9 @@ export const ClientAuthBoundary = ({ children }: PropsWithChildren) => {
   return (
     <AuthBoundary
       authClient={authClient}
-      onUnauth={() => router.push("/login")}
       getAuthUserFn={api.auth.getAuthUser}
       isAuthError={isAuthError}
+      onUnauth={() => router.push("/login")}
     >
       {children}
     </AuthBoundary>

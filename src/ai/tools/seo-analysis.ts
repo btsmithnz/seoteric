@@ -1,6 +1,6 @@
 import { tool } from "ai";
+import { type CheerioAPI, load } from "cheerio";
 import { z } from "zod";
-import { load, type CheerioAPI } from "cheerio";
 
 const MAX_LINKS = 50;
 const MAX_IMAGES = 50;
@@ -40,7 +40,9 @@ function extractLinks(
   $("a[href]").each((_, el) => {
     const $el = $(el);
     const href = $el.attr("href");
-    if (!href) return;
+    if (!href) {
+      return;
+    }
 
     const text = $el.text().trim().slice(0, 100);
 
@@ -48,14 +50,18 @@ function extractLinks(
       const linkUrl = new URL(href, baseUrl);
 
       // Skip non-http links
-      if (!linkUrl.protocol.startsWith("http")) return;
+      if (!linkUrl.protocol.startsWith("http")) {
+        return;
+      }
 
       const linkData = { href: linkUrl.href, text };
 
       if (linkUrl.hostname === baseUrl.hostname) {
-        if (internal.length < MAX_LINKS) internal.push(linkData);
-      } else {
-        if (external.length < MAX_LINKS) external.push(linkData);
+        if (internal.length < MAX_LINKS) {
+          internal.push(linkData);
+        }
+      } else if (external.length < MAX_LINKS) {
+        external.push(linkData);
       }
     } catch {
       // Invalid URL, skip
@@ -69,11 +75,15 @@ function extractImages($: CheerioAPI, baseUrl: URL) {
   const images: { src: string; alt: string | null }[] = [];
 
   $("img[src]").each((_, el) => {
-    if (images.length >= MAX_IMAGES) return;
+    if (images.length >= MAX_IMAGES) {
+      return;
+    }
 
     const $el = $(el);
     const src = $el.attr("src");
-    if (!src) return;
+    if (!src) {
+      return;
+    }
 
     try {
       const imgUrl = new URL(src, baseUrl);
@@ -88,6 +98,8 @@ function extractImages($: CheerioAPI, baseUrl: URL) {
 
   return images;
 }
+
+const SPACE_REGEX = /\s+/;
 
 function extractJsonLd($: CheerioAPI): object[] | null {
   const scripts: object[] = [];
@@ -113,7 +125,7 @@ function countWords($: CheerioAPI): number {
   $clone.find("script, style, noscript").remove();
 
   const text = $clone.find("body").text();
-  const words = text.split(/\s+/).filter((word) => word.length > 0);
+  const words = text.split(SPACE_REGEX).filter((word) => word.length > 0);
   return words.length;
 }
 

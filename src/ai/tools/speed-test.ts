@@ -1,7 +1,7 @@
-import { SpeedTestRegionResult } from "@/app/api/speed-test/_lib/speed-test";
-import { deploymentUrl } from "@/lib/env";
 import { tool } from "ai";
 import { z } from "zod";
+import type { SpeedTestRegionResult } from "@/app/api/speed-test/_lib/speed-test";
+import { deploymentUrl } from "@/lib/env";
 
 export interface SpeedTestOutput {
   url: string;

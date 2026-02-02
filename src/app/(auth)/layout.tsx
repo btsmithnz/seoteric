@@ -1,6 +1,6 @@
+import { PublicLayout } from "@/components/layouts/public";
 import { ConvexProvider } from "@/components/providers/convex";
 import { getToken } from "@/lib/auth-server";
-import { PublicLayout } from "@/components/layouts/public";
 
 export default async function AuthLayout({ children }: LayoutProps<"/">) {
   const token = await getToken();
