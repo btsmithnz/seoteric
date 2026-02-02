@@ -16,7 +16,6 @@ import {
   PromptInputSubmit,
   PromptInputTextarea,
 } from "@/components/ai-elements/prompt-input";
-import { Suggestion, Suggestions } from "@/components/ai-elements/suggestion";
 import { SeotericMessages } from "@/components/chat/seoteric-messages";
 import type { api } from "@/convex/_generated/api";
 import type { Id } from "@/convex/_generated/dataModel";
@@ -62,34 +61,10 @@ export function ChatSeo(props: {
           <Conversation>
             <ConversationContent>
               {messages.length === 0 ? (
-                <>
-                  <ConversationEmptyState
-                    description="Ask me anything about SEO optimization"
-                    title="Welcome to Seoteric"
-                  />
-                  <Suggestions className="mt-4 justify-center">
-                    <Suggestion
-                      onClick={handleSend}
-                      suggestion="Audit my site"
-                    />
-                    <Suggestion
-                      onClick={handleSend}
-                      suggestion="Check page speed"
-                    />
-                    <Suggestion
-                      onClick={handleSend}
-                      suggestion="Review meta tags"
-                    />
-                    <Suggestion
-                      onClick={handleSend}
-                      suggestion="Suggest keywords"
-                    />
-                    <Suggestion
-                      onClick={handleSend}
-                      suggestion="Find SEO issues"
-                    />
-                  </Suggestions>
-                </>
+                <ConversationEmptyState
+                  description="Ask me anything about SEO optimization"
+                  title="Welcome to Seoteric"
+                />
               ) : (
                 <SeotericMessages messages={messages} status={status} />
               )}
