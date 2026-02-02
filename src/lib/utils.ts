@@ -16,3 +16,9 @@ export const isAuthError = (error: unknown) => {
     "";
   return AUTH_ERROR_REGEX.test(message);
 };
+
+const DOMAIN_REGEX = /^https?:\/\//;
+const SLASH_REGEX = /\//;
+export function cleanDomain(domain: string) {
+  return domain.replace(DOMAIN_REGEX, "").replace(SLASH_REGEX, "");
+}

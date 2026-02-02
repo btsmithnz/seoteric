@@ -7,7 +7,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ```bash
 pnpm dev          # Start development server (localhost:3000)
 pnpm build        # Production build
-pnpm lint         # Run ESLint
+pnpm dlx ultracite check  # Check for linting/formatting issues
+pnpm dlx ultracite fix    # Auto-fix issues
 ```
 
 ## Architecture

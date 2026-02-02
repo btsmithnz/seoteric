@@ -1,5 +1,6 @@
 import { tool } from "ai";
 import { z } from "zod";
+import { cleanDomain } from "@/lib/utils";
 
 interface RobotsDirective {
   userAgent: string;
@@ -51,9 +52,6 @@ function parseRobotsTxt(text: string): ParsedRobotsTxt {
   return { raw: text, directives, sitemaps };
 }
 
-const DOMAIN_REGEX = /^https?:\/\//;
-const SLASH_REGEX = /\//;
-
 export const fetchRobotsTxtTool = tool({
   description:
     "Fetch and parse a site's robots.txt file to see crawling rules and sitemap locations",
@@ -61,10 +59,7 @@ export const fetchRobotsTxtTool = tool({
     domain: z.string().describe("The site domain (e.g., 'example.com')"),
   }),
   execute: async ({ domain }) => {
-    const cleanDomain = domain
-      .replace(DOMAIN_REGEX, "")
-      .replace(SLASH_REGEX, "");
-    const url = `https://${cleanDomain}/robots.txt`;
+    const url = `https://${cleanDomain(domain)}/robots.txt`;
 
     try {
       const response = await fetch(url);

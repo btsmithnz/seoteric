@@ -1,6 +1,7 @@
 import { tool } from "ai";
 import { load } from "cheerio";
 import { z } from "zod";
+import { cleanDomain } from "@/lib/utils";
 
 interface SitemapUrl {
   loc: string;
@@ -75,9 +76,6 @@ function parseSitemap(xml: string): SitemapResult {
   };
 }
 
-const DOMAIN_REGEX = /^https?:\/\//;
-const SLASH_REGEX = /\//;
-
 export const fetchSitemapTool = tool({
   description:
     "Fetch and parse a site's XML sitemap to list indexed pages. Handles both regular sitemaps and sitemap index files.",
@@ -103,10 +101,7 @@ export const fetchSitemapTool = tool({
           error: "Domain is required when url is a relative path",
         };
       }
-      const cleanDomain = domain
-        .replace(DOMAIN_REGEX, "")
-        .replace(SLASH_REGEX, "");
-      fullUrl = `https://${cleanDomain}${url}`;
+      fullUrl = `https://${cleanDomain(domain)}${url}`;
     }
 
     // Ensure https
