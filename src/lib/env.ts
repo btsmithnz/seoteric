@@ -6,5 +6,7 @@ if (!unsafeConvexUrl) {
 export const convexUrl = unsafeConvexUrl;
 export const convexSiteUrl = convexUrl.replace(".cloud", ".site");
 
-export const deploymentUrl =
-  process.env.VERCEL_PROJECT_PRODUCTION_URL || "http://localhost:3000";
+export const vercelUrl = process.env.VERCEL_PROJECT_PRODUCTION_URL;
+export const deploymentUrl = vercelUrl
+  ? `https://${vercelUrl}`
+  : "http://localhost:3000";
