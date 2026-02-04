@@ -2,7 +2,6 @@ export { CreateAccountTool } from "./create-account";
 export { CreateRecommendationTool } from "./create-recommendation";
 export { InspectDomTool } from "./inspect-dom";
 export { PageSpeedTool } from "./pagespeed";
-export { SpeedTestTool } from "./speed-test";
 export { ToolCall } from "./tool-call";
 export { UpdateRecommendationTool } from "./update-recommendation";
 export { WebsiteNameTool } from "./website-name";

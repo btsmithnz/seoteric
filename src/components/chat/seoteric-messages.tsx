@@ -1,7 +1,6 @@
 import type { ChatStatus, UIMessage } from "ai";
 import type { PageSpeedOutput } from "@/ai/tools/pagespeed";
 import type { CreateRecommendationOutput } from "@/ai/tools/recommendations";
-import type { SpeedTestOutput } from "@/ai/tools/speed-test";
 import {
   Message,
   MessageContent,
@@ -17,7 +16,6 @@ import {
   CreateRecommendationTool,
   InspectDomTool,
   PageSpeedTool,
-  SpeedTestTool,
   UpdateRecommendationTool,
   WebsiteNameTool,
   WebsiteTextTool,
@@ -79,15 +77,6 @@ function MessageRender({
 
           case "tool-updateRecommendation":
             return <UpdateRecommendationTool key={partId} state={part.state} />;
-
-          case "tool-runSpeedTest":
-            return (
-              <SpeedTestTool
-                key={partId}
-                output={part.output as SpeedTestOutput}
-                state={part.state}
-              />
-            );
 
           case "tool-runPageSpeed":
             return (

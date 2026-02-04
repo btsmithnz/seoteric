@@ -12,7 +12,6 @@ import { fetchRobotsTxtTool } from "./tools/robots";
 import { checkSecurityHeadersTool } from "./tools/security-headers";
 import { getPageSeoDataTool } from "./tools/seo-analysis";
 import { fetchSitemapTool } from "./tools/sitemap";
-import { runSpeedTestTool } from "./tools/speed-test";
 import { validateStructuredDataTool } from "./tools/structured-data";
 
 const existingRecommendationSchema = z.object({
@@ -35,7 +34,6 @@ export const seoAgent = new ToolLoopAgent({
     getPageSeoData: getPageSeoDataTool,
     createRecommendation: createRecommendationTool,
     updateRecommendation: updateRecommendationTool,
-    runSpeedTest: runSpeedTestTool,
     runPageSpeed: runPageSpeedTool,
     checkIndexability: checkIndexabilityTool,
     checkSecurityHeaders: checkSecurityHeadersTool,
