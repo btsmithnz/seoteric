@@ -4,7 +4,7 @@ AI-powered SEO insights for your website. Get actionable advice on keyword resea
 
 ## Try It
 
-**Hosted version:** [seoteric.com](https://seoteric.com) — no setup required.
+**Hosted version:** [seoteric.btsmith.nz](https://seoteric.btsmith.nz) — no setup required.
 
 **Self-host:** Follow the instructions below to run your own instance.
 
