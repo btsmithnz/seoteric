@@ -1,14 +1,14 @@
 "use client";
 
-import { usePaginatedQuery } from "convex/react";
 import { Loader2Icon } from "lucide-react";
 import { useEffect, useRef } from "react";
 import { api } from "@/convex/_generated/api";
 import type { Id } from "@/convex/_generated/dataModel";
-import { ChatsListItem } from "./list-item";
+import { useAuthPaginatedQuery } from "@/lib/hooks";
+import { ChatsListItem, ChatsListItemSkeleton } from "./list-item";
 
 export function ChatsList({ siteId }: { siteId: Id<"sites"> }) {
-  const { results, status, loadMore } = usePaginatedQuery(
+  const { results, status, loadMore, isLoading } = useAuthPaginatedQuery(
     api.chat.list,
     { siteId },
     { initialNumItems: 50 }
@@ -37,6 +37,7 @@ export function ChatsList({ siteId }: { siteId: Id<"sites"> }) {
 
   return (
     <div className="flex-1 overflow-y-auto p-2">
+      {isLoading && [1, 2, 3].map((i) => <ChatsListItemSkeleton key={i} />)}
       {results.map((chat) => (
         <ChatsListItem chat={chat} key={chat._id} siteId={siteId} />
       ))}

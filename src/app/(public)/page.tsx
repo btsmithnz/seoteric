@@ -6,7 +6,8 @@ import {
   Link2,
   Search,
 } from "lucide-react";
-import { ChatOnboarding } from "./chat";
+import { Suspense } from "react";
+import { ChatOnboarding, ChatOnboardingSkeleton } from "./chat";
 
 const features = [
   {
@@ -50,7 +51,9 @@ export default function Page() {
           AI-powered SEO insights
         </p>
       </header>
-      <ChatOnboarding />
+      <Suspense fallback={<ChatOnboardingSkeleton />}>
+        <ChatOnboarding />
+      </Suspense>
       <footer className="mt-8 text-muted-foreground text-xs">
         No sign-in required to start
       </footer>

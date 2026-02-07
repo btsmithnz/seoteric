@@ -3,10 +3,10 @@
 import { CheckoutLink, CustomerPortalLink } from "@convex-dev/polar/react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { api } from "@/convex/_generated/api";
-import { useAuthenticatedQuery } from "@/lib/hooks";
+import { useAuthQuery } from "@/lib/hooks";
 
 function Subscription() {
-  const products = useAuthenticatedQuery(api.polar.getConfiguredProducts);
+  const products = useAuthQuery(api.polar.getConfiguredProducts);
 
   if (!products) {
     return (
@@ -17,7 +17,10 @@ function Subscription() {
     );
   }
 
-  const productIds = [products.standardMonthly?.id].filter((p) => p != null);
+  const productIds = [
+    products.proMonthly?.id,
+    products.agencyMonthly?.id,
+  ].filter((p) => p != null);
 
   if (productIds.length === 0) {
     return (

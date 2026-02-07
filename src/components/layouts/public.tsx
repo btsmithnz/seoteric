@@ -2,6 +2,8 @@ import Link from "next/link";
 import { ThemeSwitcher } from "@/components/theme-switcher";
 import { Button } from "@/components/ui/button";
 
+const year = new Date().getFullYear();
+
 export function PublicLayout({ children }: { children: React.ReactNode }) {
   return (
     <div>
@@ -33,9 +35,7 @@ export function PublicLayout({ children }: { children: React.ReactNode }) {
       <footer className="flex flex-col gap-4 border-t px-6 py-4 text-muted-foreground text-sm sm:flex-row sm:items-center sm:justify-between">
         <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:gap-4">
           <span className="font-semibold text-foreground">Seoteric</span>
-          <span>
-            © {new Date().getFullYear()} Seoteric. All rights reserved.
-          </span>
+          <span>© {year} Seoteric. All rights reserved.</span>
         </div>
         <nav className="flex flex-wrap items-center gap-4">
           <Link className="hover:text-foreground" href="/pricing">

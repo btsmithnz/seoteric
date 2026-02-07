@@ -2,6 +2,7 @@
 
 import { useForm } from "@tanstack/react-form";
 import { useMutation } from "convex/react";
+import { PlusIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { toast } from "sonner";
@@ -16,6 +17,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
+  DialogTrigger,
 } from "@/components/ui/dialog";
 import {
   Field,
@@ -40,6 +42,15 @@ interface CreateSiteDialogProps {
 }
 
 export const createSiteDialog = createDialogHandle();
+
+export function CreateSiteDialogTrigger() {
+  return (
+    <DialogTrigger handle={createSiteDialog} render={<Button size="sm" />}>
+      <PlusIcon className="mr-1" />
+      New site
+    </DialogTrigger>
+  );
+}
 
 export function CreateSiteDialog({ onSuccess }: CreateSiteDialogProps) {
   const router = useRouter();

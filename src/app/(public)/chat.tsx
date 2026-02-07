@@ -17,6 +17,7 @@ import {
   PromptInputTextarea,
 } from "@/components/ai-elements/prompt-input";
 import { SeotericMessages } from "@/components/chat/seoteric-messages";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const transport = new DefaultChatTransport({
   api: "/api/chat/onboarding",
@@ -44,6 +45,32 @@ Once I have these details, we can create your account and get you on your way! W
     ],
   },
 ];
+
+function ChatOnboardingFrame({ children }: { children: React.ReactNode }) {
+  return (
+    <div className="flex h-[480px] w-full max-w-2xl flex-col border">
+      {children}
+    </div>
+  );
+}
+
+export function ChatOnboardingSkeleton() {
+  return (
+    <ChatOnboardingFrame>
+      <Conversation>
+        <ConversationContent>
+          <ConversationEmptyState
+            description="Ask me anything about SEO optimization"
+            title="Welcome to Seoteric"
+          />
+        </ConversationContent>
+        <ConversationScrollButton />
+      </Conversation>
+
+      <Skeleton className="h-10 w-full" />
+    </ChatOnboardingFrame>
+  );
+}
 
 export function ChatOnboarding() {
   const [input, setInput] = useState("");
@@ -80,7 +107,7 @@ export function ChatOnboarding() {
   };
 
   return (
-    <div className="flex h-[480px] w-full max-w-2xl flex-col border">
+    <ChatOnboardingFrame>
       <Conversation>
         <ConversationContent>
           {messages.length === 0 ? (
@@ -109,6 +136,6 @@ export function ChatOnboarding() {
           />
         </PromptInputFooter>
       </PromptInput>
-    </div>
+    </ChatOnboardingFrame>
   );
 }

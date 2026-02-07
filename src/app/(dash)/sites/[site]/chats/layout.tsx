@@ -3,24 +3,18 @@ import {
   SidebarMobileToggleIcon,
 } from "@/components/elements/sidebar";
 import { SidebarProvider } from "@/components/elements/sidebar/provider";
-import type { Id } from "@/convex/_generated/dataModel";
-import { ChatsSidebar } from "./chats-sidebar";
-import { RecommendationsSidebar } from "./recommendations-sidebar";
+import { ChatsSidebar } from "@/components/sidebars/chats";
+import { RecommendationsSidebar } from "@/components/sidebars/recommendations";
 
-export default async function ChatsLayout({
+export default function ChatsLayout({
   children,
-  params,
 }: {
   children: React.ReactNode;
-  params: Promise<{ site: string }>;
 }) {
-  const { site } = await params;
-  const siteId = site as Id<"sites">;
-
   return (
     <SidebarProvider>
       <div className="flex flex-1 flex-row">
-        <ChatsSidebar siteId={siteId} />
+        <ChatsSidebar />
 
         <div className="flex min-w-0 flex-1 flex-col gap-1 p-4 pt-1 md:pt-4">
           <div className="flex flex-row justify-between">
@@ -44,7 +38,7 @@ export default async function ChatsLayout({
           <div className="h-full">{children}</div>
         </div>
 
-        <RecommendationsSidebar siteId={siteId} />
+        <RecommendationsSidebar />
       </div>
     </SidebarProvider>
   );

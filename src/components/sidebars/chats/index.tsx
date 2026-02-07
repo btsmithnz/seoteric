@@ -2,6 +2,7 @@
 
 import { PlusIcon } from "lucide-react";
 import Link from "next/link";
+import { useParams } from "next/navigation";
 import {
   Sidebar,
   SidebarMobileToggleButton,
@@ -12,7 +13,9 @@ import { Button } from "@/components/ui/button";
 import type { Id } from "@/convex/_generated/dataModel";
 import { ChatsList } from "./list";
 
-export function ChatsSidebar({ siteId }: { siteId: Id<"sites"> }) {
+export function ChatsSidebar() {
+  const { site: siteId } = useParams<{ site: Id<"sites"> }>();
+
   const sidebar = useSidebar();
   const { setMobileOpen } = sidebar.pick("chats");
 

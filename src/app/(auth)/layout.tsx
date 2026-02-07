@@ -1,3 +1,5 @@
+"use cache: private";
+
 import { PublicLayout } from "@/components/layouts/public";
 import { ConvexProvider } from "@/components/providers/convex";
 import { getToken } from "@/lib/auth-server";

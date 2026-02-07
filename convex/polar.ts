@@ -1,14 +1,16 @@
 import { Polar } from "@convex-dev/polar";
 import { api, components } from "./_generated/api";
 
-const productStandardMonthly = process.env.POLAR_PRODUCT_STANDARD_MONTHLY;
-if (!productStandardMonthly) {
-  throw new Error("POLAR_PRODUCT_STANDARD_MONTHLY is not set");
+const productProMonthly = process.env.POLAR_PRODUCT_PRO_MONTHLY;
+const productAgencyMonthly = process.env.POLAR_PRODUCT_AGENCY_MONTHLY;
+if (!(productProMonthly && productAgencyMonthly)) {
+  throw new Error("Missing Polar product IDs");
 }
 
 export const polar = new Polar(components.polar, {
   products: {
-    standardMonthly: productStandardMonthly,
+    proMonthly: productProMonthly,
+    agencyMonthly: productAgencyMonthly,
   },
   getUserInfo: async (ctx) => {
     const user: {

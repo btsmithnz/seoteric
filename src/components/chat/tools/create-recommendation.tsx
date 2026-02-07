@@ -1,6 +1,6 @@
 import { LightbulbIcon } from "lucide-react";
 import type { CreateRecommendationOutput } from "@/ai/tools/recommendations";
-import { RecommendationCard } from "../../../app/(dash)/sites/[site]/chats/recommendations-sidebar/card";
+import { RecommendationCard } from "../../sidebars/recommendations/card";
 import { ToolCall } from "./tool-call";
 
 interface CreateRecommendationToolProps {

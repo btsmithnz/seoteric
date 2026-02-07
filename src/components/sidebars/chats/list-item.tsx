@@ -4,11 +4,20 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useSidebar } from "@/components/elements/sidebar";
 import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
 import type { Doc, Id } from "@/convex/_generated/dataModel";
 
 interface ChatListItemProps {
   chat: Doc<"chats">;
   siteId: Id<"sites">;
+}
+
+export function ChatsListItemSkeleton() {
+  return (
+    <Button className="w-full justify-start" variant="ghost">
+      <Skeleton className="h-4 w-full" />
+    </Button>
+  );
 }
 
 export function ChatsListItem({ chat, siteId }: ChatListItemProps) {

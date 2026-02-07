@@ -18,13 +18,13 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { api } from "@/convex/_generated/api";
-import { useAuthenticatedQuery } from "@/lib/hooks";
+import { useAuthQuery } from "@/lib/hooks";
 import { cn } from "@/lib/utils";
 
 export function DashboardNav() {
   const params = useParams<{ site?: string }>();
   const pathname = usePathname();
-  const sites = useAuthenticatedQuery(api.site.list);
+  const sites = useAuthQuery(api.site.list);
 
   const siteId = params?.site;
   const currentSite = sites?.find((s) => s._id === siteId);

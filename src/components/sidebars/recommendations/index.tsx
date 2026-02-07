@@ -1,6 +1,7 @@
 "use client";
 
 import { LightbulbIcon } from "lucide-react";
+import { useParams } from "next/navigation";
 import { useMemo } from "react";
 import {
   Sidebar,
@@ -9,17 +10,12 @@ import {
 } from "@/components/elements/sidebar";
 import { api } from "@/convex/_generated/api";
 import type { Id } from "@/convex/_generated/dataModel";
-import { useAuthenticatedQuery } from "@/lib/hooks";
+import { useAuthQuery } from "@/lib/hooks";
 import { RecommendationCard } from "./card";
 
-interface Props {
-  siteId: Id<"sites">;
-}
-
-export function RecommendationsSidebar({ siteId }: Props) {
-  const query = useAuthenticatedQuery(api.recommendations.listBySite, {
-    siteId,
-  });
+export function RecommendationsSidebar() {
+  const { site: siteId } = useParams<{ site: Id<"sites"> }>();
+  const query = useAuthQuery(api.recommendations.listBySite, { siteId });
   const recommendations = useMemo(() => query ?? [], [query]);
 
   const openRecommendations = recommendations.filter(
@@ -28,6 +24,8 @@ export function RecommendationsSidebar({ siteId }: Props) {
   const completedRecommendations = recommendations.filter(
     (r) => r.status === "completed" || r.status === "dismissed"
   );
+
+  const isLoading = query === undefined;
 
   return (
     <Sidebar className="md:w-80" selector="recommendations" side="right">
@@ -51,12 +49,16 @@ export function RecommendationsSidebar({ siteId }: Props) {
       </div>
 
       <div className="flex-1 space-y-3 overflow-y-auto p-2">
-        {openRecommendations.length === 0 &&
-          completedRecommendations.length === 0 && (
-            <p className="py-4 text-center text-muted-foreground text-sm">
-              No recommendations yet. Ask the AI to analyze your site.
-            </p>
-          )}
+        {isLoading && (
+          <p className="py-4 text-center text-muted-foreground text-sm">
+            Loading...
+          </p>
+        )}
+        {!isLoading && recommendations.length === 0 && (
+          <p className="py-4 text-center text-muted-foreground text-sm">
+            No recommendations yet. Ask the AI to analyze your site.
+          </p>
+        )}
 
         {openRecommendations.map((rec) => (
           <RecommendationCard key={rec._id} recommendation={rec} showActions />
