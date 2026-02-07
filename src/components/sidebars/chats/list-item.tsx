@@ -32,7 +32,7 @@ export function ChatsListItem({ chat, siteId }: ChatListItemProps) {
       nativeButton={false}
       render={
         <Link
-          href={`/sites/${siteId}/chats/${chat._id}`}
+          href={`/sites/${siteId}/chats/${chat.slug}`}
           onClick={() => setMobileOpen(false)}
         />
       }

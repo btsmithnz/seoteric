@@ -1,13 +1,10 @@
 "use client";
 
-import { useChat } from "@ai-sdk/react";
-import { DefaultChatTransport } from "ai";
-import { type Preloaded, usePreloadedQuery } from "convex/react";
-import { useEffect, useRef, useState } from "react";
+import { useParams } from "next/navigation";
+import { useState } from "react";
 import {
   Conversation,
   ConversationContent,
-  ConversationEmptyState,
   ConversationScrollButton,
 } from "@/components/ai-elements/conversation";
 import {
@@ -17,57 +14,36 @@ import {
   PromptInputTextarea,
 } from "@/components/ai-elements/prompt-input";
 import { SeotericMessages } from "@/components/chat/seoteric-messages";
-import type { api } from "@/convex/_generated/api";
-import type { Id } from "@/convex/_generated/dataModel";
+import { api } from "@/convex/_generated/api";
+import { useAuthQuery } from "@/lib/hooks";
+import { ChatEmptyState } from "./empty";
+import { useChatSeo } from "./provider";
 
-const transport = new DefaultChatTransport({
-  api: "/api/chat/seo",
-});
-
-export function ChatSeo(props: {
-  siteId: Id<"sites">;
-  preloadedChat: Preloaded<typeof api.chat.getWithMessages>;
-}) {
+export function ChatContent({ children }: { children: React.ReactNode }) {
   const [input, setInput] = useState("");
+  const { slug } = useParams<{ slug?: string }>();
+  const { messages, status, stop, sendMessage } = useChatSeo();
 
-  const chat = usePreloadedQuery(props.preloadedChat);
+  const chat = useAuthQuery(api.chat.getSafe, slug ? { slug } : "skip");
 
-  const { messages, sendMessage, status, stop } = useChat({
-    id: chat._id,
-    transport,
-    messages: chat.messages,
-  });
-
-  const isEmpty = messages.length === 0;
-
-  const sentInitialMessage = useRef(false);
-  useEffect(() => {
-    if (chat.initialMessage && isEmpty && !sentInitialMessage.current) {
-      sentInitialMessage.current = true;
-      sendMessage({ text: chat.initialMessage });
-    }
-  }, [chat.initialMessage, isEmpty, sendMessage]);
-
-  const handleSend = (msg: string) => {
-    sendMessage({ text: msg });
+  const handleSend = (text: string) => {
+    sendMessage({ text });
     setInput("");
   };
 
   return (
     <div className="flex h-full gap-4">
       <div className="flex min-w-0 flex-1 flex-col">
-        <h1 className="mb-1 font-bold">{chat.name}</h1>
+        <h1 className="mb-1 font-bold">{chat?.name || "New Chat"}</h1>
         <div className="flex flex-1 flex-col border">
           <Conversation>
             <ConversationContent>
               {messages.length === 0 ? (
-                <ConversationEmptyState
-                  description="Ask me anything about SEO optimization"
-                  title="Welcome to Seoteric"
-                />
+                <ChatEmptyState onSend={handleSend} />
               ) : (
                 <SeotericMessages messages={messages} status={status} />
               )}
+              {children}
             </ConversationContent>
             <ConversationScrollButton />
           </Conversation>

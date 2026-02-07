@@ -19,16 +19,46 @@ import { PRIORITY_ORDER } from "./recommendations";
 import { getSite } from "./site";
 
 async function getChatSite(ctx: QueryCtx | MutationCtx, chatId: Id<"chats">) {
-  const chat = await ctx.db.get(chatId);
+  const chat = await ctx.db.get("chats", chatId);
   if (!chat) {
-    throw new ConvexError("Chat not found");
+    return null;
   }
   const site = await getSite(ctx, chat.siteId);
   if (!site) {
-    throw new ConvexError("Chat not found"); // User doesn't have access to site
+    return null; // User doesn't have access to site
   }
   return { chat, site };
 }
+
+async function getChatSlugSite(ctx: QueryCtx | MutationCtx, slug: string) {
+  const chat = await ctx.db
+    .query("chats")
+    .withIndex("by_slug", (q) => q.eq("slug", slug))
+    .first();
+  if (!chat) {
+    return null;
+  }
+  const site = await getSite(ctx, chat.siteId);
+  if (!site) {
+    return null; // User doesn't have access to site
+  }
+  return { chat, site };
+}
+
+export const updateChatNameInternal = internalMutation({
+  args: { chatId: v.id("chats"), name: v.string() },
+  handler: async (ctx, args) => {
+    const chat = await ctx.db.get(args.chatId);
+
+    if (!chat) {
+      throw new ConvexError("Chat not found");
+    }
+
+    return ctx.db.patch("chats", chat._id, {
+      name: args.name,
+    });
+  },
+});
 
 export const generateChatNameInternal = internalAction({
   args: { chatId: v.id("chats"), message: v.string() },
@@ -47,31 +77,6 @@ export const generateChatNameInternal = internalAction({
   },
 });
 
-export const create = mutation({
-  args: {
-    siteId: v.id("sites"),
-    name: v.string(),
-    message: v.string(),
-  },
-  handler: async (ctx, args) => {
-    const site = await getSite(ctx, args.siteId);
-    const chatId = await ctx.db.insert("chats", {
-      siteId: site._id,
-      name: args.name,
-    });
-    await ctx.db.insert("messages", {
-      chatId,
-      init: args.message,
-      messages: [],
-    });
-    await ctx.scheduler.runAfter(0, internal.chat.generateChatNameInternal, {
-      chatId,
-      message: args.message,
-    });
-    return chatId;
-  },
-});
-
 export const list = query({
   args: { siteId: v.id("sites"), paginationOpts: paginationOptsValidator },
   handler: async (ctx, args) => {
@@ -84,46 +89,74 @@ export const list = query({
   },
 });
 
-export const getWithMessages = query({
-  args: { chatId: v.id("chats") },
+export const getSafe = query({
+  args: { slug: v.string() },
   handler: async (ctx, args) => {
-    const { chat } = await getChatSite(ctx, args.chatId);
+    try {
+      const res = await getChatSlugSite(ctx, args.slug);
+      return res?.chat ?? null;
+    } catch {
+      return null;
+    }
+  },
+});
+
+export const getWithMessages = query({
+  args: { slug: v.string() },
+  handler: async (ctx, args) => {
+    const res = await getChatSlugSite(ctx, args.slug);
+
+    if (!res) {
+      throw new ConvexError("Chat not found.");
+    }
+
     const messages = await ctx.db
       .query("messages")
-      .withIndex("by_chat", (q) => q.eq("chatId", chat._id))
+      .withIndex("by_chat", (q) => q.eq("chatId", res.chat._id))
       .first();
 
     if (!messages) {
-      throw new ConvexError("Chat not found");
+      throw new ConvexError("Unable to load chat."); // This should never happen
     }
 
     return {
-      ...chat,
-      initialMessage: messages.init,
+      ...res.chat,
       messages: messages.messages,
     };
   },
 });
 
-export const updateChatNameInternal = internalMutation({
-  args: { chatId: v.id("chats"), name: v.string() },
+export const generateChatContext = mutation({
+  args: { siteId: v.id("sites"), slug: v.string(), initialMessage: v.string() },
   handler: async (ctx, args) => {
-    const chat = await ctx.db.get(args.chatId);
+    // Verify access to site
+    const site = await getSite(ctx, args.siteId);
 
-    if (!chat) {
-      throw new ConvexError("Chat not found");
+    // Check if the chat already exists
+    const chat = await ctx.db
+      .query("chats")
+      .withIndex("by_slug", (q) => q.eq("slug", args.slug))
+      .filter((q) => q.eq(q.field("siteId"), args.siteId))
+      .first();
+    let chatId = chat?._id;
+
+    // If the chat doesn't exist, create it, and generate a name for it
+    if (!chatId) {
+      chatId = await ctx.db.insert("chats", {
+        siteId: args.siteId,
+        slug: args.slug,
+        name: "New Chat",
+      });
+      await ctx.db.insert("messages", {
+        chatId,
+        messages: [],
+      });
+      await ctx.scheduler.runAfter(0, internal.chat.generateChatNameInternal, {
+        chatId,
+        message: args.initialMessage,
+      });
     }
 
-    return ctx.db.patch("chats", chat._id, {
-      name: args.name,
-    });
-  },
-});
-
-export const getChatContext = query({
-  args: { chatId: v.id("chats") },
-  handler: async (ctx, args) => {
-    const { site, chat } = await getChatSite(ctx, args.chatId);
     const recommendations = await ctx.db
       .query("recommendations")
       .withIndex("by_site", (q) => q.eq("siteId", site._id))
@@ -139,8 +172,8 @@ export const getChatContext = query({
     );
 
     return {
+      chatId,
       site,
-      chat,
       recommendations,
     };
   },
@@ -152,11 +185,15 @@ export const updateChatState = mutation({
     messages: v.array(v.any()),
   },
   handler: async (ctx, args) => {
-    const { site, chat } = await getChatSite(ctx, args.chatId);
+    const res = await getChatSite(ctx, args.chatId);
+
+    if (!res) {
+      return;
+    }
 
     const current = await ctx.db
       .query("messages")
-      .withIndex("by_chat", (q) => q.eq("chatId", chat._id))
+      .withIndex("by_chat", (q) => q.eq("chatId", res.chat._id))
       .first();
 
     if (!current) {
@@ -178,7 +215,7 @@ export const updateChatState = mutation({
         ) {
           const output = part.output as CreateRecommendationOutput;
           await ctx.db.insert("recommendations", {
-            siteId: site._id,
+            siteId: res.site._id,
             title: output.title,
             description: output.description,
             category: output.category,

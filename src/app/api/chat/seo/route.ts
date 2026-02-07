@@ -1,16 +1,29 @@
-import { convertToModelMessages, generateId, type UIMessage } from "ai";
+import { convertToModelMessages, generateId } from "ai";
+import z from "zod";
 import { seoAgent } from "@/ai/seo";
 import { api } from "@/convex/_generated/api";
 import type { Id } from "@/convex/_generated/dataModel";
-import { fetchAuthMutation, fetchAuthQuery } from "@/lib/auth-server";
+import { fetchAuthMutation } from "@/lib/auth-server";
+
+const seoChatBodyExtras = z.object({
+  siteId: z.string<Id<"sites">>(),
+});
+
+const seoChatBody = seoChatBodyExtras.extend({
+  id: z.string(),
+  messages: z.any().array(),
+});
+
+export type SeoChatBodyExtras = z.infer<typeof seoChatBodyExtras>;
+export type SeoChatBody = z.infer<typeof seoChatBody>;
 
 export async function POST(req: Request) {
-  const { id: chatId, messages }: { id: Id<"chats">; messages: UIMessage[] } =
-    await req.json();
+  const body = await req.json();
+  const { id: slug, siteId, messages } = seoChatBody.parse(body);
 
-  const { site, recommendations } = await fetchAuthQuery(
-    api.chat.getChatContext,
-    { chatId }
+  const { chatId, site, recommendations } = await fetchAuthMutation(
+    api.chat.generateChatContext,
+    { siteId, slug, initialMessage: messages[0]?.parts[0]?.text }
   );
 
   const res = await seoAgent.stream({

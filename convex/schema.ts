@@ -10,13 +10,13 @@ export const sitesFields = {
 };
 
 export const chatsFeilds = {
+  slug: v.string(),
   siteId: v.id("sites"),
   name: v.string(),
 };
 
 export const messagesFields = {
   chatId: v.id("chats"),
-  init: v.optional(v.string()),
   messages: v.array(v.any()),
 };
 
@@ -51,7 +51,9 @@ export default defineSchema({
   sites: defineTable(sitesFields)
     .index("by_user", ["userId"])
     .index("by_domain", ["domain"]),
-  chats: defineTable(chatsFeilds).index("by_site", ["siteId"]),
+  chats: defineTable(chatsFeilds)
+    .index("by_slug", ["slug"])
+    .index("by_site", ["siteId"]),
   messages: defineTable(messagesFields).index("by_chat", ["chatId"]),
   recommendations: defineTable(recommendationsFields)
     .index("by_site", ["siteId"])
