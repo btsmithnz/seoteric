@@ -2,6 +2,7 @@
 
 import { useChat } from "@ai-sdk/react";
 import { DefaultChatTransport, type UIMessage } from "ai";
+import { ChevronUp, MessageCircle, Minus } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useCallback, useState, useTransition } from "react";
 import {
@@ -34,29 +35,18 @@ const initialMessages: UIMessage[] = [
 
 I'm **Seoteric**, an AI assistant that specializes in SEO (Search Engine Optimization). Lets get you set up with an account so we can start optimizing your website's search engine presence.
 
-To get started, I'll need to gather some information from you:
-
-1. **Your Name** - What's your name?
-2. **Your Email** - What's your email?
-3. **Website Domain** - What's your website's domain (e.g., www.example.com)?
-
-Once I have these details, we can create your account and get you on your way! What would you like to share first?`,
+To get started, tell me your name, email, and website domain.`,
       },
     ],
   },
 ];
 
-function ChatOnboardingFrame({ children }: { children: React.ReactNode }) {
-  return (
-    <div className="flex h-[480px] w-full max-w-2xl flex-col border">
-      {children}
-    </div>
-  );
-}
-
 export function ChatOnboardingSkeleton() {
   return (
-    <ChatOnboardingFrame>
+    <div className="fixed inset-x-2 bottom-4 z-40 flex h-112 flex-col overflow-hidden rounded-xl border bg-background shadow-lg md:inset-x-auto md:left-1/2 md:w-xl md:-translate-x-1/2">
+      <div className="flex items-center justify-between border-b px-4 py-2">
+        <span className="font-medium text-sm">Seoteric</span>
+      </div>
       <Conversation>
         <ConversationContent>
           <ConversationEmptyState
@@ -66,14 +56,14 @@ export function ChatOnboardingSkeleton() {
         </ConversationContent>
         <ConversationScrollButton />
       </Conversation>
-
       <Skeleton className="h-10 w-full" />
-    </ChatOnboardingFrame>
+    </div>
   );
 }
 
 export function ChatOnboarding() {
   const [input, setInput] = useState("");
+  const [minimized, setMinimized] = useState(false);
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
 
@@ -106,8 +96,35 @@ export function ChatOnboarding() {
     setInput("");
   };
 
+  if (minimized) {
+    return (
+      <button
+        className="fixed inset-x-2 bottom-4 z-40 flex cursor-pointer items-center gap-3 rounded-full border bg-background px-4 py-3 shadow-lg transition-all duration-200 md:inset-x-auto md:left-1/2 md:w-sm md:-translate-x-1/2"
+        onClick={() => setMinimized(false)}
+        type="button"
+      >
+        <MessageCircle className="size-5 text-muted-foreground" />
+        <span className="flex-1 text-left text-muted-foreground text-sm">
+          Tell me about your website...
+        </span>
+        <ChevronUp className="h-4 w-4 text-muted-foreground" />
+      </button>
+    );
+  }
+
   return (
-    <ChatOnboardingFrame>
+    <div className="fixed inset-x-2 bottom-4 z-40 flex h-112 flex-col overflow-hidden rounded-xl border bg-background shadow-lg transition-all duration-200 md:inset-x-auto md:left-1/2 md:w-xl md:-translate-x-1/2">
+      <div className="flex items-center justify-between border-b px-4 py-2">
+        <span className="font-medium text-sm">Seoteric</span>
+        <button
+          className="rounded-md p-1 text-muted-foreground hover:bg-muted"
+          onClick={() => setMinimized(true)}
+          type="button"
+        >
+          <Minus className="h-4 w-4" />
+        </button>
+      </div>
+
       <Conversation>
         <ConversationContent>
           {messages.length === 0 ? (
@@ -136,6 +153,6 @@ export function ChatOnboarding() {
           />
         </PromptInputFooter>
       </PromptInput>
-    </ChatOnboardingFrame>
+    </div>
   );
 }
