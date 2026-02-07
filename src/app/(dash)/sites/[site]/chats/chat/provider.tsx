@@ -45,7 +45,7 @@ export function ChatProvider({
     if (!slug && chat.status === "streaming") {
       router.push(`/sites/${siteId}/chats/${stableSlug}`);
     }
-  }, [chat.status, router.push, siteId, slug, stableSlug]);
+  }, [chat.status, router, siteId, slug, stableSlug]);
 
   return <ChatContext.Provider value={chat}>{children}</ChatContext.Provider>;
 }
