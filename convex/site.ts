@@ -1,4 +1,4 @@
-import { v } from "convex/values";
+import { ConvexError, v } from "convex/values";
 import type { Id } from "./_generated/dataModel";
 import {
   type MutationCtx,
@@ -6,6 +6,7 @@ import {
   type QueryCtx,
   query,
 } from "./_generated/server";
+import { getUserSiteCount, getUserTier } from "./usage";
 import { getUser } from "./utils";
 
 export async function getSite(
@@ -70,6 +71,14 @@ export const create = mutation({
   },
   handler: async (ctx, args) => {
     const user = await getUser(ctx);
+
+    const { limits } = await getUserTier(ctx, user._id);
+    const siteCount = await getUserSiteCount(ctx, user._id);
+    if (siteCount >= limits.sites) {
+      throw new ConvexError(
+        `You've reached your plan's limit of ${limits.sites} site${limits.sites === 1 ? "" : "s"}. Upgrade to add more.`
+      );
+    }
 
     const siteId = await ctx.db.insert("sites", { ...args, userId: user._id });
 

@@ -24,28 +24,34 @@ const existingRecommendationSchema = z.object({
   pageUrl: z.string().optional(),
 });
 
+const allTools = {
+  fetchRobotsTxt: fetchRobotsTxtTool,
+  fetchSitemap: fetchSitemapTool,
+  checkUrlStatus: checkUrlStatusTool,
+  getPageSeoData: getPageSeoDataTool,
+  createRecommendation: createRecommendationTool,
+  updateRecommendation: updateRecommendationTool,
+  runPageSpeed: runPageSpeedTool,
+  checkIndexability: checkIndexabilityTool,
+  checkSecurityHeaders: checkSecurityHeadersTool,
+  validateStructuredData: validateStructuredDataTool,
+  analyzeContentQuality: analyzeContentQualityTool,
+};
+
 export const seoAgent = new ToolLoopAgent({
   model: "anthropic/claude-sonnet-4.5",
   instructions: `You are Seoteric, an AI assistant specializing in SEO (Search Engine Optimization). You help users understand and improve their website's search engine visibility. You provide clear, actionable advice on topics like keyword research, on-page optimization, technical SEO, content strategy, and link building. Keep responses concise and practical. Summarise tool call results instead of returning all the data - we visualise the data in the UI.`,
-  tools: {
-    fetchRobotsTxt: fetchRobotsTxtTool,
-    fetchSitemap: fetchSitemapTool,
-    checkUrlStatus: checkUrlStatusTool,
-    getPageSeoData: getPageSeoDataTool,
-    createRecommendation: createRecommendationTool,
-    updateRecommendation: updateRecommendationTool,
-    runPageSpeed: runPageSpeedTool,
-    checkIndexability: checkIndexabilityTool,
-    checkSecurityHeaders: checkSecurityHeadersTool,
-    validateStructuredData: validateStructuredDataTool,
-    analyzeContentQuality: analyzeContentQualityTool,
-  },
+  tools: allTools,
   callOptionsSchema: z.object({
     siteDomain: z.string(),
     siteName: z.string(),
     siteCountry: z.string(),
     siteIndustry: z.string(),
     existingRecommendations: z.array(existingRecommendationSchema),
+    model: z.string().optional(),
+    recommendationLimit: z.number().optional(),
+    activeRecommendationCount: z.number().optional(),
+    pageSpeedRemaining: z.number().optional(),
   }),
   prepareCall: ({ options, ...settings }) => {
     let instructions =
@@ -68,6 +74,36 @@ ${options.existingRecommendations
 When the user mentions fixing something, use updateRecommendation to mark the relevant recommendation as completed.`;
     }
 
-    return { ...settings, instructions };
+    // Add limit context to instructions
+    if (
+      options.recommendationLimit !== undefined &&
+      options.recommendationLimit !== Number.POSITIVE_INFINITY &&
+      options.activeRecommendationCount !== undefined
+    ) {
+      const remaining =
+        options.recommendationLimit - options.activeRecommendationCount;
+      instructions += `\n\nRecommendation limit: You can create ${Math.max(0, remaining)} more recommendations (${options.activeRecommendationCount}/${options.recommendationLimit} used). Complete or dismiss existing ones to free up slots.`;
+    }
+
+    if (options.pageSpeedRemaining !== undefined) {
+      instructions += `\n\nPageSpeed budget: ${Math.max(0, options.pageSpeedRemaining)} tests remaining this month.`;
+    }
+
+    // Gate tools based on limits
+    let tools = { ...allTools };
+    if (
+      options.pageSpeedRemaining !== undefined &&
+      options.pageSpeedRemaining <= 0
+    ) {
+      const { runPageSpeed: _, ...rest } = tools;
+      tools = rest as typeof tools;
+    }
+
+    return {
+      ...settings,
+      instructions,
+      tools,
+      model: options.model ?? settings.model,
+    };
   },
 });

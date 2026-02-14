@@ -47,6 +47,18 @@ export const recommendationsFields = {
   completedAt: v.optional(v.number()),
 };
 
+export const usageFields = {
+  userId: v.string(),
+  periodStart: v.string(),
+  messageCount: v.number(),
+  pageSpeedCount: v.number(),
+};
+
+export const billingAnchorsFields = {
+  userId: v.string(),
+  anchorDate: v.string(),
+};
+
 export default defineSchema({
   sites: defineTable(sitesFields)
     .index("by_user", ["userId"])
@@ -58,4 +70,11 @@ export default defineSchema({
   recommendations: defineTable(recommendationsFields)
     .index("by_site", ["siteId"])
     .index("by_site_status", ["siteId", "status"]),
+  usage: defineTable(usageFields).index("by_user_period", [
+    "userId",
+    "periodStart",
+  ]),
+  billingAnchors: defineTable(billingAnchorsFields).index("by_user", [
+    "userId",
+  ]),
 });

@@ -1,4 +1,5 @@
 import { convertToModelMessages, generateId } from "ai";
+import { ConvexError } from "convex/values";
 import z from "zod";
 import { seoAgent } from "@/ai/seo";
 import { api } from "@/convex/_generated/api";
@@ -21,10 +22,26 @@ export async function POST(req: Request) {
   const body = await req.json();
   const { id: slug, siteId, messages } = seoChatBody.parse(body);
 
-  const { chatId, site, recommendations } = await fetchAuthMutation(
-    api.chat.generateChatContext,
-    { siteId, slug, initialMessage: messages[0]?.parts[0]?.text }
-  );
+  let context: Awaited<
+    ReturnType<typeof fetchAuthMutation<typeof api.chat.generateChatContext>>
+  >;
+  try {
+    context = await fetchAuthMutation(api.chat.generateChatContext, {
+      siteId,
+      slug,
+      initialMessage: messages[0]?.parts[0]?.text,
+    });
+  } catch (error) {
+    if (error instanceof ConvexError) {
+      return new Response(JSON.stringify({ error: error.data }), {
+        status: 429,
+        headers: { "Content-Type": "application/json" },
+      });
+    }
+    throw error;
+  }
+
+  const { chatId, site, recommendations, tier } = context;
 
   const res = await seoAgent.stream({
     messages: await convertToModelMessages(messages),
@@ -42,6 +59,10 @@ export async function POST(req: Request) {
         status: r.status,
         pageUrl: r.pageUrl,
       })),
+      model: tier.model,
+      recommendationLimit: tier.recommendationLimit,
+      activeRecommendationCount: tier.activeRecommendationCount,
+      pageSpeedRemaining: tier.pageSpeedRemaining,
     },
   });
 

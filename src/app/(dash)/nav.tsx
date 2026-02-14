@@ -17,6 +17,11 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { api } from "@/convex/_generated/api";
 import { useAuthQuery } from "@/lib/hooks";
 import { cn } from "@/lib/utils";
@@ -25,6 +30,8 @@ export function DashboardNav() {
   const params = useParams<{ site?: string }>();
   const pathname = usePathname();
   const sites = useAuthQuery(api.site.list);
+  const usage = useAuthQuery(api.usage.getUserUsage);
+  const atSiteLimit = usage ? usage.current.sites >= usage.limits.sites : false;
 
   const siteId = params?.site;
   const currentSite = sites?.find((s) => s._id === siteId);
@@ -91,14 +98,36 @@ export function DashboardNav() {
                   </DropdownMenuItem>
                 ))}
 
-                <DialogTrigger
-                  handle={createSiteDialog}
-                  nativeButton={false}
-                  render={<DropdownMenuItem />}
-                >
-                  <PlusIcon className="mr-1" />
-                  New site
-                </DialogTrigger>
+                {atSiteLimit ? (
+                  <Tooltip>
+                    <TooltipTrigger
+                      render={
+                        <DropdownMenuItem
+                          className="disabled:pointer-events-auto"
+                          disabled
+                        />
+                      }
+                    >
+                      <PlusIcon className="mr-1" />
+                      New site
+                    </TooltipTrigger>
+                    <TooltipContent side="left">
+                      <p>
+                        You've reached your site limit. Upgrade your plan to add
+                        more.
+                      </p>
+                    </TooltipContent>
+                  </Tooltip>
+                ) : (
+                  <DialogTrigger
+                    handle={createSiteDialog}
+                    nativeButton={false}
+                    render={<DropdownMenuItem />}
+                  >
+                    <PlusIcon className="mr-1" />
+                    New site
+                  </DialogTrigger>
+                )}
 
                 <DropdownMenuSeparator />
               </DropdownMenuGroup>

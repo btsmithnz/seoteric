@@ -33,8 +33,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { api } from "@/convex/_generated/api";
 import { countries, renderCountryLabel } from "@/lib/countries";
+import { useAuthQuery } from "@/lib/hooks";
 
 interface CreateSiteDialogProps {
   trigger?: React.ReactElement;
@@ -44,6 +50,31 @@ interface CreateSiteDialogProps {
 export const createSiteDialog = createDialogHandle();
 
 export function CreateSiteDialogTrigger() {
+  const usage = useAuthQuery(api.usage.getUserUsage);
+  const atLimit = usage ? usage.current.sites >= usage.limits.sites : false;
+
+  if (atLimit) {
+    return (
+      <Tooltip>
+        <TooltipTrigger
+          render={
+            <Button
+              className="disabled:pointer-events-auto"
+              disabled
+              size="sm"
+            />
+          }
+        >
+          <PlusIcon className="mr-1" />
+          New site
+        </TooltipTrigger>
+        <TooltipContent>
+          <p>You've reached your site limit. Upgrade your plan to add more.</p>
+        </TooltipContent>
+      </Tooltip>
+    );
+  }
+
   return (
     <DialogTrigger handle={createSiteDialog} render={<Button size="sm" />}>
       <PlusIcon className="mr-1" />
@@ -93,8 +124,10 @@ export function CreateSiteDialog({ onSuccess }: CreateSiteDialogProps) {
             router.push(`/sites/${siteId}`);
           });
         }
-      } catch {
-        toast.error("Failed to create site");
+      } catch (error) {
+        const message =
+          error instanceof Error ? error.message : "Failed to create site";
+        toast.error(message);
       }
     },
   });

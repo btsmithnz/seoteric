@@ -17,6 +17,15 @@ import {
 } from "./_generated/server";
 import { PRIORITY_ORDER } from "./recommendations";
 import { getSite } from "./site";
+import {
+  getMessageCount,
+  getPageSpeedCount,
+  getUserActiveRecommendationCount,
+  getUserTier,
+  incrementMessageCount,
+  incrementPageSpeedCount,
+} from "./usage";
+import { getUser } from "./utils";
 
 async function getChatSite(ctx: QueryCtx | MutationCtx, chatId: Id<"chats">) {
   const chat = await ctx.db.get("chats", chatId);
@@ -129,8 +138,25 @@ export const getWithMessages = query({
 export const generateChatContext = mutation({
   args: { siteId: v.id("sites"), slug: v.string(), initialMessage: v.string() },
   handler: async (ctx, args) => {
-    // Verify access to site
+    const user = await getUser(ctx);
     const site = await getSite(ctx, args.siteId);
+
+    // Resolve tier and check message limit
+    const { limits, periodStart } = await getUserTier(ctx, user._id);
+    const messageCount = await getMessageCount(ctx, user._id, periodStart);
+    if (messageCount >= limits.messagesPerMonth) {
+      throw new ConvexError(
+        "You've reached your monthly message limit. Upgrade your plan for more messages."
+      );
+    }
+    await incrementMessageCount(ctx, user._id, periodStart);
+
+    // Fetch remaining usage for tool gating
+    const pageSpeedCount = await getPageSpeedCount(ctx, user._id, periodStart);
+    const activeRecommendationCount = await getUserActiveRecommendationCount(
+      ctx,
+      user._id
+    );
 
     // Check if the chat already exists
     const chat = await ctx.db
@@ -175,9 +201,54 @@ export const generateChatContext = mutation({
       chatId,
       site,
       recommendations,
+      tier: {
+        model: limits.model,
+        recommendationLimit: limits.activeRecommendations,
+        activeRecommendationCount,
+        pageSpeedRemaining: limits.pageSpeedTestsPerMonth - pageSpeedCount,
+      },
     };
   },
 });
+
+async function processToolPart(
+  ctx: MutationCtx,
+  part: { type: string; state?: string; output?: unknown },
+  siteId: Id<"sites">,
+  state: { activeCount: number; pageSpeedTests: number; recLimit: number }
+) {
+  if (
+    part.type === "tool-createRecommendation" &&
+    part.state === "output-available"
+  ) {
+    if (state.activeCount >= state.recLimit) {
+      return;
+    }
+    const output = part.output as CreateRecommendationOutput;
+    await ctx.db.insert("recommendations", {
+      siteId,
+      title: output.title,
+      description: output.description,
+      category: output.category,
+      priority: output.priority,
+      pageUrl: output.pageUrl,
+      status: "open",
+    });
+    state.activeCount++;
+  } else if (
+    part.type === "tool-updateRecommendation" &&
+    part.state === "output-available"
+  ) {
+    const output = part.output as UpdateRecommendationOutput;
+    await ctx.runMutation(internal.recommendations.updateInternal, {
+      id: output.recommendationId as Id<"recommendations">,
+      status: output.status,
+      priority: output.priority,
+    });
+  } else if (part.type === "tool-runPageSpeed") {
+    state.pageSpeedTests++;
+  }
+}
 
 export const updateChatState = mutation({
   args: {
@@ -200,41 +271,39 @@ export const updateChatState = mutation({
       throw new ConvexError("Chat not found");
     }
 
-    await ctx.db.patch("messages", current._id, {
+    const previousLength = (current.messages as unknown[]).length;
+
+    await ctx.db.patch(current._id, {
       messages: args.messages,
     });
 
-    for (const message of args.messages) {
+    const user = await getUser(ctx);
+    const { limits, periodStart } = await getUserTier(ctx, user._id);
+    const activeCount = await getUserActiveRecommendationCount(ctx, user._id);
+
+    const state = {
+      activeCount,
+      pageSpeedTests: 0,
+      recLimit: limits.activeRecommendations,
+    };
+
+    const newMessages = args.messages.slice(previousLength);
+    for (const message of newMessages) {
       if (message.role !== "assistant") {
         continue;
       }
       for (const part of message.parts) {
-        if (
-          part.type === "tool-createRecommendation" &&
-          part.state === "output-available"
-        ) {
-          const output = part.output as CreateRecommendationOutput;
-          await ctx.db.insert("recommendations", {
-            siteId: res.site._id,
-            title: output.title,
-            description: output.description,
-            category: output.category,
-            priority: output.priority,
-            pageUrl: output.pageUrl,
-            status: "open",
-          });
-        } else if (
-          part.type === "tool-updateRecommendation" &&
-          part.state === "output-available"
-        ) {
-          const output = part.output as UpdateRecommendationOutput;
-          await ctx.runMutation(internal.recommendations.updateInternal, {
-            id: output.recommendationId as Id<"recommendations">,
-            status: output.status,
-            priority: output.priority,
-          });
-        }
+        await processToolPart(ctx, part, res.site._id, state);
       }
+    }
+
+    if (state.pageSpeedTests > 0) {
+      await incrementPageSpeedCount(
+        ctx,
+        user._id,
+        periodStart,
+        state.pageSpeedTests
+      );
     }
   },
 });
