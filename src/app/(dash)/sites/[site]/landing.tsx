@@ -17,14 +17,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import type { api } from "@/convex/_generated/api";
 import type { Id } from "@/convex/_generated/dataModel";
-
-const SUGGESTIONS = [
-  "Audit my site",
-  "Check page speed",
-  "Review meta tags",
-  "Suggest keywords",
-  "Find SEO issues",
-];
+import { CHAT_SUGGESTIONS } from "@/lib/suggestions";
 
 interface SiteLandingProps {
   preloadedSite: Preloaded<typeof api.site.get>;
@@ -145,7 +138,7 @@ export function SiteLanding({
         <div className="flex flex-col gap-3">
           <h2 className="font-medium text-base">Start a Chat</h2>
           <Suggestions>
-            {SUGGESTIONS.map((suggestion) => (
+            {CHAT_SUGGESTIONS.map((suggestion) => (
               <Suggestion
                 key={suggestion}
                 onClick={handleSuggestion}

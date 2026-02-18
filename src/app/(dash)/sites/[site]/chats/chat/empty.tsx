@@ -1,5 +1,6 @@
 import { ConversationEmptyState } from "@/components/ai-elements/conversation";
 import { Suggestion, Suggestions } from "@/components/ai-elements/suggestion";
+import { CHAT_SUGGESTIONS } from "@/lib/suggestions";
 
 interface ChatEmptyStateProps {
   onSend: (msg: string) => void;
@@ -13,11 +14,13 @@ export function ChatEmptyState({ onSend }: ChatEmptyStateProps) {
         title="Welcome to Seoteric"
       />
       <Suggestions className="mt-4 justify-center">
-        <Suggestion onClick={onSend} suggestion="Audit my site" />
-        <Suggestion onClick={onSend} suggestion="Check page speed" />
-        <Suggestion onClick={onSend} suggestion="Review meta tags" />
-        <Suggestion onClick={onSend} suggestion="Suggest keywords" />
-        <Suggestion onClick={onSend} suggestion="Find SEO issues" />
+        {CHAT_SUGGESTIONS.map((suggestion) => (
+          <Suggestion
+            key={suggestion}
+            onClick={onSend}
+            suggestion={suggestion}
+          />
+        ))}
       </Suggestions>
     </>
   );
