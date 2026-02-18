@@ -55,7 +55,7 @@ export function Sites({
             <CardAction>
               <Button
                 nativeButton={false}
-                render={<Link href={`/sites/${site._id}/chats`} />}
+                render={<Link href={`/sites/${site._id}`} />}
                 size="sm"
                 variant="outline"
               >
