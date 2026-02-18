@@ -35,7 +35,7 @@ export function ChatContent({ children }: { children: React.ReactNode }) {
     <div className="flex h-full gap-4">
       <div className="flex min-w-0 flex-1 flex-col">
         <h1 className="mb-1 font-bold">{chat?.name || "New Chat"}</h1>
-        <div className="flex flex-1 flex-col border">
+        <div className="flex flex-1 flex-col">
           <Conversation>
             <ConversationContent>
               {messages.length === 0 ? (

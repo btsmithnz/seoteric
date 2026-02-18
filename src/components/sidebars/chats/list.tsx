@@ -36,7 +36,7 @@ export function ChatsList({ siteId }: { siteId: Id<"sites"> }) {
   }, [status, loadMore]);
 
   return (
-    <div className="flex-1 overflow-y-auto p-2">
+    <div className="flex-1 overflow-y-auto px-2 pb-2">
       {isLoading && [1, 2, 3].map((i) => <ChatsListItemSkeleton key={i} />)}
       {!isLoading && results.length === 0 && (
         <div className="flex justify-center py-2">

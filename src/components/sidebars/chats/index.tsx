@@ -21,7 +21,7 @@ export function ChatsSidebar() {
 
   return (
     <Sidebar selector="chats" side="left">
-      <div className="flex flex-row">
+      <div className="flex flex-row gap-2 p-2">
         <Button
           className="flex-1"
           nativeButton={false}
