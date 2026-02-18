@@ -21,10 +21,10 @@ export function ChatsListItemSkeleton() {
 }
 
 export function ChatsListItem({ chat, siteId }: ChatListItemProps) {
-  const params = useParams<{ chat?: string }>();
+  const params = useParams<{ slug?: string }>();
   const sidebar = useSidebar();
   const { setMobileOpen } = sidebar.pick("chats");
-  const isActive = params.chat === chat._id;
+  const isActive = params.slug === chat.slug;
 
   return (
     <Button

@@ -1,6 +1,5 @@
 "use client";
 
-import { useParams } from "next/navigation";
 import { useState } from "react";
 import {
   Conversation,
@@ -14,17 +13,12 @@ import {
   PromptInputTextarea,
 } from "@/components/ai-elements/prompt-input";
 import { SeotericMessages } from "@/components/chat/seoteric-messages";
-import { api } from "@/convex/_generated/api";
-import { useAuthQuery } from "@/lib/hooks";
 import { ChatEmptyState } from "./empty";
 import { useChatSeo } from "./provider";
 
 export function ChatContent({ children }: { children: React.ReactNode }) {
   const [input, setInput] = useState("");
-  const { slug } = useParams<{ slug?: string }>();
   const { messages, status, stop, sendMessage } = useChatSeo();
-
-  const chat = useAuthQuery(api.chat.getSafe, slug ? { slug } : "skip");
 
   const handleSend = (text: string) => {
     sendMessage({ text });
@@ -34,7 +28,6 @@ export function ChatContent({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex h-full gap-4">
       <div className="flex min-w-0 flex-1 flex-col">
-        <h1 className="mb-1 font-bold">{chat?.name || "New Chat"}</h1>
         <div className="flex flex-1 flex-col">
           <Conversation>
             <ConversationContent>

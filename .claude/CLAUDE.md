@@ -21,6 +21,10 @@ This is a Next.js 16 app with:
 - **Shadcn UI** - Component library using base-lyra style with Base UI primitives (`src/components/ui/`)
 - **Tailwind CSS v4** - Styling with CSS variables for theming
 
+### Editing Files
+
+When adding or removing an import alongside its usage, always do so in a **single edit**. The linter runs automatically after each file write — if you add/remove a usage in one edit and the import in a separate edit, the linter will strip the unused import (or flag a missing one) between edits, causing a conflict on the second edit.
+
 ### Key Patterns
 
 - **UI Components**: Use `shadcn/ui` with `class-variance-authority` for variants
