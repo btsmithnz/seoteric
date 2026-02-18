@@ -1,11 +1,11 @@
 import type { Metadata } from "next";
-import { JetBrains_Mono } from "next/font/google";
+import { Figtree } from "next/font/google";
 import "./globals.css";
 import { Analytics } from "@vercel/analytics/next";
 import { ThemeProvider } from "@/components/providers/theme";
 import { Toaster } from "@/components/ui/sonner";
 
-const jetbrainsMono = JetBrains_Mono({
+const figtree = Figtree({
   subsets: ["latin"],
   variable: "--font-sans",
 });
@@ -21,7 +21,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html className={jetbrainsMono.variable} lang="en" suppressHydrationWarning>
+    <html className={figtree.variable} lang="en" suppressHydrationWarning>
       <body className="antialiased">
         <ThemeProvider>
           {children}
