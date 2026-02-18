@@ -28,6 +28,7 @@ export function DashboardNav() {
 
   const siteId = params?.site;
   const currentSite = sites?.find((s) => s._id === siteId);
+  const isLandingPage = siteId ? pathname === `/sites/${siteId}` : false;
   const isConfigPage = pathname?.endsWith("/config");
 
   return (
@@ -42,7 +43,16 @@ export function DashboardNav() {
           {siteId && (
             <div className="mr-2 flex items-center gap-1">
               <Button
-                className={cn(!isConfigPage && "bg-muted")}
+                className={cn(isLandingPage && "bg-muted")}
+                nativeButton={false}
+                render={<Link href={`/sites/${siteId}`} />}
+                size="sm"
+                variant="ghost"
+              >
+                Overview
+              </Button>
+              <Button
+                className={cn(!(isConfigPage || isLandingPage) && "bg-muted")}
                 nativeButton={false}
                 render={<Link href={`/sites/${siteId}/chats`} />}
                 size="sm"

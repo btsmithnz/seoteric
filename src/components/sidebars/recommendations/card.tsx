@@ -102,7 +102,7 @@ export function RecommendationCard({
             <div className="mb-1 flex items-center gap-1.5">
               <Badge
                 className={cn(
-                  "px-1.5 py-0 text-[10px]",
+                  "px-1.5 py-0 text-[10px] capitalize",
                   priorityColors[priority] || priorityColors.medium
                 )}
                 variant="outline"
