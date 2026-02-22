@@ -13,14 +13,22 @@ import {
   PromptInputTextarea,
 } from "@/components/ai-elements/prompt-input";
 import { SeotericMessages } from "@/components/chat/seoteric-messages";
+import { api } from "@/convex/_generated/api";
+import { useAuthQuery } from "@/lib/hooks";
 import { ChatEmptyState } from "./empty";
 import { useChatSeo } from "./provider";
 
 export function ChatContent({ children }: { children: React.ReactNode }) {
   const [input, setInput] = useState("");
   const { messages, status, stop, sendMessage } = useChatSeo();
+  const entitlements = useAuthQuery(api.billing.getEntitlements);
+  const disableInput =
+    entitlements !== undefined && entitlements.remaining.messages <= 0;
 
   const handleSend = (text: string) => {
+    if (disableInput) {
+      return;
+    }
     sendMessage({ text });
     setInput("");
   };
@@ -32,7 +40,7 @@ export function ChatContent({ children }: { children: React.ReactNode }) {
           <Conversation>
             <ConversationContent>
               {messages.length === 0 ? (
-                <ChatEmptyState onSend={handleSend} />
+                <ChatEmptyState disabled={disableInput} onSend={handleSend} />
               ) : (
                 <SeotericMessages messages={messages} status={status} />
               )}
@@ -43,13 +51,18 @@ export function ChatContent({ children }: { children: React.ReactNode }) {
 
           <PromptInput onSubmit={(msg) => handleSend(msg.text)}>
             <PromptInputTextarea
+              disabled={disableInput}
               onChange={(e) => setInput(e.target.value)}
               placeholder="Ask about SEO..."
               value={input}
             />
             <PromptInputFooter>
               <div />
-              <PromptInputSubmit onStop={stop} status={status} />
+              <PromptInputSubmit
+                disabled={disableInput}
+                onStop={stop}
+                status={status}
+              />
             </PromptInputFooter>
           </PromptInput>
         </div>

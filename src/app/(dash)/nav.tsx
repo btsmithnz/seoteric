@@ -4,7 +4,10 @@ import { ChevronDownIcon, PlusIcon } from "lucide-react";
 import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";
 import { LogoutMenuItem } from "@/components/elements/logout-button";
-import { createSiteDialog } from "@/components/sites/create-site-dialog";
+import {
+  createSiteDialog,
+  useSiteCreationAvailability,
+} from "@/components/sites/create-site-dialog";
 import { ThemeSwitcher } from "@/components/theme-switcher";
 import { Button } from "@/components/ui/button";
 import { DialogTrigger } from "@/components/ui/dialog";
@@ -25,6 +28,8 @@ export function DashboardNav() {
   const params = useParams<{ site?: string }>();
   const pathname = usePathname();
   const sites = useAuthQuery(api.site.list);
+  const { siteLimitReached } = useSiteCreationAvailability();
+  const disableCreateSite = siteLimitReached;
 
   const siteId = params?.site;
   const currentSite = sites?.find((s) => s._id === siteId);
@@ -101,14 +106,21 @@ export function DashboardNav() {
                   </DropdownMenuItem>
                 ))}
 
-                <DialogTrigger
-                  handle={createSiteDialog}
-                  nativeButton={false}
-                  render={<DropdownMenuItem />}
-                >
-                  <PlusIcon className="mr-1" />
-                  New site
-                </DialogTrigger>
+                {disableCreateSite ? (
+                  <DropdownMenuItem disabled>
+                    <PlusIcon className="mr-1" />
+                    New site
+                  </DropdownMenuItem>
+                ) : (
+                  <DialogTrigger
+                    handle={createSiteDialog}
+                    nativeButton={false}
+                    render={<DropdownMenuItem />}
+                  >
+                    <PlusIcon className="mr-1" />
+                    New site
+                  </DialogTrigger>
+                )}
 
                 <DropdownMenuSeparator />
               </DropdownMenuGroup>

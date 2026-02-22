@@ -47,6 +47,19 @@ export const recommendationsFields = {
   completedAt: v.optional(v.number()),
 };
 
+export const billingProfilesFields = {
+  userId: v.string(),
+  lastPaidAnchorMs: v.number(),
+};
+
+export const usageBucketsFields = {
+  userId: v.string(),
+  cycleStartMs: v.number(),
+  cycleEndMs: v.number(),
+  messagesUsed: v.number(),
+  pageSpeedReportsUsed: v.number(),
+};
+
 export default defineSchema({
   sites: defineTable(sitesFields)
     .index("by_user", ["userId"])
@@ -58,4 +71,10 @@ export default defineSchema({
   recommendations: defineTable(recommendationsFields)
     .index("by_site", ["siteId"])
     .index("by_site_status", ["siteId", "status"]),
+  billingProfiles: defineTable(billingProfilesFields).index("by_user", [
+    "userId",
+  ]),
+  usageBuckets: defineTable(usageBucketsFields)
+    .index("by_user_cycle_start", ["userId", "cycleStartMs"])
+    .index("by_user", ["userId"]),
 });

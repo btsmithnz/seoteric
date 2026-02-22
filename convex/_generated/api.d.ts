@@ -9,6 +9,7 @@
  */
 
 import type * as auth from "../auth.js";
+import type * as billing from "../billing.js";
 import type * as chat from "../chat.js";
 import type * as http from "../http.js";
 import type * as polar from "../polar.js";
@@ -24,6 +25,7 @@ import type {
 
 declare const fullApi: ApiFromModules<{
   auth: typeof auth;
+  billing: typeof billing;
   chat: typeof chat;
   http: typeof http;
   polar: typeof polar;

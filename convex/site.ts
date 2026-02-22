@@ -6,6 +6,7 @@ import {
   type QueryCtx,
   query,
 } from "./_generated/server";
+import { assertCanCreateSiteForUser } from "./billing";
 import { getUser } from "./utils";
 
 export async function getSite(
@@ -70,6 +71,7 @@ export const create = mutation({
   },
   handler: async (ctx, args) => {
     const user = await getUser(ctx);
+    await assertCanCreateSiteForUser(ctx, user);
 
     const siteId = await ctx.db.insert("sites", { ...args, userId: user._id });
 

@@ -17,7 +17,9 @@
       "includes": ["src/components/ui/**"],
       "linter": {
         "rules": {
-          "a11y": "off"
+          "a11y": "off",
+          "performance": "off",
+          "suspicious": "off"
         }
       }
     }

@@ -1,9 +1,9 @@
 "use client";
 
 import { type Preloaded, usePreloadedQuery } from "convex/react";
-import { GlobeIcon, PlusIcon } from "lucide-react";
+import { GlobeIcon } from "lucide-react";
 import Link from "next/link";
-import { CreateSiteDialog } from "@/components/sites/create-site-dialog";
+import { CreateSiteDialogTrigger } from "@/components/sites/create-site-dialog";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -22,14 +22,7 @@ function EmptyState() {
       <CardDescription className="mb-4">
         Create your first site to get started
       </CardDescription>
-      <CreateSiteDialog
-        trigger={
-          <Button>
-            <PlusIcon className="mr-1" />
-            Create site
-          </Button>
-        }
-      />
+      <CreateSiteDialogTrigger />
     </Card>
   );
 }

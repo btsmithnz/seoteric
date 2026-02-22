@@ -7,11 +7,13 @@ if (!(productProMonthly && productAgencyMonthly)) {
   throw new Error("Missing Polar product IDs");
 }
 
+export const PLAN_PRODUCT_IDS = {
+  proMonthly: productProMonthly,
+  agencyMonthly: productAgencyMonthly,
+} as const;
+
 export const polar = new Polar(components.polar, {
-  products: {
-    proMonthly: productProMonthly,
-    agencyMonthly: productAgencyMonthly,
-  },
+  products: PLAN_PRODUCT_IDS,
   getUserInfo: async (ctx) => {
     const user: {
       _id: string;

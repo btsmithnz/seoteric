@@ -1,6 +1,7 @@
 "use client";
 
 import { LightbulbIcon } from "lucide-react";
+import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useMemo } from "react";
 import {
@@ -8,15 +9,19 @@ import {
   SidebarMobileToggleButton,
   SidebarMobileToggleIcon,
 } from "@/components/elements/sidebar";
+import { Button } from "@/components/ui/button";
 import { api } from "@/convex/_generated/api";
 import type { Id } from "@/convex/_generated/dataModel";
 import { useAuthQuery } from "@/lib/hooks";
+import { STARTER_VISIBLE_RECOMMENDATIONS } from "@/lib/plans";
 import { RecommendationCard } from "./card";
 
 export function RecommendationsSidebar() {
   const { site: siteId } = useParams<{ site: Id<"sites"> }>();
   const query = useAuthQuery(api.recommendations.listBySite, { siteId });
+  const entitlements = useAuthQuery(api.billing.getEntitlements);
   const recommendations = useMemo(() => query ?? [], [query]);
+  const isStarterPlan = entitlements?.plan === "starter";
 
   const openRecommendations = recommendations.filter(
     (r) => r.status === "open" || r.status === "in_progress"
@@ -24,6 +29,12 @@ export function RecommendationsSidebar() {
   const completedRecommendations = recommendations.filter(
     (r) => r.status === "completed" || r.status === "dismissed"
   );
+  const visibleOpenRecommendations = isStarterPlan
+    ? openRecommendations.slice(0, STARTER_VISIBLE_RECOMMENDATIONS)
+    : openRecommendations;
+  const hiddenOpenRecommendationsCount = isStarterPlan
+    ? Math.max(0, openRecommendations.length - STARTER_VISIBLE_RECOMMENDATIONS)
+    : 0;
 
   const isLoading = query === undefined;
 
@@ -60,9 +71,26 @@ export function RecommendationsSidebar() {
           </p>
         )}
 
-        {openRecommendations.map((rec) => (
+        {visibleOpenRecommendations.map((rec) => (
           <RecommendationCard key={rec._id} recommendation={rec} showActions />
         ))}
+        {hiddenOpenRecommendationsCount > 0 && (
+          <div className="space-y-2 rounded-md border border-dashed bg-muted/30 p-3">
+            <p className="text-muted-foreground text-xs">
+              Starter shows up to {STARTER_VISIBLE_RECOMMENDATIONS} active
+              recommendations at once. Upgrade to view all{" "}
+              {openRecommendations.length}.
+            </p>
+            <Button
+              className="w-full"
+              nativeButton={false}
+              render={<Link href="/account#billing" />}
+              size="sm"
+            >
+              Upgrade to view all
+            </Button>
+          </div>
+        )}
 
         {completedRecommendations.length > 0 && (
           <details className="group">

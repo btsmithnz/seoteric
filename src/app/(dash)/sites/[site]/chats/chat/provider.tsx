@@ -3,8 +3,13 @@
 import { type UseChatHelpers, useChat } from "@ai-sdk/react";
 import { DefaultChatTransport, generateId, type UIMessage } from "ai";
 import { useParams, useRouter } from "next/navigation";
-import { createContext, useContext, useEffect, useMemo } from "react";
+import { createContext, useContext, useEffect, useMemo, useRef } from "react";
+import { toast } from "sonner";
 import type { Id } from "@/convex/_generated/dataModel";
+import {
+  getLimitToastMessage,
+  parseLimitExceededError,
+} from "@/lib/billing-errors";
 
 function useTransport({ siteId }: { siteId: Id<"sites"> }) {
   return useMemo(() => {
@@ -39,6 +44,7 @@ export function ChatProvider({
     id: stableSlug,
     transport,
   });
+  const lastError = useRef<string | null>(null);
 
   // Update the URL once the chat is created
   useEffect(() => {
@@ -46,6 +52,28 @@ export function ChatProvider({
       router.push(`/sites/${siteId}/chats/${stableSlug}`);
     }
   }, [chat.status, router, siteId, slug, stableSlug]);
+
+  useEffect(() => {
+    if (!chat.error) {
+      lastError.current = null;
+      return;
+    }
+
+    if (lastError.current === chat.error.message) {
+      return;
+    }
+    lastError.current = chat.error.message;
+
+    const limitError = parseLimitExceededError(chat.error);
+    if (limitError) {
+      toast.error(getLimitToastMessage(limitError), {
+        description: "Open Account to upgrade or manage billing.",
+      });
+      return;
+    }
+
+    toast.error("Unable to send message. Please try again.");
+  }, [chat.error]);
 
   return <ChatContext.Provider value={chat}>{children}</ChatContext.Provider>;
 }

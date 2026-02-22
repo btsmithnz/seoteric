@@ -8,7 +8,7 @@ import { useState, useTransition } from "react";
 import { toast } from "sonner";
 import { z } from "zod";
 import { FieldErrorZod } from "@/components/input/field-error-zod";
-import { Button } from "@/components/ui/button";
+import { Button, type ButtonProps } from "@/components/ui/button";
 import {
   createDialogHandle,
   Dialog,
@@ -34,7 +34,12 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { api } from "@/convex/_generated/api";
+import {
+  getLimitToastMessage,
+  parseLimitExceededError,
+} from "@/lib/billing-errors";
 import { countries, renderCountryLabel } from "@/lib/countries";
+import { useAuthQuery } from "@/lib/hooks";
 
 interface CreateSiteDialogProps {
   trigger?: React.ReactElement;
@@ -43,9 +48,53 @@ interface CreateSiteDialogProps {
 
 export const createSiteDialog = createDialogHandle();
 
-export function CreateSiteDialogTrigger() {
+interface CreateSiteDialogTriggerProps {
+  className?: string;
+  size?: ButtonProps["size"];
+  variant?: ButtonProps["variant"];
+}
+
+export function useSiteCreationAvailability() {
+  const entitlements = useAuthQuery(api.billing.getEntitlements);
+  const isLoading = entitlements === undefined;
+  const siteLimitReached =
+    !isLoading && (entitlements?.remaining.sites ?? 0) <= 0;
+  const canCreateSite = !siteLimitReached;
+
+  return {
+    canCreateSite,
+    isLoading,
+    siteLimitReached,
+    remainingSites: entitlements?.remaining.sites,
+  };
+}
+
+export function CreateSiteDialogTrigger({
+  className,
+  size = "sm",
+  variant = "default",
+}: CreateSiteDialogTriggerProps = {}) {
+  const { siteLimitReached } = useSiteCreationAvailability();
+  const disabled = siteLimitReached;
+
   return (
-    <DialogTrigger handle={createSiteDialog} render={<Button size="sm" />}>
+    <DialogTrigger
+      disabled={disabled}
+      handle={createSiteDialog}
+      render={
+        <Button
+          className={className}
+          disabled={disabled}
+          size={size}
+          title={
+            disabled
+              ? "Site limit reached. Upgrade your plan in Account > Billing."
+              : undefined
+          }
+          variant={variant}
+        />
+      }
+    >
       <PlusIcon className="mr-1" />
       New site
     </DialogTrigger>
@@ -93,7 +142,15 @@ export function CreateSiteDialog({ onSuccess }: CreateSiteDialogProps) {
             router.push(`/sites/${siteId}`);
           });
         }
-      } catch {
+      } catch (error) {
+        const limitError = parseLimitExceededError(error);
+        if (limitError) {
+          toast.error(getLimitToastMessage(limitError), {
+            description: "Open Account to upgrade or manage billing.",
+          });
+          return;
+        }
+
         toast.error("Failed to create site");
       }
     },
