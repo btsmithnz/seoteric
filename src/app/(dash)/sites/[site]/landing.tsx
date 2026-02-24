@@ -170,7 +170,19 @@ export function SiteLanding({
 
         {/* Start a Chat */}
         <div className="flex flex-col gap-3">
-          <h2 className="font-medium text-base">Start a Chat</h2>
+          <div className="flex items-center justify-between">
+            <h2 className="font-medium text-base">Start a Chat</h2>
+            <Button
+              disabled={disableNewChat}
+              nativeButton={false}
+              render={<Link href={`/sites/${siteId}/chats`} />}
+              size="sm"
+              variant="outline"
+            >
+              New empty chat
+              <ArrowRightIcon className="size-4" />
+            </Button>
+          </div>
           {isMessageLimitReached && (
             <Card>
               <CardContent className="space-y-3 py-4">
@@ -198,18 +210,6 @@ export function SiteLanding({
               />
             ))}
           </Suggestions>
-          <div className="flex justify-end">
-            <Button
-              disabled={disableNewChat}
-              nativeButton={false}
-              render={<Link href={`/sites/${siteId}/chats`} />}
-              size="sm"
-              variant="outline"
-            >
-              New empty chat
-              <ArrowRightIcon className="size-4" />
-            </Button>
-          </div>
         </div>
       </div>
     </div>
