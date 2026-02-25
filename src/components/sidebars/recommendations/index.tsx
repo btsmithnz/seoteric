@@ -40,15 +40,17 @@ export function RecommendationsSidebar() {
 
   return (
     <Sidebar className="md:w-80" selector="recommendations" side="right">
-      <div className="flex items-center justify-between px-3 pt-2 pb-1">
-        <div className="flex items-baseline gap-2">
+      <div className="flex items-center justify-between px-3 pt-3 pb-1">
+        <div className="flex items-center gap-2">
           <LightbulbIcon className="size-4 text-primary" />
-          <h2 className="font-medium text-sm">Recommendations</h2>
-          {openRecommendations.length > 0 && (
-            <span className="text-muted-foreground text-xs">
-              ({openRecommendations.length})
-            </span>
-          )}
+          <div className="flex items-baseline gap-1.5">
+            <h2 className="font-medium text-sm">Recommendations</h2>
+            {openRecommendations.length > 0 && (
+              <span className="text-muted-foreground text-xs">
+                ({openRecommendations.length})
+              </span>
+            )}
+          </div>
         </div>
 
         <SidebarMobileToggleButton
