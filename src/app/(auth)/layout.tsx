@@ -1,19 +1,22 @@
-"use cache: private";
-
+import { Suspense } from "react";
 import { PublicLayout } from "@/components/layouts/public";
 import { ConvexProvider } from "@/components/providers/convex";
+import { Spinner } from "@/components/ui/spinner";
 import { getToken } from "@/lib/auth-server";
 
-export default async function AuthLayout({ children }: LayoutProps<"/">) {
+async function ConvexGate({ children }: { children: React.ReactNode }) {
   const token = await getToken();
+  return <ConvexProvider initialToken={token}>{children}</ConvexProvider>;
+}
 
+export default function AuthLayout({ children }: LayoutProps<"/">) {
   return (
     <PublicLayout>
-      <ConvexProvider initialToken={token}>
-        <div className="flex min-h-screen items-center justify-center p-4">
-          {children}
-        </div>
-      </ConvexProvider>
+      <div className="flex min-h-screen items-center justify-center p-4">
+        <Suspense fallback={<Spinner />}>
+          <ConvexGate>{children}</ConvexGate>
+        </Suspense>
+      </div>
     </PublicLayout>
   );
 }

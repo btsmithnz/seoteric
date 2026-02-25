@@ -20,9 +20,32 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Skeleton } from "@/components/ui/skeleton";
 import { api } from "@/convex/_generated/api";
 import { useAuthQuery } from "@/lib/hooks";
 import { cn } from "@/lib/utils";
+
+function NavShell({ children }: { children: React.ReactNode }) {
+  return (
+    <header className="sticky top-0 z-20 w-full border-border border-b bg-background">
+      <div className="flex h-dashboard-nav items-center justify-between px-4">
+        <Link className="font-semibold text-xl" href="/sites">
+          Seoteric
+        </Link>
+        <nav className="flex items-center md:gap-2">{children}</nav>
+      </div>
+    </header>
+  );
+}
+
+export function DashboardNavSkeleton() {
+  return (
+    <NavShell>
+      <ThemeSwitcher />
+      <Skeleton className="h-8 w-24 rounded-md" />
+    </NavShell>
+  );
+}
 
 export function DashboardNav() {
   const params = useParams<{ site?: string }>();
@@ -37,110 +60,102 @@ export function DashboardNav() {
   const isConfigPage = pathname?.endsWith("/config");
 
   return (
-    <header className="sticky top-0 z-20 w-full border-border border-b bg-background">
-      <div className="flex h-dashboard-nav items-center justify-between px-4">
-        <Link className="font-semibold text-xl" href="/sites">
-          Seoteric
-        </Link>
+    <NavShell>
+      <ThemeSwitcher />
+      {siteId && (
+        <div className="flex items-center gap-0 md:mr-2 md:gap-1">
+          <Button
+            className={cn("px-2 md:px-3", isLandingPage && "bg-muted")}
+            nativeButton={false}
+            render={<Link href={`/sites/${siteId}`} />}
+            size="sm"
+            variant="ghost"
+          >
+            Overview
+          </Button>
+          <Button
+            className={cn(
+              "px-2 md:px-3",
+              !(isConfigPage || isLandingPage) && "bg-muted"
+            )}
+            nativeButton={false}
+            render={<Link href={`/sites/${siteId}/chats`} />}
+            size="sm"
+            variant="ghost"
+          >
+            Chat
+          </Button>
+          <Button
+            className={cn("px-2 md:px-3", isConfigPage && "bg-muted")}
+            nativeButton={false}
+            render={<Link href={`/sites/${siteId}/config`} />}
+            size="sm"
+            variant="ghost"
+          >
+            Config
+          </Button>
+        </div>
+      )}
 
-        <nav className="flex items-center md:gap-2">
-          <ThemeSwitcher />
-          {siteId && (
-            <div className="flex items-center gap-0 md:mr-2 md:gap-1">
-              <Button
-                className={cn("px-2 md:px-3", isLandingPage && "bg-muted")}
-                nativeButton={false}
-                render={<Link href={`/sites/${siteId}`} />}
-                size="sm"
-                variant="ghost"
+      <DropdownMenu>
+        <DropdownMenuTrigger
+          render={
+            <Button size="sm" variant="outline">
+              <span className="hidden md:block">
+                {currentSite?.name ?? "Sites"}
+              </span>
+              <ChevronDownIcon className="ml-1" />
+            </Button>
+          }
+        />
+        <DropdownMenuContent align="end" className="w-52">
+          <DropdownMenuGroup>
+            <DropdownMenuLabel>Sites</DropdownMenuLabel>
+            {sites?.map((site) => (
+              <DropdownMenuItem
+                key={site._id}
+                render={
+                  <Link
+                    className="flex flex-col items-start"
+                    href={`/sites/${site._id}`}
+                  />
+                }
               >
-                Overview
-              </Button>
-              <Button
-                className={cn(
-                  "px-2 md:px-3",
-                  !(isConfigPage || isLandingPage) && "bg-muted"
-                )}
+                {site.name}
+                <span className="text-muted-foreground">{site.domain}</span>
+              </DropdownMenuItem>
+            ))}
+
+            {disableCreateSite ? (
+              <DropdownMenuItem disabled>
+                <PlusIcon className="mr-1" />
+                New site
+              </DropdownMenuItem>
+            ) : (
+              <DialogTrigger
+                handle={createSiteDialog}
                 nativeButton={false}
-                render={<Link href={`/sites/${siteId}/chats`} />}
-                size="sm"
-                variant="ghost"
+                render={<DropdownMenuItem />}
               >
-                Chat
-              </Button>
-              <Button
-                className={cn("px-2 md:px-3", isConfigPage && "bg-muted")}
-                nativeButton={false}
-                render={<Link href={`/sites/${siteId}/config`} />}
-                size="sm"
-                variant="ghost"
-              >
-                Config
-              </Button>
-            </div>
-          )}
+                <PlusIcon className="mr-1" />
+                New site
+              </DialogTrigger>
+            )}
 
-          <DropdownMenu>
-            <DropdownMenuTrigger
-              render={
-                <Button size="sm" variant="outline">
-                  <span className="hidden md:block">
-                    {currentSite?.name ?? "Sites"}
-                  </span>
-                  <ChevronDownIcon className="ml-1" />
-                </Button>
-              }
-            />
-            <DropdownMenuContent align="end" className="w-52">
-              <DropdownMenuGroup>
-                <DropdownMenuLabel>Sites</DropdownMenuLabel>
-                {sites?.map((site) => (
-                  <DropdownMenuItem
-                    key={site._id}
-                    render={
-                      <Link
-                        className="flex flex-col items-start"
-                        href={`/sites/${site._id}`}
-                      />
-                    }
-                  >
-                    {site.name}
-                    <span className="text-muted-foreground">{site.domain}</span>
-                  </DropdownMenuItem>
-                ))}
+            <DropdownMenuSeparator />
+          </DropdownMenuGroup>
 
-                {disableCreateSite ? (
-                  <DropdownMenuItem disabled>
-                    <PlusIcon className="mr-1" />
-                    New site
-                  </DropdownMenuItem>
-                ) : (
-                  <DialogTrigger
-                    handle={createSiteDialog}
-                    nativeButton={false}
-                    render={<DropdownMenuItem />}
-                  >
-                    <PlusIcon className="mr-1" />
-                    New site
-                  </DialogTrigger>
-                )}
-
-                <DropdownMenuSeparator />
-              </DropdownMenuGroup>
-
-              <DropdownMenuGroup>
-                <DropdownMenuLabel>Settings</DropdownMenuLabel>
-                <DropdownMenuItem render={<Link href="/account" />}>
-                  Account
-                </DropdownMenuItem>
-                <DropdownMenuItem>
-                  <LogoutMenuItem />
-                </DropdownMenuItem>
-              </DropdownMenuGroup>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </nav>
-      </div>
-    </header>
+          <DropdownMenuGroup>
+            <DropdownMenuLabel>Settings</DropdownMenuLabel>
+            <DropdownMenuItem render={<Link href="/account" />}>
+              Account
+            </DropdownMenuItem>
+            <DropdownMenuItem>
+              <LogoutMenuItem />
+            </DropdownMenuItem>
+          </DropdownMenuGroup>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    </NavShell>
   );
 }
