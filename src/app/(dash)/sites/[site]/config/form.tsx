@@ -30,6 +30,7 @@ import {
 } from "@/components/ui/select";
 import { api } from "@/convex/_generated/api";
 import { countries, renderCountryLabel } from "@/lib/countries";
+import { parseFloatSafe } from "@/lib/utils";
 
 interface SiteConfigFormProps {
   preloadedSite: Preloaded<typeof api.site.get>;
@@ -55,19 +56,9 @@ export function SiteConfigForm({ preloadedSite }: SiteConfigFormProps) {
         domain: z.string().regex(z.regexes.domain, { error: "Invalid domain" }),
         country: z.string(),
         industry: z.string(),
-        location: z.string().optional(),
-        latitude: z.coerce
-          .number()
-          .min(-90)
-          .max(90)
-          .optional()
-          .or(z.literal("")),
-        longitude: z.coerce
-          .number()
-          .min(-180)
-          .max(180)
-          .optional()
-          .or(z.literal("")),
+        location: z.string(),
+        latitude: z.string(),
+        longitude: z.string(),
       }),
     },
     onSubmit: async ({ value }) => {
@@ -79,9 +70,8 @@ export function SiteConfigForm({ preloadedSite }: SiteConfigFormProps) {
           country: value.country,
           industry: value.industry,
           location: value.location || undefined,
-          latitude: value.latitude !== "" ? Number(value.latitude) : undefined,
-          longitude:
-            value.longitude !== "" ? Number(value.longitude) : undefined,
+          latitude: parseFloatSafe(value.latitude) ?? undefined,
+          longitude: parseFloatSafe(value.longitude) ?? undefined,
         });
 
         toast.success("Site settings updated successfully");

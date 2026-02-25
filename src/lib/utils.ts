@@ -22,3 +22,11 @@ const SLASH_REGEX = /\//;
 export function cleanDomain(domain: string) {
   return domain.replace(DOMAIN_REGEX, "").replace(SLASH_REGEX, "");
 }
+
+export function parseFloatSafe(value: string): number | null {
+  if (value.trim() === "") {
+    return null;
+  }
+  const parsed = Number(value);
+  return Number.isNaN(parsed) ? null : parsed;
+}

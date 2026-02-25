@@ -62,9 +62,9 @@ export default function OnboardingPage() {
           .regex(z.regexes.domain, { error: "Invalid domain" }),
         siteCountry: z.string().min(1, "Please select a country"),
         siteIndustry: z.string().min(1, "Please enter an industry"),
-        siteLocation: z.string().optional(),
-        siteLatitude: z.coerce.number().optional().or(z.literal("")),
-        siteLongitude: z.coerce.number().optional().or(z.literal("")),
+        siteLocation: z.string(),
+        siteLatitude: z.string(),
+        siteLongitude: z.string(),
       }),
     },
     onSubmit: async ({ value }) => {
