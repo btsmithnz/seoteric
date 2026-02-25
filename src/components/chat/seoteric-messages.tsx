@@ -24,6 +24,7 @@ import {
   GoogleSerpTool,
   InspectDomTool,
   PageSpeedTool,
+  ScrapePageTool,
   UpdateRecommendationTool,
   WebsiteNameTool,
   WebsiteTextTool,
@@ -123,6 +124,9 @@ function MessageRender({
 
           case "tool-googleSerp":
             return <GoogleSerpTool key={partId} state={part.state} />;
+
+          case "tool-scrapePage":
+            return <ScrapePageTool key={partId} />;
 
           default:
             return null;

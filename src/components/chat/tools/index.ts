@@ -10,6 +10,7 @@ export { FetchSitemapTool } from "./fetch-sitemap";
 export { GoogleSerpTool } from "./google-serp";
 export { InspectDomTool } from "./inspect-dom";
 export { PageSpeedTool } from "./pagespeed";
+export { ScrapePageTool } from "./scrape-page";
 export { ToolCall } from "./tool-call";
 export { UpdateRecommendationTool } from "./update-recommendation";
 export { WebsiteNameTool } from "./website-name";

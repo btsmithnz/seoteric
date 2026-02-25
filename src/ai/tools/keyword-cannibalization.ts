@@ -140,7 +140,7 @@ export const checkKeywordCannibalizationTool = tool({
     "Check for keyword cannibalization across multiple URLs by comparing their primary keywords, title overlap, and top keyword density. Identifies pairs of pages likely competing for the same search queries.",
   inputSchema: z.object({
     urls: z
-      .array(z.string().url())
+      .array(z.url())
       .min(2)
       .max(10)
       .describe("Array of 2–10 URLs to check for keyword cannibalization"),

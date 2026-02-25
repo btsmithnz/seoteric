@@ -13,6 +13,7 @@ import {
   updateRecommendationTool,
 } from "./tools/recommendations";
 import { fetchRobotsTxtTool } from "./tools/robots";
+import { scrapePageTool } from "./tools/scrape-page";
 import { checkSecurityHeadersTool } from "./tools/security-headers";
 import { fetchSitemapTool } from "./tools/sitemap";
 import { checkTrustSignalsTool } from "./tools/trust-signals";
@@ -84,8 +85,8 @@ Evaluate Experience, Expertise, Authoritativeness, and Trustworthiness signals:
 - Flag thin content, outdated articles, and keyword cannibalization
 
 ### 7. Structured Data
-- Validate schema markup is present and correct for the page type
-- Use the analyzePage tool — it validates structured data as part of the full page analysis
+- Check whether structured data markup is present using analyzePage (reports presence and error flags)
+- Use scrapePage to extract the actual structured data content (JSON-LD via script[type='application/ld+json'], microdata) when you need to inspect or validate the markup itself
 
 ### 8. SERP Visibility
 - Use googleSerp to check current Google rankings for the site's target keywords
@@ -111,6 +112,7 @@ Evaluate Experience, Expertise, Authoritativeness, and Trustworthiness signals:
       checkTrustSignals: checkTrustSignalsTool,
       checkKeywordCannibalization: checkKeywordCannibalizationTool,
       googleSerp: googleSerpTool,
+      scrapePage: scrapePageTool,
     },
     callOptionsSchema: z.object({
       siteDomain: z.string(),

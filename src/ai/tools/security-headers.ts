@@ -185,7 +185,7 @@ export const checkSecurityHeadersTool = tool({
   description:
     "Check security headers that affect SEO trust signals. Analyzes HSTS, CSP, X-Content-Type-Options, X-Frame-Options, Referrer-Policy, and Permissions-Policy.",
   inputSchema: z.object({
-    url: z.string().url().describe("The URL to check security headers for"),
+    url: z.string().describe("The URL to check security headers for"),
   }),
   execute: async ({
     url,
