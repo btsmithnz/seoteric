@@ -7,8 +7,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ```bash
 pnpm dev          # Start development server (localhost:3000)
 pnpm build        # Production build
-pnpm dlx ultracite check  # Check for linting/formatting issues
-pnpm dlx ultracite fix    # Auto-fix issues
+pnpm check        # Check for linting/formatting issues
+pnpm fix          # Auto-fix issues
 ```
 
 ## Architecture
@@ -18,7 +18,7 @@ This is a Next.js 16 app with:
 - **App Router** (`src/app/`) - React Server Components by default
 - **Convex** - Backend/database (schema and functions in `convex/`)
 - **Better Auth** - Authentication via `@convex-dev/better-auth` integration
-- **Shadcn UI** - Component library using base-lyra style with Base UI primitives (`src/components/ui/`)
+- **Shadcn UI** - Component library with Base UI primitives (`src/components/ui/`)
 - **Tailwind CSS v4** - Styling with CSS variables for theming
 
 ### Editing Files
@@ -38,7 +38,7 @@ When adding or removing an import alongside its usage, always do so in a **singl
 
 ### Route Structure (`src/app/`)
 
-- **`(dash)/`** - Authenticated routes (post-signin/signup). Sites use `/sites/[domain]` URL structure.
+- **`(dash)/`** - Authenticated routes (post-signin/signup). Sites use `/sites/[site]` URL structure where `[site]` is a Convex document ID.
 - **`(public)/`** - Public/landing pages
 - **`(auth)/`** - Login and onboarding pages
 
@@ -47,9 +47,9 @@ When adding or removing an import alongside its usage, always do so in a **singl
 Uses Better Auth with `@convex-dev/better-auth` Convex integration.
 
 **Key files:**
-- `convex/auth.ts` - Server auth config with `createAuth` and `authComponent`
-- `src/lib/auth-client.ts` - Client auth via `authClient`
-- `src/lib/auth-server.ts` - Next.js server utilities
+- `convex/auth.ts` - Server auth config with `createClient` and `authComponent`
+- `src/lib/auth-client.tsx` - Client auth via `authClient` + `ClientAuthBoundary`
+- `src/lib/auth-server.ts` - Next.js server utilities (`preloadAuthQuery`, `fetchAuthQuery`, `fetchAuthMutation`, `fetchAuthAction`, `isAuthenticated`, `getToken`)
 
 **Server Components (RSC):**
 
@@ -101,9 +101,9 @@ const res = await myAgent.stream({ messages, options });
 return res.toUIMessageStreamResponse();
 ```
 
-**AI chat endpoints** use Convex HTTP actions (`convex/http.ts`) for streaming, not Next.js API routes. Simple non-streaming endpoints can use Next.js routes (`src/app/api/`).
+**AI chat endpoints** use Next.js API routes (`src/app/api/chat/`) for streaming. Convex HTTP actions (`convex/http.ts`) handle auth and billing webhook routes only.
 
-**AI tools** are defined in `src/ai/tools/` using `tool()` with Zod schemas. Website inspection tools use Cheerio for HTML parsing.
+**AI tools** are defined in `src/ai/tools/` using `tool()` with Zod v4 schemas (e.g., `z.url()`, `z.email()`). Website inspection tools use Cheerio for HTML parsing.
 
 Do not import provider packages (e.g., `@ai-sdk/anthropic`) - use string model identifiers like `"anthropic/claude-haiku-4.5"` or `"openai/gpt-5-mini"`.
 
@@ -111,11 +111,14 @@ Do not import provider packages (e.g., `@ai-sdk/anthropic`) - use string model i
 
 Pre-built chat UI components that compose Shadcn UI primitives:
 
-- **`conversation`** - Auto-scrolling message container with `StickToBottom`
-- **`message`** - Message rendering with `MessageResponse` (markdown via Streamdown)
+- **`conversation`** - Auto-scrolling message container with `use-stick-to-bottom`
+- **`message`** - Message rendering with `MessageResponse` (markdown via `Streamdown`), `MessageBranch` for multi-branch navigation
 - **`prompt-input`** - Chat input with submit button, status handling, stop functionality
+- **`reasoning`** - Collapsible reasoning display
+- **`shimmer`** - Loading shimmer animation
+- **`suggestion`** - Chat suggestion chips
 
-Use `SeotericMessages` (`src/components/chat/seoteric-messages.tsx`) for consistent message rendering with tool call visualization.
+Use `SeotericMessages` (`src/components/chat/seoteric-messages.tsx`) for consistent message rendering with tool call visualization. Individual tool UI components live in `src/components/chat/tools/`.
 
 
 # Ultracite Code Standards
@@ -124,8 +127,8 @@ This project uses **Ultracite**, a zero-config preset that enforces strict code 
 
 ## Quick Reference
 
-- **Format code**: `pnpm dlx ultracite fix`
-- **Check for issues**: `pnpm dlx ultracite check`
+- **Format code**: `pnpm fix`
+- **Check for issues**: `pnpm check`
 - **Diagnose setup**: `pnpm dlx ultracite doctor`
 
 Biome (the underlying engine) provides robust linting and formatting. Most issues are automatically fixable.
@@ -215,9 +218,6 @@ Write code that is **accessible, performant, type-safe, and maintainable**. Focu
 **React 19+:**
 - Use ref as a prop instead of `React.forwardRef`
 
-**Solid/Svelte/Vue/Qwik:**
-- Use `class` and `for` attributes (not `className` or `htmlFor`)
-
 ---
 
 ## Testing
@@ -240,4 +240,4 @@ Biome's linter will catch most issues automatically. Focus your attention on:
 
 ---
 
-Most formatting and common issues are automatically fixed by Biome. Run `pnpm dlx ultracite fix` before committing to ensure compliance.
+Most formatting and common issues are automatically fixed by Biome. Run `pnpm fix` before committing to ensure compliance.
