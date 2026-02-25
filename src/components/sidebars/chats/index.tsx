@@ -28,12 +28,16 @@ export function ChatsSidebar() {
   return (
     <Sidebar selector="chats" side="left">
       <div className="flex flex-row gap-2 p-2">
+        <SidebarMobileToggleButton selector="chats" variant="outline">
+          <SidebarMobileToggleIcon selector="chats" />
+        </SidebarMobileToggleButton>
+
         {disableNewChat ? (
           <Button
             className="flex-1"
             disabled
             title="Message limit reached. Upgrade your plan in Account > Billing."
-            variant="outline"
+            variant="secondary"
           >
             New Chat
             <PlusIcon className="size-4" />
@@ -44,16 +48,12 @@ export function ChatsSidebar() {
             nativeButton={false}
             onClick={() => setMobileOpen(false)}
             render={<Link href={`/sites/${siteId}/chats`} />}
-            variant="outline"
+            variant="secondary"
           >
             New Chat
             <PlusIcon className="size-4" />
           </Button>
         )}
-
-        <SidebarMobileToggleButton selector="chats" variant="outline">
-          <SidebarMobileToggleIcon selector="chats" />
-        </SidebarMobileToggleButton>
       </div>
 
       <ChatsList siteId={siteId} />

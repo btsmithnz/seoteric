@@ -26,11 +26,13 @@ export function SidebarMobileToggleButton({
   children,
   className,
   selector,
+  size,
   variant,
 }: {
   children: React.ReactNode;
   className?: string;
   selector?: SidebarSelector;
+  size?: ButtonProps["size"];
   variant?: ButtonProps["variant"];
 }) {
   const sidebar = useSidebar();
@@ -40,6 +42,7 @@ export function SidebarMobileToggleButton({
     <Button
       className={cn("md:hidden", className)}
       onClick={() => setMobileOpen((open) => !open)}
+      size={size}
       variant={variant}
     >
       {children}
@@ -64,8 +67,9 @@ export function Sidebar({
   return (
     <div
       className={cn(
-        "fixed top-[calc(var(--spacing-dashboard-nav)+1px)] z-10 h-[calc(100vh-var(--spacing-dashboard-nav))] w-full overflow-y-auto border-border bg-background md:sticky md:block md:w-64",
-        side === "right" ? "right-0 border-l" : "left-0 border-r",
+        "fixed top-[calc(var(--spacing-dashboard-nav)+1px)] z-10 h-[calc(100vh-var(--spacing-dashboard-nav))] w-full overflow-y-auto bg-background md:sticky md:block md:w-64",
+        "md:mx-2 md:my-2 md:h-[calc(100vh-var(--spacing-dashboard-nav)-1rem)] md:rounded-xl md:border md:border-border md:shadow-sm",
+        side === "right" ? "right-0" : "left-0",
         !mobileOpen && "hidden",
         className
       )}

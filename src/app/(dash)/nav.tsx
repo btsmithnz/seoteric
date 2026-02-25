@@ -43,12 +43,12 @@ export function DashboardNav() {
           Seoteric
         </Link>
 
-        <nav className="flex items-center gap-2">
+        <nav className="flex items-center md:gap-2">
           <ThemeSwitcher />
           {siteId && (
-            <div className="mr-2 flex items-center gap-1">
+            <div className="flex items-center gap-0 md:mr-2 md:gap-1">
               <Button
-                className={cn(isLandingPage && "bg-muted")}
+                className={cn("px-2 md:px-3", isLandingPage && "bg-muted")}
                 nativeButton={false}
                 render={<Link href={`/sites/${siteId}`} />}
                 size="sm"
@@ -57,7 +57,10 @@ export function DashboardNav() {
                 Overview
               </Button>
               <Button
-                className={cn(!(isConfigPage || isLandingPage) && "bg-muted")}
+                className={cn(
+                  "px-2 md:px-3",
+                  !(isConfigPage || isLandingPage) && "bg-muted"
+                )}
                 nativeButton={false}
                 render={<Link href={`/sites/${siteId}/chats`} />}
                 size="sm"
@@ -66,7 +69,7 @@ export function DashboardNav() {
                 Chat
               </Button>
               <Button
-                className={cn(isConfigPage && "bg-muted")}
+                className={cn("px-2 md:px-3", isConfigPage && "bg-muted")}
                 nativeButton={false}
                 render={<Link href={`/sites/${siteId}/config`} />}
                 size="sm"

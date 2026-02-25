@@ -41,7 +41,7 @@ export function RecommendationsSidebar() {
   return (
     <Sidebar className="md:w-80" selector="recommendations" side="right">
       <div className="flex items-center justify-between px-3 pt-2 pb-1">
-        <div className="flex items-center gap-2">
+        <div className="flex items-baseline gap-2">
           <LightbulbIcon className="size-4 text-primary" />
           <h2 className="font-medium text-sm">Recommendations</h2>
           {openRecommendations.length > 0 && (
@@ -51,7 +51,12 @@ export function RecommendationsSidebar() {
           )}
         </div>
 
-        <SidebarMobileToggleButton selector="recommendations" variant="outline">
+        <SidebarMobileToggleButton
+          className="px-0"
+          selector="recommendations"
+          size="sm"
+          variant="ghost"
+        >
           <SidebarMobileToggleIcon
             className="rotate-180"
             selector="recommendations"
@@ -72,7 +77,12 @@ export function RecommendationsSidebar() {
         )}
 
         {visibleOpenRecommendations.map((rec) => (
-          <RecommendationCard key={rec._id} recommendation={rec} showActions />
+          <RecommendationCard
+            className="bg-muted/40 shadow-none ring-0"
+            key={rec._id}
+            recommendation={rec}
+            showActions
+          />
         ))}
         {hiddenOpenRecommendationsCount > 0 && (
           <div className="space-y-2 rounded-md border border-dashed bg-muted/30 p-3">
@@ -100,6 +110,7 @@ export function RecommendationsSidebar() {
             <div className="space-y-2 pt-2 opacity-60">
               {completedRecommendations.map((rec) => (
                 <RecommendationCard
+                  className="bg-muted/40 shadow-none ring-0"
                   compact
                   key={rec._id}
                   recommendation={rec}

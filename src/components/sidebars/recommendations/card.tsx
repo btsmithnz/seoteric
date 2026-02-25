@@ -40,12 +40,14 @@ interface RecommendationCardProps {
   recommendation: RecommendationData;
   showActions?: boolean;
   compact?: boolean;
+  className?: string;
 }
 
 export function RecommendationCard({
   recommendation,
   showActions = false,
   compact = false,
+  className,
 }: RecommendationCardProps) {
   const [loadingAction, setLoadingAction] = useState<
     "complete" | "dismiss" | "reopen" | null
@@ -93,7 +95,7 @@ export function RecommendationCard({
 
   return (
     <Card
-      className={cn(compact && "border-l-2 border-l-primary")}
+      className={cn(compact && "border-l-2 border-l-primary", className)}
       size={compact ? "sm" : "default"}
     >
       <CardHeader className={cn(compact && "pb-1")}>

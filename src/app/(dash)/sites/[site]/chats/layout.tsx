@@ -15,7 +15,7 @@ export default async function ChatsLayout(
 
   return (
     <SidebarProvider>
-      <div className="flex flex-1 flex-row">
+      <div className="flex flex-1 flex-row md:bg-muted/40">
         <ChatsSidebar />
 
         <div className="flex min-w-0 flex-1 flex-col gap-1 p-4 pt-1 md:pt-4">
