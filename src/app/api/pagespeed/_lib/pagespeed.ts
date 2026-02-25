@@ -1,11 +1,11 @@
 /** biome-ignore-all lint/suspicious/noExplicitAny: <api types> */
 export interface CoreWebVitals {
-  lcp: {
+  cls: {
     value: number;
     displayValue: string;
     rating: "good" | "needs-improvement" | "poor";
   } | null;
-  cls: {
+  fcp: {
     value: number;
     displayValue: string;
     rating: "good" | "needs-improvement" | "poor";
@@ -15,7 +15,7 @@ export interface CoreWebVitals {
     displayValue: string;
     rating: "good" | "needs-improvement" | "poor";
   } | null;
-  fcp: {
+  lcp: {
     value: number;
     displayValue: string;
     rating: "good" | "needs-improvement" | "poor";
@@ -28,22 +28,22 @@ export interface CoreWebVitals {
 }
 
 export interface PageSpeedOpportunity {
-  id: string;
-  title: string;
   description: string;
-  score: number | null;
+  id: string;
   savings: string | null;
+  score: number | null;
+  title: string;
 }
 
 export interface PageSpeedResult {
-  url: string;
-  finalUrl: string;
-  strategy: "mobile" | "desktop";
-  performanceScore: number;
   coreWebVitals: CoreWebVitals;
-  opportunities: PageSpeedOpportunity[];
   diagnostics: PageSpeedOpportunity[];
   fetchTime: string;
+  finalUrl: string;
+  opportunities: PageSpeedOpportunity[];
+  performanceScore: number;
+  strategy: "mobile" | "desktop";
+  url: string;
 }
 
 export interface PageSpeedError {

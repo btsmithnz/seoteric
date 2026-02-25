@@ -3,19 +3,15 @@ import { z } from "zod";
 import { dataforseoPost } from "@/lib/dataforseo";
 
 interface DfsOnPageItem {
-  resource_type: string;
-  status_code: number;
-  url: string;
-  meta: {
-    title: string | null;
-    description: string | null;
-    canonical: string | null;
-    robots: string | null;
-    htags: { h1?: string[]; h2?: string[]; h3?: string[] } | null;
-    social_media_tags: Record<string, string> | null;
-    images_count: number;
-    internal_links_count: number;
-    external_links_count: number;
+  checks: {
+    is_redirect: boolean;
+    is_broken: boolean;
+    is_https: boolean;
+    canonical_to_redirect: boolean;
+    has_micromarkup: boolean;
+    has_micromarkup_errors: boolean;
+    no_image_alt: boolean;
+    no_h1_tag: boolean;
   } | null;
   content: {
     plain_text_word_count: number;
@@ -28,17 +24,21 @@ interface DfsOnPageItem {
     description_to_content_consistency: number | null;
     title_to_content_consistency: number | null;
   } | null;
-  checks: {
-    is_redirect: boolean;
-    is_broken: boolean;
-    is_https: boolean;
-    canonical_to_redirect: boolean;
-    has_micromarkup: boolean;
-    has_micromarkup_errors: boolean;
-    no_image_alt: boolean;
-    no_h1_tag: boolean;
+  meta: {
+    title: string | null;
+    description: string | null;
+    canonical: string | null;
+    robots: string | null;
+    htags: { h1?: string[]; h2?: string[]; h3?: string[] } | null;
+    social_media_tags: Record<string, string> | null;
+    images_count: number;
+    internal_links_count: number;
+    external_links_count: number;
   } | null;
+  resource_type: string;
   response_headers: Record<string, string> | null;
+  status_code: number;
+  url: string;
 }
 
 interface DfsOnPageResponse {

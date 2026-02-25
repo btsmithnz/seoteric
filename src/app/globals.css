@@ -119,6 +119,7 @@
 }
 
 @utility text-gradient {
+  -webkit-text-fill-color: transparent;
   background: linear-gradient(
     135deg,
     oklch(0.809 0.105 251.813),
@@ -127,7 +128,6 @@
   );
   -webkit-background-clip: text;
   background-clip: text;
-  -webkit-text-fill-color: transparent;
 }
 
 /* ── Homepage: Command Center Design ── */
@@ -192,15 +192,15 @@
 @utility glass-card {
   background: oklch(1 0 0 / 4%);
   border: 1px solid oklch(1 0 0 / 10%);
-  backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
 }
 
 @utility glass-card-interactive {
   background: oklch(1 0 0 / 4%);
   border: 1px solid oklch(1 0 0 / 10%);
-  backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
   transition:
     border-color 0.2s ease,
     box-shadow 0.2s ease;
@@ -213,8 +213,8 @@
 @utility metric-chip {
   background: oklch(1 0 0 / 6%);
   border: 1px solid oklch(1 0 0 / 12%);
-  backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
 }
 
 @utility glow-primary {
@@ -226,6 +226,7 @@
 }
 
 @utility text-gradient-blue {
+  -webkit-text-fill-color: transparent;
   background: linear-gradient(
     110deg,
     oklch(0.85 0.08 220),
@@ -234,7 +235,6 @@
   );
   -webkit-background-clip: text;
   background-clip: text;
-  -webkit-text-fill-color: transparent;
 }
 
 @layer base {

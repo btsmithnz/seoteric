@@ -44,9 +44,9 @@ const PRODUCT_TO_PLAN: Record<string, Exclude<PlanKey, "starter">> = {
 type BillingCtx = QueryCtx | MutationCtx;
 
 interface BillingUser {
+  _creationTime?: number;
   _id: string;
   createdAt?: number | null;
-  _creationTime?: number;
 }
 
 type ResolvedSubscription = {
@@ -59,12 +59,12 @@ type ResolvedSubscription = {
 } | null;
 
 interface BillingState {
-  user: BillingUser;
-  plan: PlanKey;
-  limits: (typeof PLAN_LIMITS)[PlanKey];
-  cycleStartMs: number;
   cycleEndMs: number;
+  cycleStartMs: number;
+  limits: (typeof PLAN_LIMITS)[PlanKey];
+  plan: PlanKey;
   subscription: ResolvedSubscription;
+  user: BillingUser;
 }
 
 interface CycleUsage {
@@ -73,12 +73,12 @@ interface CycleUsage {
 }
 
 interface PolarSubscriptionLike {
+  cancelAtPeriodEnd: boolean;
+  currentPeriodEnd: string | null;
+  currentPeriodStart: string;
+  product?: { name?: string | null } | null;
   productId: string;
   status: string;
-  currentPeriodStart: string;
-  currentPeriodEnd: string | null;
-  cancelAtPeriodEnd: boolean;
-  product?: { name?: string | null } | null;
 }
 
 const FEATURE_LABELS = {

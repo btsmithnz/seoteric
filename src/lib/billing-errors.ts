@@ -6,14 +6,14 @@ export type BillingLimitFeature = "sites" | "messages" | "pageSpeedReports";
 
 export interface LimitExceededErrorData {
   code: typeof LIMIT_EXCEEDED_CODE;
-  feature: BillingLimitFeature;
-  plan: "starter" | "pro" | "agency";
-  limit: number;
-  used: number;
-  message: string;
-  cycleStartMs?: number;
-  cycleEndMs?: number;
   cta?: "upgrade";
+  cycleEndMs?: number;
+  cycleStartMs?: number;
+  feature: BillingLimitFeature;
+  limit: number;
+  message: string;
+  plan: "starter" | "pro" | "agency";
+  used: number;
 }
 
 function isRecord(value: unknown): value is Record<string, unknown> {

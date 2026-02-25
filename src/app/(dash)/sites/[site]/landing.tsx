@@ -22,8 +22,8 @@ import { STARTER_VISIBLE_RECOMMENDATIONS } from "@/lib/plans";
 import { CHAT_SUGGESTIONS } from "@/lib/suggestions";
 
 interface SiteLandingProps {
-  preloadedSite: Preloaded<typeof api.site.get>;
   preloadedRecommendations: Preloaded<typeof api.recommendations.listBySite>;
+  preloadedSite: Preloaded<typeof api.site.get>;
   siteId: Id<"sites">;
 }
 

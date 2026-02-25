@@ -3,13 +3,11 @@ import { z } from "zod";
 
 interface HeaderCheck {
   present: boolean;
-  value: string | null;
   recommendation: string | null;
+  value: string | null;
 }
 
 interface SecurityHeadersResult {
-  url: string;
-  score: number;
   headers: {
     strictTransportSecurity: HeaderCheck;
     contentSecurityPolicy: HeaderCheck;
@@ -19,17 +17,19 @@ interface SecurityHeadersResult {
     permissionsPolicy: HeaderCheck;
   };
   missingCritical: string[];
+  score: number;
+  url: string;
 }
 
 interface HeaderConfig {
-  name: string;
-  headerName: string;
-  weight: number;
   critical: boolean;
+  headerName: string;
+  name: string;
   validate: (value: string | null) => {
     valid: boolean;
     recommendation: string | null;
   };
+  weight: number;
 }
 
 const MAX_AGE_REGEX = /max-age=\d+/;

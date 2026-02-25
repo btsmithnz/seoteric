@@ -42,8 +42,8 @@ import { countries, renderCountryLabel } from "@/lib/countries";
 import { useAuthQuery } from "@/lib/hooks";
 
 interface CreateSiteDialogProps {
-  trigger?: React.ReactElement;
   onSuccess?: (siteId: string) => void;
+  trigger?: React.ReactElement;
 }
 
 export const createSiteDialog = createDialogHandle();

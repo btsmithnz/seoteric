@@ -3,8 +3,8 @@ import { cn } from "@/lib/utils";
 import { formatUrl, ToolCall } from "./tool-call";
 
 export interface FetchSitemapToolInput {
-  url: string;
   domain?: string;
+  url: string;
 }
 
 export function FetchSitemapTool({

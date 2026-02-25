@@ -4,18 +4,18 @@ import { z } from "zod";
 import { cleanDomain } from "@/lib/utils";
 
 interface SitemapUrl {
-  loc: string;
-  lastmod?: string;
   changefreq?: string;
+  lastmod?: string;
+  loc: string;
   priority?: string;
 }
 
 interface SitemapResult {
-  type: "urlset" | "sitemapindex";
-  urls?: SitemapUrl[];
   sitemaps?: string[];
   total: number;
   truncated: boolean;
+  type: "urlset" | "sitemapindex";
+  urls?: SitemapUrl[];
 }
 
 const MAX_URLS = 100;

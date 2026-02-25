@@ -28,19 +28,19 @@ const categoryLabels = {
 
 export interface RecommendationData {
   _id?: Id<"recommendations">;
-  title: string;
-  description: string;
   category: string;
-  priority: string;
+  description: string;
   pageUrl?: string;
+  priority: string;
   status?: string;
+  title: string;
 }
 
 interface RecommendationCardProps {
+  className?: string;
+  compact?: boolean;
   recommendation: RecommendationData;
   showActions?: boolean;
-  compact?: boolean;
-  className?: string;
 }
 
 export function RecommendationCard({

@@ -3,19 +3,19 @@ import { z } from "zod";
 import { dataforseoPost } from "@/lib/dataforseo";
 
 interface DfsSerpItem {
-  type: string;
-  rank_group: number;
-  domain: string | null;
-  title: string | null;
   description: string | null;
+  domain: string | null;
+  rank_group: number;
+  title: string | null;
+  type: string;
   url: string | null;
 }
 
 interface DfsSerpResult {
-  keyword: string;
-  total_count: number | null;
   item_types: string[];
   items: DfsSerpItem[] | null;
+  keyword: string;
+  total_count: number | null;
 }
 
 interface DfsSerpResponse {

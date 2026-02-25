@@ -3,14 +3,14 @@ import { z } from "zod";
 import { dataforseoPost } from "@/lib/dataforseo";
 
 interface DfsOnPageItem {
-  resource_type: string;
-  url: string;
+  keyword_density: Record<string, number> | null;
   meta: {
     title: string | null;
     description: string | null;
     htags: { h1?: string[] } | null;
   } | null;
-  keyword_density: Record<string, number> | null;
+  resource_type: string;
+  url: string;
 }
 
 interface DfsOnPageResponse {
@@ -24,12 +24,12 @@ interface DfsOnPageResponse {
 }
 
 interface PageData {
-  url: string;
-  title: string | null;
   description: string | null;
   h1: string | null;
   primaryKeyword: string | null;
+  title: string | null;
   topKeywords: string[];
+  url: string;
 }
 
 type RiskLevel = "high" | "medium" | "low";

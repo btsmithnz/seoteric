@@ -58,16 +58,16 @@ export const updateRecommendationTool = tool({
 
 export interface CreateRecommendationOutput {
   action: "create";
-  title: string;
-  description: string;
   category: "technical" | "content" | "on-page" | "off-page" | "performance";
-  priority: "critical" | "high" | "medium" | "low";
+  description: string;
   pageUrl?: string;
+  priority: "critical" | "high" | "medium" | "low";
+  title: string;
 }
 
 export interface UpdateRecommendationOutput {
   action: "update";
+  priority?: "critical" | "high" | "medium" | "low";
   recommendationId: string;
   status?: "open" | "in_progress" | "completed" | "dismissed";
-  priority?: "critical" | "high" | "medium" | "low";
 }

@@ -3,16 +3,16 @@ import { z } from "zod";
 import { cleanDomain } from "@/lib/utils";
 
 interface RobotsDirective {
-  userAgent: string;
   rules: {
     type: "allow" | "disallow";
     path: string;
   }[];
+  userAgent: string;
 }
 
 interface ParsedRobotsTxt {
-  raw: string;
   directives: RobotsDirective[];
+  raw: string;
   sitemaps: string[];
 }
 

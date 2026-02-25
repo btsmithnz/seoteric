@@ -4,8 +4,8 @@ import { RecommendationCard } from "../../sidebars/recommendations/card";
 import { ToolCall } from "./tool-call";
 
 interface CreateRecommendationToolProps {
-  state: string;
   output?: CreateRecommendationOutput;
+  state: string;
 }
 
 export function CreateRecommendationTool({

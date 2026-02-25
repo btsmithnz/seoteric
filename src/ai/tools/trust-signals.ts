@@ -3,12 +3,12 @@ import { z } from "zod";
 import { dataforseoPost } from "@/lib/dataforseo";
 
 interface DfsWhoisItem {
-  domain: string;
   created_date: string | null;
+  domain: string;
   expiration_date: string | null;
-  updated_date: string | null;
   registrar: { registrar_name: string | null } | null;
   status: string[] | null;
+  updated_date: string | null;
 }
 
 interface DfsWhoisResponse {
@@ -22,13 +22,13 @@ interface DfsWhoisResponse {
 }
 
 interface DfsBacklinksResult {
-  target: string;
-  rank: number | null;
   backlinks: number | null;
+  broken_backlinks: number | null;
+  rank: number | null;
   referring_domains: number | null;
   referring_ips: number | null;
   spam_score: number | null;
-  broken_backlinks: number | null;
+  target: string;
 }
 
 interface DfsBacklinksResponse {

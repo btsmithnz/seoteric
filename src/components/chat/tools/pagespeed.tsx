@@ -254,9 +254,9 @@ function PageSpeedResults({ output }: { output: PageSpeedOutput }) {
 }
 
 interface PageSpeedToolProps {
-  state: string;
-  output?: PageSpeedOutput;
   input?: { url: string; strategy: "mobile" | "desktop" };
+  output?: PageSpeedOutput;
+  state: string;
 }
 
 export function PageSpeedTool({ state, output, input }: PageSpeedToolProps) {

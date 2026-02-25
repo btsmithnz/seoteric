@@ -12,7 +12,7 @@ async function ConvexGate({ children }: { children: React.ReactNode }) {
 export default function AuthLayout({ children }: LayoutProps<"/">) {
   return (
     <PublicLayout>
-      <div className="flex min-h-screen items-center justify-center p-4">
+      <div className="flex min-h-screen items-center justify-center p-4 pt-20">
         <Suspense fallback={<Spinner />}>
           <ConvexGate>{children}</ConvexGate>
         </Suspense>

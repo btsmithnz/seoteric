@@ -8,8 +8,8 @@ export interface PageSpeedOutput extends PageSpeedResult {
 }
 
 export interface PageSpeedToolInput {
-  url: string;
   strategy: "mobile" | "desktop";
+  url: string;
 }
 
 interface PageSpeedToolCallbacks {
