@@ -63,7 +63,7 @@ export function ChatOnboardingSkeleton() {
 
 export function ChatOnboarding() {
   const [input, setInput] = useState("");
-  const [minimized, setMinimized] = useState(false);
+  const [minimized, setMinimized] = useState(true);
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
 

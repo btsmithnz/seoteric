@@ -304,7 +304,7 @@ export function Billing() {
         <p className="text-muted-foreground text-xs">
           Pro is $16/month. Intro offer: first 3 months at $8/month with code{" "}
           <span className="font-medium text-foreground">{PRO_PROMO_CODE}</span>{" "}
-          in Polar checkout.
+          at checkout.
         </p>
         <SubscriptionActions currentPlan={entitlements.plan as PlanId} />
       </div>
