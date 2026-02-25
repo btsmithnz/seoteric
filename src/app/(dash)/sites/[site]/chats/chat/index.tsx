@@ -1,5 +1,6 @@
 "use client";
 
+import { Suspense } from "react";
 import type { Id } from "@/convex/_generated/dataModel";
 import { ChatContent } from "./content";
 import { ChatProvider } from "./provider";
@@ -13,7 +14,9 @@ export function ChatSeo({
 }) {
   return (
     <ChatProvider siteId={siteId}>
-      <ChatContent>{children}</ChatContent>
+      <Suspense>
+        <ChatContent>{children}</ChatContent>
+      </Suspense>
     </ChatProvider>
   );
 }

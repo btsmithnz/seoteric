@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useSearchParams } from "next/navigation";
+import { useEffect, useRef, useState } from "react";
 import {
   Conversation,
   ConversationContent,
@@ -24,6 +25,8 @@ export function ChatContent({ children }: { children: React.ReactNode }) {
   const entitlements = useAuthQuery(api.billing.getEntitlements);
   const disableInput =
     entitlements !== undefined && entitlements.remaining.messages <= 0;
+  const searchParams = useSearchParams();
+  const initialQueryRef = useRef(searchParams.get("q"));
 
   const handleSend = (text: string) => {
     if (disableInput) {
@@ -32,6 +35,15 @@ export function ChatContent({ children }: { children: React.ReactNode }) {
     sendMessage({ text });
     setInput("");
   };
+
+  useEffect(() => {
+    const q = initialQueryRef.current;
+    if (!q || disableInput) {
+      return;
+    }
+    initialQueryRef.current = null;
+    sendMessage({ text: q });
+  }, [disableInput, sendMessage]);
 
   return (
     <div className="flex h-full gap-4">

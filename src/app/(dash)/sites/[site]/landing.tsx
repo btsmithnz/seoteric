@@ -55,11 +55,11 @@ export function SiteLanding({
     ? Math.max(0, openRecs.length - STARTER_VISIBLE_RECOMMENDATIONS)
     : 0;
 
-  const handleSuggestion = () => {
+  const handleSuggestion = (suggestion: string) => {
     if (disableNewChat) {
       return;
     }
-    router.push(`/sites/${siteId}/chats`);
+    router.push(`/sites/${siteId}/chats?q=${encodeURIComponent(suggestion)}`);
   };
 
   return (
