@@ -13,18 +13,28 @@ import {
 } from "../ai-elements/reasoning";
 import {
   AnalyzePageTool,
+  type AnalyzePageToolInput,
   CheckKeywordCannibalizationTool,
+  type CheckKeywordCannibalizationToolInput,
   CheckSecurityHeadersTool,
+  type CheckSecurityHeadersToolInput,
   CheckTrustSignalsTool,
+  type CheckTrustSignalsToolInput,
   CheckUrlStatusTool,
+  type CheckUrlStatusToolInput,
   CreateAccountTool,
   CreateRecommendationTool,
   FetchRobotsTxtTool,
+  type FetchRobotsTxtToolInput,
   FetchSitemapTool,
+  type FetchSitemapToolInput,
   GoogleSerpTool,
+  type GoogleSerpToolInput,
   InspectDomTool,
   PageSpeedTool,
+  type PageSpeedToolInput,
   ScrapePageTool,
+  type ScrapePageToolInput,
   UpdateRecommendationTool,
   WebsiteNameTool,
   WebsiteTextTool,
@@ -90,6 +100,7 @@ function MessageRender({
           case "tool-runPageSpeed":
             return (
               <PageSpeedTool
+                input={part.input as PageSpeedToolInput}
                 key={partId}
                 output={part.output as PageSpeedOutput}
                 state={part.state}
@@ -97,36 +108,84 @@ function MessageRender({
             );
 
           case "tool-checkUrlStatus":
-            return <CheckUrlStatusTool key={partId} state={part.state} />;
+            return (
+              <CheckUrlStatusTool
+                input={part.input as CheckUrlStatusToolInput}
+                key={partId}
+                state={part.state}
+              />
+            );
 
           case "tool-fetchRobotsTxt":
-            return <FetchRobotsTxtTool key={partId} state={part.state} />;
+            return (
+              <FetchRobotsTxtTool
+                input={part.input as FetchRobotsTxtToolInput}
+                key={partId}
+                state={part.state}
+              />
+            );
 
           case "tool-fetchSitemap":
-            return <FetchSitemapTool key={partId} state={part.state} />;
+            return (
+              <FetchSitemapTool
+                input={part.input as FetchSitemapToolInput}
+                key={partId}
+                state={part.state}
+              />
+            );
 
           case "tool-checkSecurityHeaders":
-            return <CheckSecurityHeadersTool key={partId} state={part.state} />;
+            return (
+              <CheckSecurityHeadersTool
+                input={part.input as CheckSecurityHeadersToolInput}
+                key={partId}
+                state={part.state}
+              />
+            );
 
           case "tool-checkTrustSignals":
-            return <CheckTrustSignalsTool key={partId} state={part.state} />;
+            return (
+              <CheckTrustSignalsTool
+                input={part.input as CheckTrustSignalsToolInput}
+                key={partId}
+                state={part.state}
+              />
+            );
 
           case "tool-analyzePage":
-            return <AnalyzePageTool key={partId} state={part.state} />;
+            return (
+              <AnalyzePageTool
+                input={part.input as AnalyzePageToolInput}
+                key={partId}
+                state={part.state}
+              />
+            );
 
           case "tool-checkKeywordCannibalization":
             return (
               <CheckKeywordCannibalizationTool
+                input={part.input as CheckKeywordCannibalizationToolInput}
                 key={partId}
                 state={part.state}
               />
             );
 
           case "tool-googleSerp":
-            return <GoogleSerpTool key={partId} state={part.state} />;
+            return (
+              <GoogleSerpTool
+                input={part.input as GoogleSerpToolInput}
+                key={partId}
+                state={part.state}
+              />
+            );
 
           case "tool-scrapePage":
-            return <ScrapePageTool key={partId} />;
+            return (
+              <ScrapePageTool
+                input={part.input as ScrapePageToolInput}
+                key={partId}
+              />
+            );
 
           default:
             return null;

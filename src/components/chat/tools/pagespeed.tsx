@@ -1,8 +1,11 @@
 import { ActivityIcon, ChevronDownIcon } from "lucide-react";
 import { useState } from "react";
 import type { PageSpeedOutput } from "@/ai/tools/pagespeed";
+
+export type { PageSpeedToolInput } from "@/ai/tools/pagespeed";
+
 import { cn } from "@/lib/utils";
-import { ToolCall } from "./tool-call";
+import { formatUrl, ToolCall } from "./tool-call";
 
 function getScoreColor(score: number): string {
   if (score >= 90) {
@@ -253,9 +256,10 @@ function PageSpeedResults({ output }: { output: PageSpeedOutput }) {
 interface PageSpeedToolProps {
   state: string;
   output?: PageSpeedOutput;
+  input?: { url: string; strategy: "mobile" | "desktop" };
 }
 
-export function PageSpeedTool({ state, output }: PageSpeedToolProps) {
+export function PageSpeedTool({ state, output, input }: PageSpeedToolProps) {
   if (state === "output-available" && output) {
     return <PageSpeedResults output={output} />;
   }
@@ -263,6 +267,14 @@ export function PageSpeedTool({ state, output }: PageSpeedToolProps) {
   return (
     <ToolCall icon={<ActivityIcon className="inline size-4 animate-pulse" />}>
       Running PageSpeed analysis...
+      {input?.url && (
+        <>
+          <span className="mx-1">·</span>
+          <span className="font-mono text-xs opacity-60">
+            {formatUrl(input.url)}
+          </span>
+        </>
+      )}
     </ToolCall>
   );
 }

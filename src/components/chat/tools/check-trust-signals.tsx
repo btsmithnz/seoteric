@@ -2,7 +2,17 @@ import { BadgeCheckIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ToolCall } from "./tool-call";
 
-export function CheckTrustSignalsTool({ state }: { state: string }) {
+export interface CheckTrustSignalsToolInput {
+  domain: string;
+}
+
+export function CheckTrustSignalsTool({
+  state,
+  input,
+}: {
+  state: string;
+  input?: CheckTrustSignalsToolInput;
+}) {
   const done = state === "output-available";
   return (
     <ToolCall
@@ -13,6 +23,12 @@ export function CheckTrustSignalsTool({ state }: { state: string }) {
       }
     >
       {done ? "Checked trust signals" : "Checking trust signals..."}
+      {input?.domain && (
+        <>
+          <span className="mx-1">·</span>
+          <span className="font-mono text-xs opacity-60">{input.domain}</span>
+        </>
+      )}
     </ToolCall>
   );
 }

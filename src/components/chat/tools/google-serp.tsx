@@ -2,7 +2,17 @@ import { TrendingUpIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ToolCall } from "./tool-call";
 
-export function GoogleSerpTool({ state }: { state: string }) {
+export interface GoogleSerpToolInput {
+  keyword: string;
+}
+
+export function GoogleSerpTool({
+  state,
+  input,
+}: {
+  state: string;
+  input?: GoogleSerpToolInput;
+}) {
   const done = state === "output-available";
   return (
     <ToolCall
@@ -13,6 +23,14 @@ export function GoogleSerpTool({ state }: { state: string }) {
       }
     >
       {done ? "Search rankings retrieved" : "Checking search rankings..."}
+      {input?.keyword && (
+        <>
+          <span className="mx-1">·</span>
+          <span className="font-mono text-xs opacity-60">
+            "{input.keyword}"
+          </span>
+        </>
+      )}
     </ToolCall>
   );
 }

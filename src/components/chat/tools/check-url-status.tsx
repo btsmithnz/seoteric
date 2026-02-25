@@ -1,8 +1,18 @@
 import { Link2Icon } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { ToolCall } from "./tool-call";
+import { formatUrl, ToolCall } from "./tool-call";
 
-export function CheckUrlStatusTool({ state }: { state: string }) {
+export interface CheckUrlStatusToolInput {
+  url: string;
+}
+
+export function CheckUrlStatusTool({
+  state,
+  input,
+}: {
+  state: string;
+  input?: CheckUrlStatusToolInput;
+}) {
   const done = state === "output-available";
   return (
     <ToolCall
@@ -11,6 +21,14 @@ export function CheckUrlStatusTool({ state }: { state: string }) {
       }
     >
       {done ? "Link checked" : "Checking link status..."}
+      {input?.url && (
+        <>
+          <span className="mx-1">·</span>
+          <span className="font-mono text-xs opacity-60">
+            {formatUrl(input.url)}
+          </span>
+        </>
+      )}
     </ToolCall>
   );
 }

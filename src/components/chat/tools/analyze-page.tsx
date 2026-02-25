@@ -1,8 +1,18 @@
 import { ScanSearchIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { ToolCall } from "./tool-call";
+import { formatUrl, ToolCall } from "./tool-call";
 
-export function AnalyzePageTool({ state }: { state: string }) {
+export interface AnalyzePageToolInput {
+  url: string;
+}
+
+export function AnalyzePageTool({
+  state,
+  input,
+}: {
+  state: string;
+  input?: AnalyzePageToolInput;
+}) {
   const done = state === "output-available";
   return (
     <ToolCall
@@ -13,6 +23,14 @@ export function AnalyzePageTool({ state }: { state: string }) {
       }
     >
       {done ? "Page analyzed" : "Analyzing page..."}
+      {input?.url && (
+        <>
+          <span className="mx-1">·</span>
+          <span className="font-mono text-xs opacity-60">
+            {formatUrl(input.url)}
+          </span>
+        </>
+      )}
     </ToolCall>
   );
 }

@@ -1,10 +1,22 @@
 import { CodeIcon } from "lucide-react";
-import { ToolCall } from "./tool-call";
+import { formatUrl, ToolCall } from "./tool-call";
 
-export function ScrapePageTool() {
+export interface ScrapePageToolInput {
+  url: string;
+}
+
+export function ScrapePageTool({ input }: { input?: ScrapePageToolInput }) {
   return (
     <ToolCall icon={<CodeIcon className="inline size-4" />}>
       Scraping page content
+      {input?.url && (
+        <>
+          <span className="mx-1">·</span>
+          <span className="font-mono text-xs opacity-60">
+            {formatUrl(input.url)}
+          </span>
+        </>
+      )}
     </ToolCall>
   );
 }

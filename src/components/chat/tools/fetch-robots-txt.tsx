@@ -2,7 +2,17 @@ import { FileTextIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ToolCall } from "./tool-call";
 
-export function FetchRobotsTxtTool({ state }: { state: string }) {
+export interface FetchRobotsTxtToolInput {
+  domain: string;
+}
+
+export function FetchRobotsTxtTool({
+  state,
+  input,
+}: {
+  state: string;
+  input?: FetchRobotsTxtToolInput;
+}) {
   const done = state === "output-available";
   return (
     <ToolCall
@@ -13,6 +23,12 @@ export function FetchRobotsTxtTool({ state }: { state: string }) {
       }
     >
       {done ? "Fetched robots.txt" : "Fetching robots.txt..."}
+      {input?.domain && (
+        <>
+          <span className="mx-1">·</span>
+          <span className="font-mono text-xs opacity-60">{input.domain}</span>
+        </>
+      )}
     </ToolCall>
   );
 }
