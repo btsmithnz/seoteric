@@ -1,5 +1,13 @@
+export { AnalyzePageTool } from "./analyze-page";
+export { CheckKeywordCannibalizationTool } from "./check-keyword-cannibalization";
+export { CheckSecurityHeadersTool } from "./check-security-headers";
+export { CheckTrustSignalsTool } from "./check-trust-signals";
+export { CheckUrlStatusTool } from "./check-url-status";
 export { CreateAccountTool } from "./create-account";
 export { CreateRecommendationTool } from "./create-recommendation";
+export { FetchRobotsTxtTool } from "./fetch-robots-txt";
+export { FetchSitemapTool } from "./fetch-sitemap";
+export { GoogleSerpTool } from "./google-serp";
 export { InspectDomTool } from "./inspect-dom";
 export { PageSpeedTool } from "./pagespeed";
 export { ToolCall } from "./tool-call";

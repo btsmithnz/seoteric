@@ -12,8 +12,16 @@ import {
   ReasoningTrigger,
 } from "../ai-elements/reasoning";
 import {
+  AnalyzePageTool,
+  CheckKeywordCannibalizationTool,
+  CheckSecurityHeadersTool,
+  CheckTrustSignalsTool,
+  CheckUrlStatusTool,
   CreateAccountTool,
   CreateRecommendationTool,
+  FetchRobotsTxtTool,
+  FetchSitemapTool,
+  GoogleSerpTool,
   InspectDomTool,
   PageSpeedTool,
   UpdateRecommendationTool,
@@ -86,6 +94,35 @@ function MessageRender({
                 state={part.state}
               />
             );
+
+          case "tool-checkUrlStatus":
+            return <CheckUrlStatusTool key={partId} state={part.state} />;
+
+          case "tool-fetchRobotsTxt":
+            return <FetchRobotsTxtTool key={partId} state={part.state} />;
+
+          case "tool-fetchSitemap":
+            return <FetchSitemapTool key={partId} state={part.state} />;
+
+          case "tool-checkSecurityHeaders":
+            return <CheckSecurityHeadersTool key={partId} state={part.state} />;
+
+          case "tool-checkTrustSignals":
+            return <CheckTrustSignalsTool key={partId} state={part.state} />;
+
+          case "tool-analyzePage":
+            return <AnalyzePageTool key={partId} state={part.state} />;
+
+          case "tool-checkKeywordCannibalization":
+            return (
+              <CheckKeywordCannibalizationTool
+                key={partId}
+                state={part.state}
+              />
+            );
+
+          case "tool-googleSerp":
+            return <GoogleSerpTool key={partId} state={part.state} />;
 
           default:
             return null;
