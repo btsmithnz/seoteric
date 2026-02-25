@@ -85,6 +85,10 @@ export async function POST(req: Request) {
       siteName: site.name,
       siteCountry: site.country,
       siteIndustry: site.industry,
+      siteLocation: site.location,
+      siteLatitude: site.latitude,
+      siteLongitude: site.longitude,
+      siteGoogleLocationId: site.googleLocationId,
       existingRecommendations: recommendations.map((r) => ({
         _id: r._id,
         title: r.title,

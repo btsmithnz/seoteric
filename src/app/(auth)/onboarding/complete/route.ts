@@ -13,12 +13,18 @@ export async function GET(req: NextRequest) {
       domain: z.string(),
       country: z.string(),
       industry: z.string(),
+      location: z.string().optional(),
+      latitude: z.coerce.number().optional(),
+      longitude: z.coerce.number().optional(),
     })
     .parse({
       name: searchParams.get("name") ?? "",
       domain: searchParams.get("domain") ?? "",
       country: searchParams.get("country") ?? "",
       industry: searchParams.get("industry") ?? "",
+      location: searchParams.get("location") ?? undefined,
+      latitude: searchParams.get("latitude") ?? undefined,
+      longitude: searchParams.get("longitude") ?? undefined,
     });
 
   const siteId = await fetchAuthMutation(api.site.create, data);

@@ -13,6 +13,18 @@ function getAuthHeader(): string {
   return `Basic ${Buffer.from(`${login}:${password}`).toString("base64")}`;
 }
 
+export async function dataforseoGet<T = unknown>(path: string): Promise<T> {
+  const response = await fetch(`${BASE_URL}${path}`, {
+    headers: { Authorization: getAuthHeader() },
+  });
+  if (!response.ok) {
+    throw new Error(
+      `DataForSEO API error: ${response.status} ${response.statusText}`
+    );
+  }
+  return response.json() as Promise<T>;
+}
+
 export async function dataforseoPost<T = unknown>(
   path: string,
   body: unknown[]

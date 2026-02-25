@@ -7,6 +7,10 @@ export const sitesFields = {
   userId: v.string(),
   country: v.string(),
   industry: v.string(),
+  location: v.optional(v.string()),
+  latitude: v.optional(v.number()),
+  longitude: v.optional(v.number()),
+  googleLocationId: v.optional(v.number()),
 };
 
 export const chatsFeilds = {

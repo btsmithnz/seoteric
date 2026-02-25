@@ -68,9 +68,14 @@ export function ChatOnboarding() {
   const router = useRouter();
 
   const onboardingTool = useCallback(
-    (input: Record<string, string>) => {
+    (input: Record<string, unknown>) => {
       startTransition(() => {
-        const params = new URLSearchParams(input);
+        const params = new URLSearchParams();
+        for (const [key, value] of Object.entries(input)) {
+          if (value !== undefined && value !== null) {
+            params.set(key, String(value));
+          }
+        }
         router.push(`/onboarding?${params}`);
       });
     },
@@ -83,7 +88,7 @@ export function ChatOnboarding() {
     onToolCall: ({ toolCall }) => {
       switch (toolCall.toolName) {
         case "createAccount":
-          onboardingTool(toolCall.input as Record<string, string>);
+          onboardingTool(toolCall.input as Record<string, unknown>);
           return;
         default:
           break;

@@ -45,6 +45,9 @@ export function SiteConfigForm({ preloadedSite }: SiteConfigFormProps) {
       domain: site.domain,
       country: site.country,
       industry: site.industry,
+      location: site.location ?? "",
+      latitude: site.latitude?.toString() ?? "",
+      longitude: site.longitude?.toString() ?? "",
     },
     validators: {
       onSubmit: z.object({
@@ -52,6 +55,19 @@ export function SiteConfigForm({ preloadedSite }: SiteConfigFormProps) {
         domain: z.string().regex(z.regexes.domain, { error: "Invalid domain" }),
         country: z.string(),
         industry: z.string(),
+        location: z.string().optional(),
+        latitude: z.coerce
+          .number()
+          .min(-90)
+          .max(90)
+          .optional()
+          .or(z.literal("")),
+        longitude: z.coerce
+          .number()
+          .min(-180)
+          .max(180)
+          .optional()
+          .or(z.literal("")),
       }),
     },
     onSubmit: async ({ value }) => {
@@ -62,6 +78,10 @@ export function SiteConfigForm({ preloadedSite }: SiteConfigFormProps) {
           domain: value.domain,
           country: value.country,
           industry: value.industry,
+          location: value.location || undefined,
+          latitude: value.latitude !== "" ? Number(value.latitude) : undefined,
+          longitude:
+            value.longitude !== "" ? Number(value.longitude) : undefined,
         });
 
         toast.success("Site settings updated successfully");
@@ -153,6 +173,56 @@ export function SiteConfigForm({ preloadedSite }: SiteConfigFormProps) {
                     onChange={(e) => field.handleChange(e.target.value)}
                     placeholder="e.g., E-commerce, Healthcare, Finance"
                     type="text"
+                    value={field.state.value}
+                  />
+                  <FieldErrorZod field={field} />
+                </Field>
+              )}
+            </form.Field>
+            <form.Field name="location">
+              {(field) => (
+                <Field data-invalid={field.state.meta.errors.length > 0}>
+                  <FieldLabel>Location</FieldLabel>
+                  <Input
+                    onBlur={field.handleBlur}
+                    onChange={(e) => field.handleChange(e.target.value)}
+                    placeholder="e.g., Christchurch - New Zealand"
+                    type="text"
+                    value={field.state.value}
+                  />
+                  <FieldDescription>
+                    Descriptive location for local SEO (optional)
+                  </FieldDescription>
+                  <FieldErrorZod field={field} />
+                </Field>
+              )}
+            </form.Field>
+            <form.Field name="latitude">
+              {(field) => (
+                <Field data-invalid={field.state.meta.errors.length > 0}>
+                  <FieldLabel>Latitude</FieldLabel>
+                  <Input
+                    onBlur={field.handleBlur}
+                    onChange={(e) => field.handleChange(e.target.value)}
+                    placeholder="-43.5321"
+                    step="any"
+                    type="number"
+                    value={field.state.value}
+                  />
+                  <FieldErrorZod field={field} />
+                </Field>
+              )}
+            </form.Field>
+            <form.Field name="longitude">
+              {(field) => (
+                <Field data-invalid={field.state.meta.errors.length > 0}>
+                  <FieldLabel>Longitude</FieldLabel>
+                  <Input
+                    onBlur={field.handleBlur}
+                    onChange={(e) => field.handleChange(e.target.value)}
+                    placeholder="172.6362"
+                    step="any"
+                    type="number"
                     value={field.state.value}
                   />
                   <FieldErrorZod field={field} />

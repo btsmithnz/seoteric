@@ -1,6 +1,7 @@
 import { ToolLoopAgent } from "ai";
 import { z } from "zod";
 import { analyzePageTool } from "./tools/analyze-page";
+import { googleSerpTool } from "./tools/google-serp";
 import { checkKeywordCannibalizationTool } from "./tools/keyword-cannibalization";
 import { checkUrlStatusTool } from "./tools/link-checker";
 import {
@@ -86,6 +87,13 @@ Evaluate Experience, Expertise, Authoritativeness, and Trustworthiness signals:
 - Validate schema markup is present and correct for the page type
 - Use the analyzePage tool — it validates structured data as part of the full page analysis
 
+### 8. SERP Visibility
+- Use googleSerp to check current Google rankings for the site's target keywords
+- Always pass siteGoogleLocationId as locationCode for locale-accurate results
+- Identify where the site's domain appears in topResults; report position or "not found in top N"
+- Note serpFeatures (paid, featured_snippet) that push organic results down
+- Use topDomains to identify direct SERP competitors for the query
+
 ### Industry-Specific Watchpoints
 - **SaaS**: shallow product pages, blog content not integrated with product, missing comparison pages
 - **E-commerce**: thin category pages, duplicate product descriptions, faceted navigation creating duplicate URLs
@@ -102,12 +110,17 @@ Evaluate Experience, Expertise, Authoritativeness, and Trustworthiness signals:
       checkSecurityHeaders: checkSecurityHeadersTool,
       checkTrustSignals: checkTrustSignalsTool,
       checkKeywordCannibalization: checkKeywordCannibalizationTool,
+      googleSerp: googleSerpTool,
     },
     callOptionsSchema: z.object({
       siteDomain: z.string(),
       siteName: z.string(),
       siteCountry: z.string(),
       siteIndustry: z.string(),
+      siteLocation: z.string().optional(),
+      siteLatitude: z.number().optional(),
+      siteLongitude: z.number().optional(),
+      siteGoogleLocationId: z.number().optional(),
       existingRecommendations: z.array(existingRecommendationSchema),
     }),
     prepareCall: ({ options, ...settings }) => {
@@ -118,6 +131,19 @@ Evaluate Experience, Expertise, Authoritativeness, and Trustworthiness signals:
 - Site Domain: ${options.siteDomain}
 - Site Country: ${options.siteCountry}
 - Site Industry: ${options.siteIndustry}`;
+
+      if (options.siteLocation) {
+        instructions += `\n- Site Location: ${options.siteLocation}`;
+      }
+      if (
+        options.siteLatitude !== undefined &&
+        options.siteLongitude !== undefined
+      ) {
+        instructions += `\n- Coordinates: ${options.siteLatitude}, ${options.siteLongitude}`;
+      }
+      if (options.siteGoogleLocationId !== undefined) {
+        instructions += `\n- Google Location ID: ${options.siteGoogleLocationId}`;
+      }
 
       if (options.existingRecommendations.length > 0) {
         instructions += `\n\nExisting recommendations (avoid creating duplicates):

@@ -47,6 +47,9 @@ export default function OnboardingPage() {
       siteDomain: searchParams.get("siteDomain") ?? "",
       siteCountry: searchParams.get("siteCountry") ?? "",
       siteIndustry: searchParams.get("siteIndustry") ?? "",
+      siteLocation: searchParams.get("siteLocation") ?? "",
+      siteLatitude: searchParams.get("siteLatitude") ?? "",
+      siteLongitude: searchParams.get("siteLongitude") ?? "",
     },
     validators: {
       onSubmit: z.object({
@@ -59,6 +62,9 @@ export default function OnboardingPage() {
           .regex(z.regexes.domain, { error: "Invalid domain" }),
         siteCountry: z.string().min(1, "Please select a country"),
         siteIndustry: z.string().min(1, "Please enter an industry"),
+        siteLocation: z.string().optional(),
+        siteLatitude: z.coerce.number().optional().or(z.literal("")),
+        siteLongitude: z.coerce.number().optional().or(z.literal("")),
       }),
     },
     onSubmit: async ({ value }) => {
@@ -77,6 +83,15 @@ export default function OnboardingPage() {
           params.set("domain", value.siteDomain);
           params.set("country", value.siteCountry);
           params.set("industry", value.siteIndustry);
+          if (value.siteLocation) {
+            params.set("location", value.siteLocation);
+          }
+          if (value.siteLatitude !== "") {
+            params.set("latitude", String(value.siteLatitude));
+          }
+          if (value.siteLongitude !== "") {
+            params.set("longitude", String(value.siteLongitude));
+          }
           router.push(`/onboarding/complete?${params}`);
         });
       }
@@ -219,6 +234,24 @@ export default function OnboardingPage() {
                     type="text"
                     value={field.state.value}
                   />
+                  <FieldErrorZod field={field} />
+                </Field>
+              )}
+            </form.Field>
+            <form.Field name="siteLocation">
+              {(field) => (
+                <Field data-invalid={field.state.meta.errors.length > 0}>
+                  <FieldLabel>Location</FieldLabel>
+                  <Input
+                    onBlur={field.handleBlur}
+                    onChange={(e) => field.handleChange(e.target.value)}
+                    placeholder="e.g., Christchurch - New Zealand"
+                    type="text"
+                    value={field.state.value}
+                  />
+                  <FieldDescription>
+                    Descriptive location for local SEO (optional)
+                  </FieldDescription>
                   <FieldErrorZod field={field} />
                 </Field>
               )}
