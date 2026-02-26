@@ -26,7 +26,7 @@ export function ChatContent({ children }: { children: React.ReactNode }) {
   const disableInput =
     entitlements !== undefined && entitlements.remaining.messages <= 0;
   const searchParams = useSearchParams();
-  const initialQueryRef = useRef(searchParams.get("q"));
+  const sentRef = useRef(false);
 
   const handleSend = (text: string) => {
     if (disableInput) {
@@ -37,13 +37,13 @@ export function ChatContent({ children }: { children: React.ReactNode }) {
   };
 
   useEffect(() => {
-    const q = initialQueryRef.current;
-    if (!q || disableInput) {
+    const q = searchParams.get("q");
+    if (!q || disableInput || sentRef.current) {
       return;
     }
-    initialQueryRef.current = null;
+    sentRef.current = true;
     sendMessage({ text: q });
-  }, [disableInput, sendMessage]);
+  }, [searchParams, disableInput, sendMessage]);
 
   return (
     <div className="flex h-full gap-4">
