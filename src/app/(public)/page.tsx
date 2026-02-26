@@ -147,17 +147,13 @@ export default function Page() {
             {/* Eyebrow */}
             <div className="flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-4 py-1.5 text-sm">
               <span className="inline-block h-2 w-2 animate-[pulse-glow_2s_ease-in-out_infinite] rounded-full bg-blue-400" />
-              <span className="text-muted-foreground">
-                AI-native SEO command center
-              </span>
+              <span className="text-muted-foreground">AI-native SEO agent</span>
             </div>
 
             {/* Headline */}
             <h1 className="max-w-3xl font-bold text-5xl tracking-tighter md:text-7xl">
               Your site&apos;s SEO,{" "}
-              <span className="block text-gradient-blue">
-                command and control.
-              </span>
+              <span className="block text-gradient-blue">on autopilot.</span>
             </h1>
 
             {/* Subheading */}
