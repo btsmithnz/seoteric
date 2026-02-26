@@ -7,40 +7,42 @@ const year = new Date().getFullYear();
 export function PublicLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="min-h-screen">
-      <header className="fixed top-0 right-0 left-0 z-50 flex items-center justify-between border-white/5 border-b bg-background/30 px-6 py-3 backdrop-blur-md">
-        <Link
-          className="font-semibold text-xl tracking-tight transition-opacity hover:opacity-80"
-          href="/"
-        >
-          Seoteric
-        </Link>
+      <header className="fixed top-0 right-0 left-0 z-50 flex justify-center px-6 pt-4">
+        <div className="flex w-full max-w-3xl items-center justify-between rounded-full border border-border/60 bg-background/80 px-6 py-2 shadow-sm backdrop-blur-md">
+          <Link
+            className="font-semibold text-xl tracking-tight transition-opacity hover:opacity-80"
+            href="/"
+          >
+            Seoteric
+          </Link>
 
-        <nav className="flex items-center gap-1">
-          <Button
-            nativeButton={false}
-            render={<Link href="/pricing" />}
-            size="sm"
-            variant="ghost"
-          >
-            Pricing
-          </Button>
-          <Button
-            nativeButton={false}
-            render={<Link href="/login" />}
-            size="sm"
-            variant="ghost"
-          >
-            Log in
-          </Button>
-          <Button
-            className="glow-primary"
-            nativeButton={false}
-            render={<Link href="/onboarding" />}
-            size="sm"
-          >
-            Get started free
-          </Button>
-        </nav>
+          <nav className="flex items-center gap-1">
+            <Button
+              nativeButton={false}
+              render={<Link href="/pricing" />}
+              size="sm"
+              variant="ghost"
+            >
+              Pricing
+            </Button>
+            <Button
+              nativeButton={false}
+              render={<Link href="/login" />}
+              size="sm"
+              variant="ghost"
+            >
+              Log in
+            </Button>
+            <Button
+              className="glow-primary"
+              nativeButton={false}
+              render={<Link href="/onboarding" />}
+              size="sm"
+            >
+              Get started
+            </Button>
+          </nav>
+        </div>
       </header>
 
       {children}

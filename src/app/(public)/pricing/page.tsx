@@ -32,7 +32,7 @@ export default function PricingPage() {
   return (
     <main className="flex w-full flex-col">
       {/* Hero Header */}
-      <section className="relative overflow-hidden py-20 text-center">
+      <section className="relative overflow-hidden pt-32 pb-20 text-center">
         <div className="absolute inset-0 bg-grid bg-grid-fade" />
         <div className="glow-orb-blue pointer-events-none absolute -top-32 -left-32 h-96 w-96" />
         <div className="glow-orb-purple pointer-events-none absolute -right-32 bottom-0 h-96 w-96" />
