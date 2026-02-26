@@ -222,18 +222,24 @@ function SubscriptionActions({ currentPlan }: { currentPlan: PlanId }) {
         })}
       </div>
 
-      <CustomerPortalLink
-        className={buttonVariants({
-          variant: "outline",
-          className: "w-full sm:w-auto",
-        })}
-        polarApi={{
-          generateCustomerPortalUrl: api.polar.generateCustomerPortalUrl,
-        }}
-      >
-        Manage subscription
-      </CustomerPortalLink>
+      {currentPlan !== "starter" && <ManageSubscriptionButton />}
     </div>
+  );
+}
+
+function ManageSubscriptionButton() {
+  return (
+    <CustomerPortalLink
+      className={buttonVariants({
+        variant: "outline",
+        className: "w-full sm:w-auto",
+      })}
+      polarApi={{
+        generateCustomerPortalUrl: api.polar.generateCustomerPortalUrl,
+      }}
+    >
+      Manage subscription
+    </CustomerPortalLink>
   );
 }
 
