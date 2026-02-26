@@ -10,29 +10,33 @@ export function PublicLayout({ children }: { children: React.ReactNode }) {
       <header className="fixed top-0 right-0 left-0 z-50 flex justify-center px-6 pt-4">
         <div className="flex w-full max-w-3xl items-center justify-between rounded-full border border-border/60 bg-background/80 px-6 py-2 shadow-sm backdrop-blur-md">
           <Link
-            className="font-semibold text-xl tracking-tight transition-opacity hover:opacity-80"
+            className="font-semibold text-xl leading-none tracking-tight transition-opacity hover:opacity-80"
             href="/"
           >
             Seoteric
           </Link>
 
           <nav className="flex items-center gap-1">
-            <Button
-              nativeButton={false}
-              render={<Link href="/pricing" />}
-              size="sm"
-              variant="ghost"
-            >
-              Pricing
-            </Button>
-            <Button
-              nativeButton={false}
-              render={<Link href="/login" />}
-              size="sm"
-              variant="ghost"
-            >
-              Log in
-            </Button>
+            <div className="flex items-center">
+              <Button
+                className="px-2"
+                nativeButton={false}
+                render={<Link href="/pricing" />}
+                size="sm"
+                variant="ghost"
+              >
+                Pricing
+              </Button>
+              <Button
+                className="px-2"
+                nativeButton={false}
+                render={<Link href="/login" />}
+                size="sm"
+                variant="ghost"
+              >
+                Log in
+              </Button>
+            </div>
             <Button
               className="glow-primary"
               nativeButton={false}
