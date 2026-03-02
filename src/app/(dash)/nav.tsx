@@ -1,6 +1,6 @@
 "use client";
 
-import { ChevronDownIcon, PlusIcon } from "lucide-react";
+import { ChevronDownIcon, CircleArrowUp, PlusIcon } from "lucide-react";
 import Link from "next/link";
 import { useParams, usePathname } from "next/navigation";
 import { LogoutMenuItem } from "@/components/elements/logout-button";
@@ -51,6 +51,8 @@ export function DashboardNav() {
   const params = useParams<{ site?: string }>();
   const pathname = usePathname();
   const sites = useAuthQuery(api.site.list);
+  const entitlements = useAuthQuery(api.billing.getEntitlements);
+  const isStarterPlan = entitlements?.plan === "starter";
   const { siteLimitReached } = useSiteCreationAvailability();
   const disableCreateSite = siteLimitReached;
 
@@ -150,6 +152,15 @@ export function DashboardNav() {
             <DropdownMenuItem render={<Link href="/account" />}>
               Account
             </DropdownMenuItem>
+            {isStarterPlan && (
+              <DropdownMenuItem
+                className="text-primary"
+                render={<Link href="/account#billing" />}
+              >
+                <CircleArrowUp className="mr-1 size-4" />
+                Upgrade
+              </DropdownMenuItem>
+            )}
             <DropdownMenuItem>
               <LogoutMenuItem />
             </DropdownMenuItem>
