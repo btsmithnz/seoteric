@@ -18,7 +18,6 @@ import {
   PromptInputTextarea,
 } from "@/components/ai-elements/prompt-input";
 import { SeotericMessages } from "@/components/chat/seoteric-messages";
-import { Skeleton } from "@/components/ui/skeleton";
 
 const transport = new DefaultChatTransport({
   api: "/api/chat/onboarding",
@@ -43,20 +42,12 @@ To get started, tell me your name, email, and website domain.`,
 
 export function ChatOnboardingSkeleton() {
   return (
-    <div className="fixed inset-x-2 bottom-4 z-40 flex h-112 flex-col overflow-hidden rounded-xl border bg-background shadow-lg md:inset-x-auto md:left-1/2 md:w-xl md:-translate-x-1/2">
-      <div className="flex items-center justify-between border-b px-4 py-2">
-        <span className="font-medium text-sm">Seoteric</span>
-      </div>
-      <Conversation>
-        <ConversationContent>
-          <ConversationEmptyState
-            description="Ask me anything about SEO optimization"
-            title="Welcome to Seoteric"
-          />
-        </ConversationContent>
-        <ConversationScrollButton />
-      </Conversation>
-      <Skeleton className="h-10 w-full" />
+    <div className="fixed inset-x-2 bottom-4 z-40 flex items-center gap-3 rounded-full border bg-background px-4 py-3 shadow-lg md:inset-x-auto md:left-1/2 md:w-sm md:-translate-x-1/2">
+      <MessageCircle className="size-5 text-muted-foreground" />
+      <span className="flex-1 text-left text-muted-foreground text-sm">
+        Tell me about your website...
+      </span>
+      <ChevronUp className="h-4 w-4 text-muted-foreground" />
     </div>
   );
 }
