@@ -1,6 +1,7 @@
 import { streamText } from "ai";
 import { paginationOptsValidator } from "convex/server";
 import { ConvexError, v } from "convex/values";
+import type { UpdateMemoryOutput } from "@/ai/tools/memory";
 import type {
   CreateRecommendationOutput,
   UpdateRecommendationOutput,
@@ -204,11 +205,9 @@ export const updateChatState = mutation({
       messages: args.messages,
     });
 
-    for (const message of args.messages) {
-      if (message.role !== "assistant") {
-        continue;
-      }
-      for (const part of message.parts) {
+    const lastMessage = args.messages.at(-1);
+    if (lastMessage?.role === "assistant") {
+      for (const part of lastMessage.parts) {
         if (
           part.type === "tool-createRecommendation" &&
           part.state === "output-available"
@@ -232,6 +231,14 @@ export const updateChatState = mutation({
             id: output.recommendationId as Id<"recommendations">,
             status: output.status,
             priority: output.priority,
+          });
+        } else if (
+          part.type === "tool-updateMemory" &&
+          part.state === "output-available"
+        ) {
+          const output = part.output as UpdateMemoryOutput;
+          await ctx.db.patch("sites", res.site._id, {
+            memory: output.memory,
           });
         }
       }
