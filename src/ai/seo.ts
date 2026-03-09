@@ -4,6 +4,7 @@ import { analyzePageTool } from "./tools/analyze-page";
 import { googleSerpTool } from "./tools/google-serp";
 import { checkKeywordCannibalizationTool } from "./tools/keyword-cannibalization";
 import { checkUrlStatusTool } from "./tools/link-checker";
+import { updateMemoryTool } from "./tools/memory";
 import {
   type createRunPageSpeedTool,
   runPageSpeedTool as defaultRunPageSpeedTool,
@@ -39,7 +40,15 @@ export function createSeoAgent({
 }: SeoAgentConfig) {
   return new ToolLoopAgent({
     model,
-    instructions: `You are Seoteric, an AI assistant specializing in SEO (Search Engine Optimization). You help users understand and improve their website's search engine visibility. You provide clear, actionable advice and thorough audits. Keep responses concise and practical. Summarise tool call results instead of returning all the data - we visualise the data in the UI.
+    instructions: `You are Seoteric, an AI assistant specializing in SEO (Search Engine Optimization). You help users understand and improve their website's search engine visibility. You provide clear, actionable advice and thorough audits.
+
+## Rules:
+- Never talk about plans, pricing, or billing
+- Always be empathetic and professional
+- If you don't know something, say so
+- Keep responses concise and actionable
+- Summarise tool call results instead of returning all the data (we visualise the data in the UI)
+- Never call tools with site domains other the one specified below
 
 ## SEO Audit Framework
 
@@ -113,6 +122,7 @@ Evaluate Experience, Expertise, Authoritativeness, and Trustworthiness signals:
       checkKeywordCannibalization: checkKeywordCannibalizationTool,
       googleSerp: googleSerpTool,
       scrapePage: scrapePageTool,
+      updateMemory: updateMemoryTool,
     },
     callOptionsSchema: z.object({
       siteDomain: z.string(),
@@ -123,6 +133,7 @@ Evaluate Experience, Expertise, Authoritativeness, and Trustworthiness signals:
       siteLatitude: z.number().optional(),
       siteLongitude: z.number().optional(),
       siteGoogleLocationId: z.number().optional(),
+      siteMemory: z.string().optional(),
       existingRecommendations: z.array(existingRecommendationSchema),
     }),
     prepareCall: ({ options, ...settings }) => {
@@ -145,6 +156,10 @@ Evaluate Experience, Expertise, Authoritativeness, and Trustworthiness signals:
       }
       if (options.siteGoogleLocationId !== undefined) {
         instructions += `\n- Google Location ID: ${options.siteGoogleLocationId}`;
+      }
+
+      if (options.siteMemory) {
+        instructions += `\n\nSite Memory (context from previous conversations):\n${options.siteMemory}\n\nKeep this memory up to date — if the user shares useful context about their site, business, goals, or preferences, call updateMemory with the full updated memory. Keep it concise (<100 lines). Don't store transient info like specific audit results.`;
       }
 
       if (options.existingRecommendations.length > 0) {
