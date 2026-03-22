@@ -1,5 +1,6 @@
 "use client";
 
+import { BotIcon } from "lucide-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useSidebar } from "@/components/elements/sidebar";
@@ -38,6 +39,7 @@ export function ChatsListItem({ chat, siteId }: ChatListItemProps) {
       }
       variant={isActive ? "default" : "ghost"}
     >
+      {chat.agent && <BotIcon className="size-4 shrink-0" />}
       <span className="truncate">{chat.name || "Untitled"}</span>
     </Button>
   );

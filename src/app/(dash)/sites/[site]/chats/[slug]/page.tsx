@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
+import { InitialiseChatSeo } from "@/components/chat/provider";
 import { api } from "@/convex/_generated/api";
 import { fetchAuthQuery } from "@/lib/auth-server";
-import { InitialiseChatSeo } from "../chat/provider";
 
 export default async function SiteChatPage(
   props: PageProps<"/sites/[site]/chats/[slug]">

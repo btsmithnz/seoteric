@@ -12,12 +12,15 @@ export const sitesFields = {
   longitude: v.optional(v.number()),
   googleLocationId: v.optional(v.number()),
   memory: v.optional(v.string()),
+  /** @deprecated Remove after migrating existing documents */
+  agentChatId: v.optional(v.id("chats")),
 };
 
 export const chatsFeilds = {
   slug: v.string(),
   siteId: v.id("sites"),
   name: v.string(),
+  agent: v.optional(v.boolean()),
 };
 
 export const messagesFields = {

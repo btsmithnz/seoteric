@@ -3,6 +3,7 @@
 import { type Preloaded, usePreloadedQuery } from "convex/react";
 import {
   ArrowRightIcon,
+  BotIcon,
   LightbulbIcon,
   MessageSquareIcon,
   SettingsIcon,
@@ -72,6 +73,15 @@ export function SiteLanding({
             <p className="text-muted-foreground text-sm">{site.domain}</p>
           </div>
           <div className="flex gap-2">
+            <Button
+              nativeButton={false}
+              render={<Link href={`/sites/${siteId}/agent`} />}
+              size="sm"
+              variant="outline"
+            >
+              <BotIcon className="size-4" />
+              Agent
+            </Button>
             <Button
               nativeButton={false}
               render={<Link href={`/sites/${siteId}/chats`} />}

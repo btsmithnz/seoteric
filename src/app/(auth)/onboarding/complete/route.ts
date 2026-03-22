@@ -29,5 +29,5 @@ export async function GET(req: NextRequest) {
 
   const siteId = await fetchAuthMutation(api.site.create, data);
 
-  return redirect(`/sites/${siteId}`);
+  return redirect(`/sites/${siteId}/agent`);
 }

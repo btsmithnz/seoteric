@@ -127,6 +127,63 @@ export const getWithMessages = query({
   },
 });
 
+export const getWithMessagesByChatId = query({
+  args: { chatId: v.id("chats") },
+  handler: async (ctx, args) => {
+    const res = await getChatSite(ctx, args.chatId);
+
+    if (!res) {
+      return null;
+    }
+
+    const messages = await ctx.db
+      .query("messages")
+      .withIndex("by_chat", (q) => q.eq("chatId", res.chat._id))
+      .first();
+
+    if (!messages) {
+      return null;
+    }
+
+    return {
+      slug: res.chat.slug,
+      messages: messages.messages,
+    };
+  },
+});
+
+export const getLatestAgentChat = query({
+  args: { siteId: v.id("sites") },
+  handler: async (ctx, args) => {
+    const site = await getSite(ctx, args.siteId);
+
+    const chat = await ctx.db
+      .query("chats")
+      .withIndex("by_site", (q) => q.eq("siteId", site._id))
+      .filter((q) => q.eq(q.field("agent"), true))
+      .order("desc")
+      .first();
+
+    if (!chat) {
+      return null;
+    }
+
+    const messages = await ctx.db
+      .query("messages")
+      .withIndex("by_chat", (q) => q.eq("chatId", chat._id))
+      .first();
+
+    if (!messages) {
+      return null;
+    }
+
+    return {
+      slug: chat.slug,
+      messages: messages.messages,
+    };
+  },
+});
+
 export const generateChatContext = mutation({
   args: { siteId: v.id("sites"), slug: v.string(), initialMessage: v.string() },
   handler: async (ctx, args) => {

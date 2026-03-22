@@ -22,7 +22,9 @@ function useTransport({ siteId }: { siteId: Id<"sites"> }) {
   }, [siteId]);
 }
 
-const ChatContext = createContext<UseChatHelpers<UIMessage> | null>(null);
+export const ChatContext = createContext<UseChatHelpers<UIMessage> | null>(
+  null
+);
 
 export function ChatProvider({
   children,

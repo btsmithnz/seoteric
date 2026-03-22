@@ -139,7 +139,7 @@ export function CreateSiteDialog({ onSuccess }: CreateSiteDialogProps) {
           onSuccess(siteId);
         } else {
           startTransition(() => {
-            router.push(`/sites/${siteId}`);
+            router.push(`/sites/${siteId}/agent`);
           });
         }
       } catch (error) {

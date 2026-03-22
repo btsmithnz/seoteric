@@ -1,9 +1,9 @@
 "use client";
 
 import { Suspense } from "react";
+import { ChatContent } from "@/components/chat/content";
+import { ChatProvider } from "@/components/chat/provider";
 import type { Id } from "@/convex/_generated/dataModel";
-import { ChatContent } from "./content";
-import { ChatProvider } from "./provider";
 
 export function ChatSeo({
   children,
