@@ -144,6 +144,7 @@ function DialogDescription({
 const createDialogHandle = DialogPrimitive.createHandle;
 
 export {
+  createDialogHandle,
   Dialog,
   DialogClose,
   DialogContent,
@@ -154,5 +155,4 @@ export {
   DialogPortal,
   DialogTitle,
   DialogTrigger,
-  createDialogHandle,
 };

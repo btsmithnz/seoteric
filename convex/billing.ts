@@ -258,7 +258,7 @@ async function resolveBillingState(
   );
 
   const paidPlan =
-    subscription != null ? PRODUCT_TO_PLAN[subscription.productId] : undefined;
+    subscription == null ? undefined : PRODUCT_TO_PLAN[subscription.productId];
 
   if (paidPlan && subscription) {
     const cycleStartMs = toMs(subscription.currentPeriodStart, nowMs);

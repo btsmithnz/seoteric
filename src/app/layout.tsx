@@ -11,6 +11,7 @@ const figtree = Figtree({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://seoteric.com"),
   title: "Seoteric - AI-Powered SEO Assistant",
   description: "Get instant SEO insights and recommendations with AI",
 };

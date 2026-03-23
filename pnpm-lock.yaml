@@ -71,6 +71,9 @@ importers:
       convex:
         specifier: ^1.34.0
         version: 1.34.0(react@19.2.4)
+      dataforseo-client:
+        specifier: ^2.0.20
+        version: 2.0.20
       lucide-react:
         specifier: ^0.577.0
         version: 0.577.0(react@19.2.4)
@@ -2540,6 +2543,9 @@ packages:
   data-uri-to-buffer@4.0.1:
     resolution: {integrity: sha512-0R9ikRb668HB7QDxT1vkpuUBtqc53YyAwMwGeUFKRojY/NWKvdZ+9UYtRfGmhqNbRkTSVpMbmyhXipFFv2cb/A==}
     engines: {node: '>= 12'}
+
+  dataforseo-client@2.0.20:
+    resolution: {integrity: sha512-68B1gxzu/I1QnjIwhMrb79dgUi0/iT6w+QJB+eJoeYfrCIYHHz9Tf/xWgw/hg022qmZKbPN+CKwl2KjiJpVUaw==}
 
   date-fns-jalali@4.1.0-0:
     resolution: {integrity: sha512-hTIP/z+t+qKwBDcmmsnmjWTduxCg+5KfdqWQvb2X/8C9+knYY6epN/pfxdDuyVlSVeFz0sM5eEfwIUQ70U4ckg==}
@@ -6850,6 +6856,8 @@ snapshots:
       lodash-es: 4.17.23
 
   data-uri-to-buffer@4.0.1: {}
+
+  dataforseo-client@2.0.20: {}
 
   date-fns-jalali@4.1.0-0: {}
 
