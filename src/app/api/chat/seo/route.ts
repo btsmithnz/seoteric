@@ -1,7 +1,7 @@
 import { convertToModelMessages, generateId } from "ai";
 import { NextResponse } from "next/server";
 import z from "zod";
-import { createSeoAgent } from "@/ai/seo";
+import { createSeoAgent } from "@/ai/agents/seo";
 import { createRecallMemoriesTool } from "@/ai/tools/memory";
 import { createRunPageSpeedTool } from "@/ai/tools/pagespeed";
 import { api } from "@/convex/_generated/api";

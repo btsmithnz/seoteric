@@ -1,26 +1,26 @@
 import { ToolLoopAgent } from "ai";
 import { z } from "zod";
-import { analyzePageTool } from "./tools/analyze-page";
-import { googleSerpTool } from "./tools/google-serp";
-import { checkKeywordCannibalizationTool } from "./tools/keyword-cannibalization";
-import { checkUrlStatusTool } from "./tools/link-checker";
+import { analyzePageTool } from "../tools/analyze-page";
+import { googleSerpTool } from "../tools/google-serp";
+import { checkKeywordCannibalizationTool } from "../tools/keyword-cannibalization";
+import { checkUrlStatusTool } from "../tools/link-checker";
 import {
   type createRecallMemoriesTool,
   updateMemoryTool,
-} from "./tools/memory";
+} from "../tools/memory";
 import {
   type createRunPageSpeedTool,
   runPageSpeedTool as defaultRunPageSpeedTool,
-} from "./tools/pagespeed";
+} from "../tools/pagespeed";
 import {
   createRecommendationTool,
   updateRecommendationTool,
-} from "./tools/recommendations";
-import { fetchRobotsTxtTool } from "./tools/robots";
-import { scrapePageTool } from "./tools/scrape-page";
-import { checkSecurityHeadersTool } from "./tools/security-headers";
-import { fetchSitemapTool } from "./tools/sitemap";
-import { checkTrustSignalsTool } from "./tools/trust-signals";
+} from "../tools/recommendations";
+import { fetchRobotsTxtTool } from "../tools/robots";
+import { scrapePageTool } from "../tools/scrape-page";
+import { checkSecurityHeadersTool } from "../tools/security-headers";
+import { fetchSitemapTool } from "../tools/sitemap";
+import { checkTrustSignalsTool } from "../tools/trust-signals";
 
 const existingRecommendationSchema = z.object({
   _id: z.string(),

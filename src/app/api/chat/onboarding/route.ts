@@ -1,7 +1,7 @@
 import { convertToModelMessages, type UIMessage } from "ai";
 import { checkBotId } from "botid/server";
 import { NextResponse } from "next/server";
-import { onboardingAgent } from "@/ai/onboarding";
+import { onboardingAgent } from "@/ai/agents/onboarding";
 
 export async function POST(req: Request) {
   const verification = await checkBotId();

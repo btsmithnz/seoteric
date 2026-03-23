@@ -1,6 +1,6 @@
 import { ToolLoopAgent, tool } from "ai";
 import { z } from "zod";
-import { getWebsiteNameTool, getWebsiteTextTool } from "./tools/website";
+import { getWebsiteNameTool, getWebsiteTextTool } from "../tools/website";
 
 export const onboardingAgent = new ToolLoopAgent({
   model: "openai/gpt-5-mini",
