@@ -26,7 +26,6 @@ import {
 } from "../tools/recommendations";
 import { fetchRobotsTxtTool } from "../tools/robots";
 import { scrapePageTool } from "../tools/scrape-page";
-import { checkSecurityHeadersTool } from "../tools/security-headers";
 import { fetchSitemapTool } from "../tools/sitemap";
 import { checkTrustSignalsTool } from "../tools/trust-signals";
 
@@ -98,9 +97,9 @@ When auditing a site, work through these areas in priority order:
 - CLS (Cumulative Layout Shift) target: <0.1
 - Check TTFB, image optimisation, JavaScript execution time, caching headers, and CDN usage
 
-### 4. Mobile & Security
+### 4. Mobile Friendliness
 - Confirm responsive design works across device sizes
-- Verify HTTPS is enforced across the entire site with a valid SSL certificate
+- Verify the site uses HTTPS (note: don't create recommendations about specific security headers like CSP or X-Frame-Options — these are web security concerns, not SEO issues)
 
 ### 5. On-Page SEO
 - Title tags: unique, 50–60 characters, primary keyword near the start
@@ -143,7 +142,6 @@ Evaluate Experience, Expertise, Authoritativeness, and Trustworthiness signals:
       createRecommendation: createRecommendationTool,
       updateRecommendation: updateRecommendationTool,
       runPageSpeed: runPageSpeedTool,
-      checkSecurityHeaders: checkSecurityHeadersTool,
       checkTrustSignals: checkTrustSignalsTool,
       checkKeywordCannibalization: checkKeywordCannibalizationTool,
       googleSerp: googleSerpTool,

@@ -2,8 +2,6 @@ export type { AnalyzePageToolInput } from "./analyze-page";
 export { AnalyzePageTool } from "./analyze-page";
 export type { CheckKeywordCannibalizationToolInput } from "./check-keyword-cannibalization";
 export { CheckKeywordCannibalizationTool } from "./check-keyword-cannibalization";
-export type { CheckSecurityHeadersToolInput } from "./check-security-headers";
-export { CheckSecurityHeadersTool } from "./check-security-headers";
 export type { CheckTrustSignalsToolInput } from "./check-trust-signals";
 export { CheckTrustSignalsTool } from "./check-trust-signals";
 export type { CheckUrlStatusToolInput } from "./check-url-status";

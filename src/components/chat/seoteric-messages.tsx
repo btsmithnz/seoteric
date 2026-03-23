@@ -16,8 +16,6 @@ import {
   type AnalyzePageToolInput,
   CheckKeywordCannibalizationTool,
   type CheckKeywordCannibalizationToolInput,
-  CheckSecurityHeadersTool,
-  type CheckSecurityHeadersToolInput,
   CheckTrustSignalsTool,
   type CheckTrustSignalsToolInput,
   CheckUrlStatusTool,
@@ -129,15 +127,6 @@ function MessageRender({
             return (
               <FetchSitemapTool
                 input={part.input as FetchSitemapToolInput}
-                key={partId}
-                state={part.state}
-              />
-            );
-
-          case "tool-checkSecurityHeaders":
-            return (
-              <CheckSecurityHeadersTool
-                input={part.input as CheckSecurityHeadersToolInput}
                 key={partId}
                 state={part.state}
               />
