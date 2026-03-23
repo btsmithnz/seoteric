@@ -87,6 +87,9 @@ export async function POST(req: Request) {
     model: getModelForPlan(plan),
     runPageSpeedTool: pageSpeedTool,
     recallMemoriesTool,
+    saveMemory: async (key, value) => {
+      await fetchAuthAction(api.memories.saveMemory, { siteId, key, value });
+    },
   });
 
   const res = await seoAgent.stream({

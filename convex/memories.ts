@@ -60,6 +60,17 @@ export const upsertMemoryInternal = internalMutation({
   },
 });
 
+export const saveMemory = action({
+  args: {
+    siteId: v.id("sites"),
+    key: v.string(),
+    value: v.string(),
+  },
+  handler: async (ctx, args) => {
+    await ctx.runAction(internal.memories.upsertMemory, args);
+  },
+});
+
 export const searchMemories = action({
   args: {
     siteId: v.id("sites"),

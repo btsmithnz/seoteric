@@ -1,10 +1,16 @@
-import { type LanguageModel, ToolLoopAgent } from "ai";
+import {
+  type LanguageModel,
+  readUIMessageStream,
+  ToolLoopAgent,
+  tool,
+} from "ai";
 import { z } from "zod";
 import { analyzePageTool } from "../tools/analyze-page";
 import { googleSerpTool } from "../tools/google-serp";
 import { scrapePageTool } from "../tools/scrape-page";
 import { fetchSitemapTool } from "../tools/sitemap";
 import { checkTrustSignalsTool } from "../tools/trust-signals";
+import type { SiteContextOptions } from "../types";
 
 interface BusinessReviewSubagentConfig {
   model: LanguageModel;
@@ -79,6 +85,36 @@ Be factual and specific. Do not speculate or use filler. Base everything on tool
       if (event.text) {
         await saveMemory("business-review", event.text);
       }
+    },
+  });
+}
+
+export function createBusinessReviewTool(
+  subagent: ReturnType<typeof createBusinessReviewSubagent>,
+  options: SiteContextOptions
+) {
+  return tool({
+    description:
+      "Research the website and produce a business overview covering what the business does, its market, location, and site structure.",
+    inputSchema: z.object({}),
+    async *execute(_, { abortSignal }) {
+      const result = await subagent.stream({
+        prompt: "Review this business",
+        options,
+        abortSignal,
+      });
+      for await (const message of readUIMessageStream({
+        stream: result.toUIMessageStream(),
+      })) {
+        yield message;
+      }
+    },
+    toModelOutput: ({ output: message }) => {
+      const lastTextPart = message?.parts.findLast((p) => p.type === "text");
+      return {
+        type: "text" as const,
+        value: lastTextPart?.text ?? "Task completed.",
+      };
     },
   });
 }

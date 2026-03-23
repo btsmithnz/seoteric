@@ -1,5 +1,13 @@
-import { ToolLoopAgent } from "ai";
+import { type LanguageModel, ToolLoopAgent } from "ai";
 import { z } from "zod";
+import {
+  createBusinessReviewSubagent,
+  createBusinessReviewTool,
+} from "../subagents/business-review";
+import {
+  createCompetitorAnalysisSubagent,
+  createCompetitorAnalysisTool,
+} from "../subagents/competitor-analysis";
 import { analyzePageTool } from "../tools/analyze-page";
 import { googleSerpTool } from "../tools/google-serp";
 import { checkKeywordCannibalizationTool } from "../tools/keyword-cannibalization";
@@ -33,16 +41,27 @@ const existingRecommendationSchema = z.object({
 });
 
 interface SeoAgentConfig {
-  model: "anthropic/claude-haiku-4.5" | "anthropic/claude-sonnet-4.5";
+  model: LanguageModel;
   recallMemoriesTool: ReturnType<typeof createRecallMemoriesTool>;
   runPageSpeedTool?: ReturnType<typeof createRunPageSpeedTool>;
+  saveMemory: (key: string, value: string) => Promise<void>;
 }
 
 export function createSeoAgent({
   model,
   runPageSpeedTool = defaultRunPageSpeedTool,
   recallMemoriesTool,
+  saveMemory,
 }: SeoAgentConfig) {
+  const businessReviewSubagent = createBusinessReviewSubagent({
+    model,
+    saveMemory,
+  });
+  const competitorAnalysisSubagent = createCompetitorAnalysisSubagent({
+    model,
+    saveMemory,
+  });
+
   return new ToolLoopAgent({
     model,
     instructions: `You are Seoteric, an AI assistant specializing in SEO (Search Engine Optimization). You help users understand and improve their website's search engine visibility. You provide clear, actionable advice and thorough audits.
@@ -144,6 +163,17 @@ Evaluate Experience, Expertise, Authoritativeness, and Trustworthiness signals:
       existingRecommendations: z.array(existingRecommendationSchema),
     }),
     prepareCall: ({ options, ...settings }) => {
+      const siteContext = {
+        siteDomain: options.siteDomain,
+        siteName: options.siteName,
+        siteCountry: options.siteCountry,
+        siteIndustry: options.siteIndustry,
+        siteLocation: options.siteLocation,
+        siteLatitude: options.siteLatitude,
+        siteLongitude: options.siteLongitude,
+        siteGoogleLocationId: options.siteGoogleLocationId,
+      };
+
       let instructions =
         settings.instructions +
         `\nSite context:
@@ -177,7 +207,21 @@ ${options.existingRecommendations
 When the user mentions fixing something, use updateRecommendation to mark the relevant recommendation as completed.`;
       }
 
-      return { ...settings, instructions };
+      return {
+        ...settings,
+        instructions,
+        tools: {
+          ...settings.tools,
+          businessReview: createBusinessReviewTool(
+            businessReviewSubagent,
+            siteContext
+          ),
+          competitorAnalysis: createCompetitorAnalysisTool(
+            competitorAnalysisSubagent,
+            siteContext
+          ),
+        } as typeof settings.tools,
+      };
     },
   });
 }

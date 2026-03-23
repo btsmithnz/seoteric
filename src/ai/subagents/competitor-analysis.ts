@@ -1,9 +1,15 @@
-import { type LanguageModel, ToolLoopAgent } from "ai";
+import {
+  type LanguageModel,
+  readUIMessageStream,
+  ToolLoopAgent,
+  tool,
+} from "ai";
 import { z } from "zod";
 import { analyzePageTool } from "../tools/analyze-page";
 import { fastSearchTool } from "../tools/fast-search";
 import { scrapePageTool } from "../tools/scrape-page";
 import { checkTrustSignalsTool } from "../tools/trust-signals";
+import type { SiteContextOptions } from "../types";
 
 interface CompetitorAnalysisSubagentConfig {
   model: LanguageModel;
@@ -83,6 +89,36 @@ Be factual and specific. Do not speculate or use filler. Base everything on tool
       if (event.text) {
         await saveMemory("competitor-analysis", event.text);
       }
+    },
+  });
+}
+
+export function createCompetitorAnalysisTool(
+  subagent: ReturnType<typeof createCompetitorAnalysisSubagent>,
+  options: SiteContextOptions
+) {
+  return tool({
+    description:
+      "Research the competitive landscape for this website, identifying top competitors, their positioning, and market density.",
+    inputSchema: z.object({}),
+    async *execute(_, { abortSignal }) {
+      const result = await subagent.stream({
+        prompt: "Analyze the competitive landscape",
+        options,
+        abortSignal,
+      });
+      for await (const message of readUIMessageStream({
+        stream: result.toUIMessageStream(),
+      })) {
+        yield message;
+      }
+    },
+    toModelOutput: ({ output: message }) => {
+      const lastTextPart = message?.parts.findLast((p) => p.type === "text");
+      return {
+        type: "text" as const,
+        value: lastTextPart?.text ?? "Task completed.",
+      };
     },
   });
 }
