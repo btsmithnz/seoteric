@@ -4,7 +4,10 @@ import { analyzePageTool } from "./tools/analyze-page";
 import { googleSerpTool } from "./tools/google-serp";
 import { checkKeywordCannibalizationTool } from "./tools/keyword-cannibalization";
 import { checkUrlStatusTool } from "./tools/link-checker";
-import { updateMemoryTool } from "./tools/memory";
+import {
+  type createRecallMemoriesTool,
+  updateMemoryTool,
+} from "./tools/memory";
 import {
   type createRunPageSpeedTool,
   runPageSpeedTool as defaultRunPageSpeedTool,
@@ -31,12 +34,14 @@ const existingRecommendationSchema = z.object({
 
 interface SeoAgentConfig {
   model: "anthropic/claude-haiku-4.5" | "anthropic/claude-sonnet-4.5";
+  recallMemoriesTool: ReturnType<typeof createRecallMemoriesTool>;
   runPageSpeedTool?: ReturnType<typeof createRunPageSpeedTool>;
 }
 
 export function createSeoAgent({
   model,
   runPageSpeedTool = defaultRunPageSpeedTool,
+  recallMemoriesTool,
 }: SeoAgentConfig) {
   return new ToolLoopAgent({
     model,
@@ -49,6 +54,8 @@ export function createSeoAgent({
 - Keep responses concise and actionable
 - Summarise tool call results instead of returning all the data (we visualise the data in the UI)
 - Never call tools with site domains other the one specified below
+- Use recallMemories to look up prior context about the site when it would be helpful (e.g. business goals, competitors, audience, preferences)
+- Use updateMemory to save useful context from conversations. Don't store transient info like specific audit results.
 
 ## SEO Audit Framework
 
@@ -123,6 +130,7 @@ Evaluate Experience, Expertise, Authoritativeness, and Trustworthiness signals:
       googleSerp: googleSerpTool,
       scrapePage: scrapePageTool,
       updateMemory: updateMemoryTool,
+      recallMemories: recallMemoriesTool,
     },
     callOptionsSchema: z.object({
       siteDomain: z.string(),
@@ -133,7 +141,6 @@ Evaluate Experience, Expertise, Authoritativeness, and Trustworthiness signals:
       siteLatitude: z.number().optional(),
       siteLongitude: z.number().optional(),
       siteGoogleLocationId: z.number().optional(),
-      siteMemory: z.string().optional(),
       existingRecommendations: z.array(existingRecommendationSchema),
     }),
     prepareCall: ({ options, ...settings }) => {
@@ -158,10 +165,6 @@ Evaluate Experience, Expertise, Authoritativeness, and Trustworthiness signals:
         instructions += `\n- Google Location ID: ${options.siteGoogleLocationId}`;
       }
 
-      if (options.siteMemory) {
-        instructions += `\n\nSite Memory (context from previous conversations):\n${options.siteMemory}\n\nKeep this memory up to date — if the user shares useful context about their site, business, goals, or preferences, call updateMemory with the full updated memory. Keep it concise (<100 lines). Don't store transient info like specific audit results.`;
-      }
-
       if (options.existingRecommendations.length > 0) {
         instructions += `\n\nExisting recommendations (avoid creating duplicates):
 ${options.existingRecommendations
@@ -178,7 +181,3 @@ When the user mentions fixing something, use updateRecommendation to mark the re
     },
   });
 }
-
-export const seoAgent = createSeoAgent({
-  model: "anthropic/claude-sonnet-4.5",
-});

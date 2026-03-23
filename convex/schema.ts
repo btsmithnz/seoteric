@@ -11,6 +11,7 @@ export const sitesFields = {
   latitude: v.optional(v.number()),
   longitude: v.optional(v.number()),
   googleLocationId: v.optional(v.number()),
+  /** @deprecated Remove after migrating existing documents */
   memory: v.optional(v.string()),
   /** @deprecated Remove after migrating existing documents */
   agentChatId: v.optional(v.id("chats")),
@@ -55,6 +56,13 @@ export const recommendationsFields = {
   completedAt: v.optional(v.number()),
 };
 
+export const memoriesFields = {
+  siteId: v.id("sites"),
+  key: v.string(),
+  value: v.string(),
+  embedding: v.array(v.float64()),
+};
+
 export const billingProfilesFields = {
   userId: v.string(),
   lastPaidAnchorMs: v.number(),
@@ -79,6 +87,14 @@ export default defineSchema({
   recommendations: defineTable(recommendationsFields)
     .index("by_site", ["siteId"])
     .index("by_site_status", ["siteId", "status"]),
+  memories: defineTable(memoriesFields)
+    .index("by_site", ["siteId"])
+    .index("by_site_key", ["siteId", "key"])
+    .vectorIndex("by_embedding", {
+      vectorField: "embedding",
+      dimensions: 1536,
+      filterFields: ["siteId"],
+    }),
   billingProfiles: defineTable(billingProfilesFields).index("by_user", [
     "userId",
   ]),

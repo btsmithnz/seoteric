@@ -294,8 +294,10 @@ export const updateChatState = mutation({
           part.state === "output-available"
         ) {
           const output = part.output as UpdateMemoryOutput;
-          await ctx.db.patch("sites", res.site._id, {
-            memory: output.memory,
+          await ctx.scheduler.runAfter(0, internal.memories.upsertMemory, {
+            siteId: res.site._id,
+            key: output.key,
+            value: output.value,
           });
         }
       }

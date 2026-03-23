@@ -2,10 +2,15 @@ import { convertToModelMessages, generateId } from "ai";
 import { NextResponse } from "next/server";
 import z from "zod";
 import { createSeoAgent } from "@/ai/seo";
+import { createRecallMemoriesTool } from "@/ai/tools/memory";
 import { createRunPageSpeedTool } from "@/ai/tools/pagespeed";
 import { api } from "@/convex/_generated/api";
 import type { Id } from "@/convex/_generated/dataModel";
-import { fetchAuthMutation, fetchAuthQuery } from "@/lib/auth-server";
+import {
+  fetchAuthAction,
+  fetchAuthMutation,
+  fetchAuthQuery,
+} from "@/lib/auth-server";
 import { parseLimitExceededError } from "@/lib/billing-errors";
 
 const seoChatBodyExtras = z.object({
@@ -73,9 +78,15 @@ export async function POST(req: Request) {
     },
   });
 
+  const recallMemoriesTool = createRecallMemoriesTool({
+    search: (query) =>
+      fetchAuthAction(api.memories.searchMemories, { siteId, query }),
+  });
+
   const seoAgent = createSeoAgent({
     model: getModelForPlan(plan),
     runPageSpeedTool: pageSpeedTool,
+    recallMemoriesTool,
   });
 
   const res = await seoAgent.stream({
@@ -89,7 +100,6 @@ export async function POST(req: Request) {
       siteLatitude: site.latitude,
       siteLongitude: site.longitude,
       siteGoogleLocationId: site.googleLocationId,
-      siteMemory: site.memory,
       existingRecommendations: recommendations.map((r) => ({
         _id: r._id,
         title: r.title,
