@@ -1,43 +1,11 @@
 import { tool } from "ai";
+import {
+  BacklinksSummaryLiveRequestInfo,
+  type BacklinksSummaryLiveResultInfo,
+  DomainAnalyticsWhoisOverviewLiveRequestInfo,
+} from "dataforseo-client";
 import { z } from "zod";
-import { dataforseoPost } from "@/lib/dataforseo";
-
-interface DfsWhoisItem {
-  created_date: string | null;
-  domain: string;
-  expiration_date: string | null;
-  registrar: { registrar_name: string | null } | null;
-  status: string[] | null;
-  updated_date: string | null;
-}
-
-interface DfsWhoisResponse {
-  tasks: Array<{
-    status_code: number;
-    status_message: string;
-    result: Array<{
-      items: DfsWhoisItem[];
-    }> | null;
-  }>;
-}
-
-interface DfsBacklinksResult {
-  backlinks: number | null;
-  broken_backlinks: number | null;
-  rank: number | null;
-  referring_domains: number | null;
-  referring_ips: number | null;
-  spam_score: number | null;
-  target: string;
-}
-
-interface DfsBacklinksResponse {
-  tasks: Array<{
-    status_code: number;
-    status_message: string;
-    result: DfsBacklinksResult[] | null;
-  }>;
-}
+import { createBacklinksApi, createDomainAnalyticsApi } from "@/lib/dataforseo";
 
 const LOW_DOMAIN_AGE_YEARS = 1;
 const LOW_REFERRING_DOMAINS = 10;
@@ -55,7 +23,9 @@ function extractDomain(input: string): string {
   }
 }
 
-function getDomainAgeYears(createdDate: string | null): number | null {
+function getDomainAgeYears(
+  createdDate: string | null | undefined
+): number | null {
   if (!createdDate) {
     return null;
   }
@@ -68,7 +38,7 @@ function getDomainAgeYears(createdDate: string | null): number | null {
 
 function buildTrustFlags(
   domainAgeYears: number | null,
-  backlinksResult: DfsBacklinksResult | null
+  backlinksResult: BacklinksSummaryLiveResultInfo | null
 ): string[] {
   const flags: string[] = [];
 
@@ -85,7 +55,7 @@ function buildTrustFlags(
     );
   }
 
-  const spamScore = backlinksResult?.spam_score;
+  const spamScore = backlinksResult?.backlinks_spam_score;
   if (spamScore != null && spamScore > HIGH_SPAM_SCORE) {
     flags.push(`High spam score: ${spamScore}/100 (over ${HIGH_SPAM_SCORE})`);
   }
@@ -112,23 +82,30 @@ export const checkTrustSignalsTool = tool({
     try {
       const target = extractDomain(domain);
 
+      const domainAnalyticsApi = createDomainAnalyticsApi();
+      const backlinksApi = createBacklinksApi();
+
       const [whoisResponse, backlinksResponse] = await Promise.all([
-        dataforseoPost<DfsWhoisResponse>(
-          "/domain_analytics/whois/overview/live",
-          [{ target }]
-        ),
-        dataforseoPost<DfsBacklinksResponse>("/backlinks/overview/live", [
-          { target, include_subdomains: true },
+        domainAnalyticsApi.whoisOverviewLive([
+          new DomainAnalyticsWhoisOverviewLiveRequestInfo({ target }),
+        ]),
+        backlinksApi.summaryLive([
+          new BacklinksSummaryLiveRequestInfo({
+            target,
+            include_subdomains: true,
+          }),
         ]),
       ]);
 
-      const whoisTask = whoisResponse.tasks[0];
-      const backlinksTask = backlinksResponse.tasks[0];
+      const whoisTask = whoisResponse?.tasks?.[0];
+      const backlinksTask = backlinksResponse?.tasks?.[0];
 
       const whoisItem = whoisTask?.result?.[0]?.items?.[0] ?? null;
       const backlinksResult = backlinksTask?.result?.[0] ?? null;
 
-      const domainAgeYears = getDomainAgeYears(whoisItem?.created_date ?? null);
+      const domainAgeYears = getDomainAgeYears(
+        whoisItem?.created_datetime ?? null
+      );
       const trustFlags = buildTrustFlags(domainAgeYears, backlinksResult);
 
       const errors: string[] = [];
@@ -143,15 +120,15 @@ export const checkTrustSignalsTool = tool({
         domain: target,
         whois: whoisItem
           ? {
-              createdDate: whoisItem.created_date,
-              expirationDate: whoisItem.expiration_date,
-              updatedDate: whoisItem.updated_date,
-              registrar: whoisItem.registrar?.registrar_name ?? null,
-              status: whoisItem.status ?? [],
+              createdDate: whoisItem.created_datetime,
+              expirationDate: whoisItem.expiration_datetime,
+              updatedDate: whoisItem.updated_datetime,
+              registrar: whoisItem.registrar ?? null,
+              status: whoisItem.epp_status_codes ?? [],
               domainAgeYears:
-                domainAgeYears !== null
-                  ? Math.round(domainAgeYears * 10) / 10
-                  : null,
+                domainAgeYears === null
+                  ? null
+                  : Math.round(domainAgeYears * 10) / 10,
             }
           : null,
         backlinks: backlinksResult
@@ -160,7 +137,7 @@ export const checkTrustSignalsTool = tool({
               totalBacklinks: backlinksResult.backlinks,
               referringDomains: backlinksResult.referring_domains,
               referringIps: backlinksResult.referring_ips,
-              spamScore: backlinksResult.spam_score,
+              spamScore: backlinksResult.backlinks_spam_score,
               brokenBacklinks: backlinksResult.broken_backlinks,
             }
           : null,

@@ -1,7 +1,12 @@
 import { tool } from "ai";
+import {
+  OnPageInstantPagesRequestInfo,
+  type OnPageInstantPagesResponseInfo,
+} from "dataforseo-client";
 import { z } from "zod";
-import { dataforseoPost } from "@/lib/dataforseo";
+import { createOnPageApi } from "@/lib/dataforseo";
 
+// SDK types OnPage items generically. Keep manual interface for keyword density data.
 interface DfsOnPageItem {
   keyword_density: Record<string, number> | null;
   meta: {
@@ -11,16 +16,6 @@ interface DfsOnPageItem {
   } | null;
   resource_type: string;
   url: string;
-}
-
-interface DfsOnPageResponse {
-  tasks: Array<{
-    status_code: number;
-    status_message: string;
-    result: Array<{
-      items: DfsOnPageItem[];
-    }> | null;
-  }>;
 }
 
 interface PageData {
@@ -83,10 +78,14 @@ function getRiskLevel(
   return "low";
 }
 
-function buildPageData(response: DfsOnPageResponse, url: string): PageData {
-  const item = response.tasks[0]?.result?.[0]?.items?.find(
-    (i) => i.resource_type === "html"
-  );
+function buildPageData(
+  response: OnPageInstantPagesResponseInfo,
+  url: string
+): PageData {
+  const items = response.tasks?.[0]?.result?.[0]?.items as unknown as
+    | DfsOnPageItem[]
+    | undefined;
+  const item = items?.find((i) => i.resource_type === "html");
   const topKeywords = extractTopKeywords(item?.keyword_density ?? null);
   return {
     url,
@@ -147,22 +146,23 @@ export const checkKeywordCannibalizationTool = tool({
   }),
   execute: async ({ urls }) => {
     try {
+      const onPageApi = createOnPageApi();
       const responses = await Promise.all(
         urls.map((url) =>
-          dataforseoPost<DfsOnPageResponse>("/on_page/instant_pages", [
-            {
+          onPageApi.instantPages([
+            new OnPageInstantPagesRequestInfo({
               url,
               load_resources: false,
               enable_javascript: false,
               calculate_keyword_density: true,
-            },
+            }),
           ])
         )
       );
 
-      const pages = responses.map((response, idx) =>
-        buildPageData(response, urls[idx])
-      );
+      const pages = responses
+        .filter((response) => response != null)
+        .map((response, idx) => buildPageData(response, urls[idx]));
 
       const riskOrder: Record<RiskLevel, number> = {
         high: 0,

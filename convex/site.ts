@@ -1,7 +1,7 @@
 import { generateText, Output } from "ai";
 import { v } from "convex/values";
 import { z } from "zod";
-import { dataforseoGet } from "@/lib/dataforseo";
+import { createSerpApi } from "@/lib/dataforseo";
 import { internal } from "./_generated/api";
 import type { Id } from "./_generated/dataModel";
 import {
@@ -15,16 +15,6 @@ import {
 } from "./_generated/server";
 import { assertCanCreateSiteForUser } from "./billing";
 import { getUser } from "./utils";
-
-interface DfsLocation {
-  location_code: number;
-  location_name: string;
-  location_type: string;
-}
-
-interface DfsLocationsResponse {
-  tasks: Array<{ result: DfsLocation[] | null }>;
-}
 
 export async function getSite(
   ctx: QueryCtx | MutationCtx,
@@ -131,12 +121,15 @@ export const resolveGoogleLocation = internalAction({
       return;
     }
 
-    const data = await dataforseoGet<DfsLocationsResponse>(
-      `/serp/google/locations/${site.country.toLowerCase()}`
+    const serpApi = createSerpApi();
+    const data = await serpApi.googleLocationsCountry(
+      site.country.toLowerCase()
     );
 
-    const locations = (data.tasks?.[0]?.result ?? []).filter((l) =>
-      ["Country", "State", "City", "DMA Region"].includes(l.location_type)
+    const locations = (data?.tasks?.[0]?.result ?? []).filter(
+      (l) =>
+        l.location_type &&
+        ["Country", "State", "City", "DMA Region"].includes(l.location_type)
     );
 
     if (locations.length === 0) {

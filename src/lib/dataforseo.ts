@@ -1,6 +1,16 @@
-const BASE_URL = "https://api.dataforseo.com/v3";
+import {
+  BacklinksApi,
+  DomainAnalyticsApi,
+  OnPageApi,
+  SerpApi,
+} from "dataforseo-client";
 
-function getAuthHeader(): string {
+const BASE_URL = "https://api.dataforseo.com";
+
+function createAuthFetch(): (
+  url: RequestInfo,
+  init?: RequestInit
+) => Promise<Response> {
   const login = process.env.DATAFORSEO_LOGIN;
   const password = process.env.DATAFORSEO_PASSWORD;
 
@@ -10,39 +20,34 @@ function getAuthHeader(): string {
     );
   }
 
-  return `Basic ${Buffer.from(`${login}:${password}`).toString("base64")}`;
+  const token = Buffer.from(`${login}:${password}`).toString("base64");
+
+  return (url: RequestInfo, init?: RequestInit) =>
+    fetch(url, {
+      ...init,
+      headers: {
+        ...init?.headers,
+        Authorization: `Basic ${token}`,
+      },
+    });
 }
 
-export async function dataforseoGet<T = unknown>(path: string): Promise<T> {
-  const response = await fetch(`${BASE_URL}${path}`, {
-    headers: { Authorization: getAuthHeader() },
-  });
-  if (!response.ok) {
-    throw new Error(
-      `DataForSEO API error: ${response.status} ${response.statusText}`
-    );
-  }
-  return response.json() as Promise<T>;
+function createHttpClient() {
+  return { fetch: createAuthFetch() };
 }
 
-export async function dataforseoPost<T = unknown>(
-  path: string,
-  body: unknown[]
-): Promise<T> {
-  const response = await fetch(`${BASE_URL}${path}`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: getAuthHeader(),
-    },
-    body: JSON.stringify(body),
-  });
+export function createSerpApi() {
+  return new SerpApi(BASE_URL, createHttpClient());
+}
 
-  if (!response.ok) {
-    throw new Error(
-      `DataForSEO API error: ${response.status} ${response.statusText}`
-    );
-  }
+export function createOnPageApi() {
+  return new OnPageApi(BASE_URL, createHttpClient());
+}
 
-  return response.json() as Promise<T>;
+export function createDomainAnalyticsApi() {
+  return new DomainAnalyticsApi(BASE_URL, createHttpClient());
+}
+
+export function createBacklinksApi() {
+  return new BacklinksApi(BASE_URL, createHttpClient());
 }

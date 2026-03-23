@@ -1,30 +1,7 @@
 import { tool } from "ai";
+import { SerpGoogleOrganicLiveRegularRequestInfo } from "dataforseo-client";
 import { z } from "zod";
-import { dataforseoPost } from "@/lib/dataforseo";
-
-interface DfsSerpItem {
-  description: string | null;
-  domain: string | null;
-  rank_group: number;
-  title: string | null;
-  type: string;
-  url: string | null;
-}
-
-interface DfsSerpResult {
-  item_types: string[];
-  items: DfsSerpItem[] | null;
-  keyword: string;
-  total_count: number | null;
-}
-
-interface DfsSerpResponse {
-  tasks: Array<{
-    status_code: number;
-    status_message: string;
-    result: DfsSerpResult[] | null;
-  }>;
-}
+import { createSerpApi } from "@/lib/dataforseo";
 
 export const googleSerpTool = tool({
   description:
@@ -45,18 +22,16 @@ export const googleSerpTool = tool({
   execute: async ({ keyword, locationCode, depth }) => {
     try {
       const clampedDepth = Math.min(Math.max(depth ?? 10, 10), 20);
-      const response = await dataforseoPost<DfsSerpResponse>(
-        "/serp/google/organic/live/regular",
-        [
-          {
-            keyword,
-            language_code: "en",
-            depth: clampedDepth,
-            location_code: locationCode ?? 2840,
-          },
-        ]
-      );
-      const task = response.tasks[0];
+      const serpApi = createSerpApi();
+      const response = await serpApi.googleOrganicLiveRegular([
+        new SerpGoogleOrganicLiveRegularRequestInfo({
+          keyword,
+          language_code: "en",
+          depth: clampedDepth,
+          location_code: locationCode ?? 2840,
+        }),
+      ]);
+      const task = response?.tasks?.[0];
       if (task?.status_code !== 20_000) {
         return { error: `DataForSEO SERP error: ${task?.status_message}` };
       }
@@ -69,8 +44,8 @@ export const googleSerpTool = tool({
       return {
         keyword: result.keyword,
         locationCode: locationCode ?? 2840,
-        totalEstimatedResults: result.total_count,
-        serpFeatures: result.item_types.filter((t) => t !== "organic"),
+        totalEstimatedResults: result.se_results_count,
+        serpFeatures: (result.item_types ?? []).filter((t) => t !== "organic"),
         topResults: organic.map((i) => ({
           rank: i.rank_group,
           domain: i.domain,

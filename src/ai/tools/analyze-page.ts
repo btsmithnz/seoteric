@@ -1,7 +1,10 @@
 import { tool } from "ai";
+import { OnPageInstantPagesRequestInfo } from "dataforseo-client";
 import { z } from "zod";
-import { dataforseoPost } from "@/lib/dataforseo";
+import { createOnPageApi } from "@/lib/dataforseo";
 
+// SDK types OnPage items as OnPageStylesheetResourceItem which doesn't capture
+// the rich HTML page metadata. Keep manual interfaces for proper typing.
 interface DfsOnPageItem {
   checks: {
     is_redirect: boolean;
@@ -39,16 +42,6 @@ interface DfsOnPageItem {
   response_headers: Record<string, string> | null;
   status_code: number;
   url: string;
-}
-
-interface DfsOnPageResponse {
-  tasks: Array<{
-    status_code: number;
-    status_message: string;
-    result: Array<{
-      items: DfsOnPageItem[];
-    }> | null;
-  }>;
 }
 
 const NOINDEX_REGEX = /noindex/i;
@@ -196,28 +189,27 @@ function mapItemToResult(
 
 async function executeAnalyzePage(url: string) {
   try {
-    const response = await dataforseoPost<DfsOnPageResponse>(
-      "/on_page/instant_pages",
-      [
-        {
-          url,
-          load_resources: true,
-          enable_javascript: true,
-          validate_micromarkup: true,
-        },
-      ]
-    );
+    const onPageApi = createOnPageApi();
+    const response = await onPageApi.instantPages([
+      new OnPageInstantPagesRequestInfo({
+        url,
+        load_resources: true,
+        enable_javascript: true,
+        validate_micromarkup: true,
+      }),
+    ]);
 
-    const task = response.tasks[0];
+    const task = response?.tasks?.[0];
     if (!task || task.status_code !== 20_000) {
       return {
         error: `DataForSEO task error: ${task?.status_message ?? "Unknown error"}`,
       };
     }
 
-    const item = task.result?.[0]?.items?.find(
-      (i) => i.resource_type === "html"
-    );
+    const items = task.result?.[0]?.items as unknown as
+      | DfsOnPageItem[]
+      | undefined;
+    const item = items?.find((i) => i.resource_type === "html");
     if (!item) {
       return { error: "No HTML page data returned for URL" };
     }
