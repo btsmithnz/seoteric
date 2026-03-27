@@ -15,7 +15,7 @@ export default async function ChatsLayout(
 
   return (
     <SidebarProvider>
-      <div className="flex flex-1 flex-row md:bg-muted/40">
+      <div className="flex min-h-0 flex-1 flex-row md:bg-muted/40">
         <ChatsSidebar />
 
         <div className="flex min-w-0 flex-1 flex-col gap-1 p-4 pt-1 md:pt-4">
@@ -37,7 +37,7 @@ export default async function ChatsLayout(
               <SidebarMobileToggleIcon className="ml-1 rotate-180" />
             </SidebarMobileToggleButton>
           </div>
-          <div className="h-full">
+          <div className="flex min-h-0 flex-1 flex-col">
             <ChatSeo siteId={params.site as Id<"sites">}>
               {props.children}
             </ChatSeo>

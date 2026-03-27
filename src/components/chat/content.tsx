@@ -46,9 +46,9 @@ export function ChatContent({ children }: { children: React.ReactNode }) {
   }, [searchParams, disableInput, sendMessage]);
 
   return (
-    <div className="flex h-full gap-4">
+    <div className="flex min-h-0 flex-1 gap-4">
       <div className="flex min-w-0 flex-1 flex-col">
-        <div className="flex flex-1 flex-col">
+        <div className="flex min-h-0 flex-1 flex-col">
           <Conversation>
             <ConversationContent>
               {messages.length === 0 ? (
