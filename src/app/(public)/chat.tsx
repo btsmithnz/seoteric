@@ -34,7 +34,7 @@ const initialMessages: UIMessage[] = [
 
 I'm **Seoteric**, an AI assistant that specializes in SEO (Search Engine Optimization). Lets get you set up with an account so we can start optimizing your website's search engine presence.
 
-To get started, tell me your name, email, and website domain.`,
+To get started, tell me your name, email, and website domain. If you have specific SEO goals in mind, feel free to share those too!`,
       },
     ],
   },

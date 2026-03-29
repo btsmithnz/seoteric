@@ -59,6 +59,7 @@ export const update = mutation({
     location: v.optional(v.string()),
     latitude: v.optional(v.number()),
     longitude: v.optional(v.number()),
+    objective: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
     const site = await getSite(ctx, args.siteId);
@@ -70,6 +71,7 @@ export const update = mutation({
       location: args.location,
       latitude: args.latitude,
       longitude: args.longitude,
+      objective: args.objective,
     });
     await ctx.scheduler.runAfter(0, internal.site.resolveGoogleLocation, {
       siteId: site._id,
@@ -87,6 +89,7 @@ export const create = mutation({
     location: v.optional(v.string()),
     latitude: v.optional(v.number()),
     longitude: v.optional(v.number()),
+    objective: v.optional(v.string()),
   },
   handler: async (ctx, args) => {
     const user = await getUser(ctx);

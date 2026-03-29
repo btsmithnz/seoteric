@@ -30,8 +30,12 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
 import { authClient } from "@/lib/auth-client";
 import { countries, renderCountryLabel } from "@/lib/countries";
+
+const DEFAULT_OBJECTIVE =
+  "We want to improve our search rankings and placement in generative AI results. Consider both technical SEO and content direction.";
 
 export default function OnboardingPage() {
   const router = useRouter();
@@ -47,6 +51,7 @@ export default function OnboardingPage() {
       siteDomain: searchParams.get("siteDomain") ?? "",
       siteCountry: searchParams.get("siteCountry") ?? "",
       siteIndustry: searchParams.get("siteIndustry") ?? "",
+      siteObjective: searchParams.get("siteObjective") || DEFAULT_OBJECTIVE,
       siteLocation: searchParams.get("siteLocation") ?? "",
       siteLatitude: searchParams.get("siteLatitude") ?? "",
       siteLongitude: searchParams.get("siteLongitude") ?? "",
@@ -62,6 +67,7 @@ export default function OnboardingPage() {
           .regex(z.regexes.domain, { error: "Invalid domain" }),
         siteCountry: z.string().min(1, "Please select a country"),
         siteIndustry: z.string().min(1, "Please enter an industry"),
+        siteObjective: z.string().max(500),
         siteLocation: z.string(),
         siteLatitude: z.string(),
         siteLongitude: z.string(),
@@ -83,6 +89,9 @@ export default function OnboardingPage() {
           params.set("domain", value.siteDomain);
           params.set("country", value.siteCountry);
           params.set("industry", value.siteIndustry);
+          if (value.siteObjective) {
+            params.set("objective", value.siteObjective);
+          }
           if (value.siteLocation) {
             params.set("location", value.siteLocation);
           }
@@ -234,6 +243,24 @@ export default function OnboardingPage() {
                     type="text"
                     value={field.state.value}
                   />
+                  <FieldErrorZod field={field} />
+                </Field>
+              )}
+            </form.Field>
+            <form.Field name="siteObjective">
+              {(field) => (
+                <Field data-invalid={field.state.meta.errors.length > 0}>
+                  <FieldLabel>Objective</FieldLabel>
+                  <Textarea
+                    maxLength={500}
+                    onBlur={field.handleBlur}
+                    onChange={(e) => field.handleChange(e.target.value)}
+                    placeholder="What are your SEO goals?"
+                    value={field.state.value}
+                  />
+                  <FieldDescription>
+                    Guides how our AI agent prioritizes recommendations
+                  </FieldDescription>
                   <FieldErrorZod field={field} />
                 </Field>
               )}

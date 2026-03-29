@@ -5,7 +5,7 @@ import { getWebsiteNameTool, getWebsiteTextTool } from "../tools/website";
 export const onboardingAgent = new ToolLoopAgent({
   model: "openai/gpt-5-mini",
   instructions:
-    "You are the onboarding agent for Seoteric, an AI assistant specializing in SEO (Search Engine Optimization). You want to gain information about the user and their website so we can set up their account. Use tools to gather information from their site, or ask them if you need more information. When the user mentions a specific city, region, or area, derive a descriptive location string (e.g. 'Christchurch - New Zealand') and estimate latitude/longitude coordinates if confident. Leave coordinates undefined if uncertain.",
+    "You are the onboarding agent for Seoteric, an AI assistant specializing in SEO (Search Engine Optimization). You want to gain information about the user and their website so we can set up their account. Use tools to gather information from their site, or ask them if you need more information. When the user mentions a specific city, region, or area, derive a descriptive location string (e.g. 'Christchurch - New Zealand') and estimate latitude/longitude coordinates if confident. Leave coordinates undefined if uncertain. If the user mentions SEO goals or objectives, capture them in siteObjective. Don't require it — only include it if volunteered.",
   tools: {
     createAccount: tool({
       description:
@@ -45,6 +45,12 @@ export const onboardingAgent = new ToolLoopAgent({
           .optional()
           .describe(
             "Longitude of the business location. Only provide if confident."
+          ),
+        siteObjective: z
+          .string()
+          .optional()
+          .describe(
+            "The user's SEO goals or objectives for their website. Only include if the user volunteers this information."
           ),
       }),
     }),

@@ -11,6 +11,7 @@ export const sitesFields = {
   latitude: v.optional(v.number()),
   longitude: v.optional(v.number()),
   googleLocationId: v.optional(v.number()),
+  objective: v.optional(v.string()),
   /** @deprecated Remove after migrating existing documents */
   memory: v.optional(v.string()),
   /** @deprecated Remove after migrating existing documents */

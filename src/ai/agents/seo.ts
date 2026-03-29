@@ -154,6 +154,7 @@ Evaluate Experience, Expertise, Authoritativeness, and Trustworthiness signals:
       siteName: z.string(),
       siteCountry: z.string(),
       siteIndustry: z.string(),
+      siteObjective: z.string().optional(),
       siteLocation: z.string().optional(),
       siteLatitude: z.number().optional(),
       siteLongitude: z.number().optional(),
@@ -166,6 +167,7 @@ Evaluate Experience, Expertise, Authoritativeness, and Trustworthiness signals:
         siteName: options.siteName,
         siteCountry: options.siteCountry,
         siteIndustry: options.siteIndustry,
+        siteObjective: options.siteObjective,
         siteLocation: options.siteLocation,
         siteLatitude: options.siteLatitude,
         siteLongitude: options.siteLongitude,
@@ -179,6 +181,10 @@ Evaluate Experience, Expertise, Authoritativeness, and Trustworthiness signals:
 - Site Domain: ${options.siteDomain}
 - Site Country: ${options.siteCountry}
 - Site Industry: ${options.siteIndustry}`;
+
+      if (options.siteObjective) {
+        instructions += `\n- Site Objective: ${options.siteObjective}`;
+      }
 
       if (options.siteLocation) {
         instructions += `\n- Site Location: ${options.siteLocation}`;

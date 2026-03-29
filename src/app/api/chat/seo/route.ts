@@ -99,6 +99,7 @@ export async function POST(req: Request) {
       siteName: site.name,
       siteCountry: site.country,
       siteIndustry: site.industry,
+      siteObjective: site.objective,
       siteLocation: site.location,
       siteLatitude: site.latitude,
       siteLongitude: site.longitude,

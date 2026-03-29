@@ -28,6 +28,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Textarea } from "@/components/ui/textarea";
 import { api } from "@/convex/_generated/api";
 import { countries, renderCountryLabel } from "@/lib/countries";
 import { parseFloatSafe } from "@/lib/utils";
@@ -46,6 +47,7 @@ export function SiteConfigForm({ preloadedSite }: SiteConfigFormProps) {
       domain: site.domain,
       country: site.country,
       industry: site.industry,
+      objective: site.objective ?? "",
       location: site.location ?? "",
       latitude: site.latitude?.toString() ?? "",
       longitude: site.longitude?.toString() ?? "",
@@ -56,6 +58,7 @@ export function SiteConfigForm({ preloadedSite }: SiteConfigFormProps) {
         domain: z.string().regex(z.regexes.domain, { error: "Invalid domain" }),
         country: z.string(),
         industry: z.string(),
+        objective: z.string().max(500),
         location: z.string(),
         latitude: z.string(),
         longitude: z.string(),
@@ -69,6 +72,7 @@ export function SiteConfigForm({ preloadedSite }: SiteConfigFormProps) {
           domain: value.domain,
           country: value.country,
           industry: value.industry,
+          objective: value.objective || undefined,
           location: value.location || undefined,
           latitude: parseFloatSafe(value.latitude) ?? undefined,
           longitude: parseFloatSafe(value.longitude) ?? undefined,
@@ -165,6 +169,23 @@ export function SiteConfigForm({ preloadedSite }: SiteConfigFormProps) {
                     type="text"
                     value={field.state.value}
                   />
+                  <FieldErrorZod field={field} />
+                </Field>
+              )}
+            </form.Field>
+            <form.Field name="objective">
+              {(field) => (
+                <Field data-invalid={field.state.meta.errors.length > 0}>
+                  <FieldLabel>Objective</FieldLabel>
+                  <Textarea
+                    maxLength={500}
+                    onBlur={field.handleBlur}
+                    onChange={(e) => field.handleChange(e.target.value)}
+                    value={field.state.value}
+                  />
+                  <FieldDescription>
+                    Guides how our AI agent prioritizes recommendations
+                  </FieldDescription>
                   <FieldErrorZod field={field} />
                 </Field>
               )}
