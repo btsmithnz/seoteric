@@ -13,3 +13,17 @@ export const siteContextSchema = z.object({
 });
 
 export type SiteContext = z.infer<typeof siteContextSchema>;
+
+export const existingRecommendationSchema = z.object({
+  _id: z.string(),
+  title: z.string(),
+  description: z.string(),
+  category: z.string(),
+  priority: z.string(),
+  status: z.string(),
+  pageUrl: z.string().optional(),
+});
+
+export type ExistingRecommendation = z.infer<
+  typeof existingRecommendationSchema
+>;
