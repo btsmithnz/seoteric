@@ -5,11 +5,11 @@ import {
   tool,
 } from "ai";
 import { z } from "zod";
+import { type SiteContext, siteContextSchema } from "../schemas";
 import { analyzePageTool } from "../tools/analyze-page";
 import { fastSearchTool } from "../tools/fast-search";
 import { scrapePageTool } from "../tools/scrape-page";
 import { checkTrustSignalsTool } from "../tools/trust-signals";
-import type { SiteContextOptions } from "../types";
 
 interface CompetitorAnalysisSubagentConfig {
   model: LanguageModel;
@@ -51,16 +51,7 @@ Be factual and specific. Do not speculate or use filler. Base everything on tool
       scrapePage: scrapePageTool,
       checkTrustSignals: checkTrustSignalsTool,
     },
-    callOptionsSchema: z.object({
-      siteDomain: z.string(),
-      siteName: z.string(),
-      siteCountry: z.string(),
-      siteIndustry: z.string(),
-      siteLocation: z.string().optional(),
-      siteLatitude: z.number().optional(),
-      siteLongitude: z.number().optional(),
-      siteGoogleLocationId: z.number().optional(),
-    }),
+    callOptionsSchema: siteContextSchema,
     prepareCall: ({ options, ...settings }) => {
       let instructions =
         settings.instructions +
@@ -95,7 +86,7 @@ Be factual and specific. Do not speculate or use filler. Base everything on tool
 
 export function createCompetitorAnalysisTool(
   subagent: ReturnType<typeof createCompetitorAnalysisSubagent>,
-  options: SiteContextOptions
+  options: SiteContext
 ) {
   return tool({
     description:

@@ -1,5 +1,6 @@
 import { type LanguageModel, ToolLoopAgent } from "ai";
 import { z } from "zod";
+import { siteContextSchema } from "../schemas";
 import {
   createBusinessReviewSubagent,
   createBusinessReviewTool,
@@ -149,31 +150,10 @@ Evaluate Experience, Expertise, Authoritativeness, and Trustworthiness signals:
       updateMemory: updateMemoryTool,
       recallMemories: recallMemoriesTool,
     },
-    callOptionsSchema: z.object({
-      siteDomain: z.string(),
-      siteName: z.string(),
-      siteCountry: z.string(),
-      siteIndustry: z.string(),
-      siteObjective: z.string().optional(),
-      siteLocation: z.string().optional(),
-      siteLatitude: z.number().optional(),
-      siteLongitude: z.number().optional(),
-      siteGoogleLocationId: z.number().optional(),
+    callOptionsSchema: siteContextSchema.extend({
       existingRecommendations: z.array(existingRecommendationSchema),
     }),
     prepareCall: ({ options, ...settings }) => {
-      const siteContext = {
-        siteDomain: options.siteDomain,
-        siteName: options.siteName,
-        siteCountry: options.siteCountry,
-        siteIndustry: options.siteIndustry,
-        siteObjective: options.siteObjective,
-        siteLocation: options.siteLocation,
-        siteLatitude: options.siteLatitude,
-        siteLongitude: options.siteLongitude,
-        siteGoogleLocationId: options.siteGoogleLocationId,
-      };
-
       let instructions =
         settings.instructions +
         `\nSite context:
@@ -218,11 +198,11 @@ When the user mentions fixing something, use updateRecommendation to mark the re
           ...settings.tools,
           businessReview: createBusinessReviewTool(
             businessReviewSubagent,
-            siteContext
+            options
           ),
           competitorAnalysis: createCompetitorAnalysisTool(
             competitorAnalysisSubagent,
-            siteContext
+            options
           ),
         } as typeof settings.tools,
       };
