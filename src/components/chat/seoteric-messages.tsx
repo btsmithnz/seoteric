@@ -1,6 +1,18 @@
 import type { ChatStatus, UIMessage } from "ai";
+import {
+  BriefcaseIcon,
+  ChevronDownIcon,
+  RadarIcon,
+  WrenchIcon,
+} from "lucide-react";
 import type { PageSpeedOutput } from "@/ai/tools/pagespeed";
 import type { CreateRecommendationOutput } from "@/ai/tools/recommendations";
+import {
+  Collapsible,
+  CollapsibleContent,
+  CollapsibleTrigger,
+} from "@/components/ui/collapsible";
+import { cn } from "@/lib/utils";
 import {
   Message,
   MessageContent,
@@ -184,6 +196,53 @@ function MessageRender({
   );
 }
 
+function SubagentTool({
+  id,
+  label,
+  icon,
+  part,
+  status,
+  isLast,
+}: {
+  id: string;
+  label: string;
+  icon: React.ReactNode;
+  part: { state: string; preliminary?: boolean; output?: unknown };
+  status: ChatStatus;
+  isLast: boolean;
+}) {
+  const isStreaming =
+    part.state === "output-available" && part.preliminary === true;
+  const isComplete = part.state === "output-available" && !part.preliminary;
+  const nestedMessage = part.output as UIMessage | undefined;
+
+  return (
+    <Collapsible defaultOpen>
+      <CollapsibleTrigger className="group flex w-full items-center gap-1.5 text-left text-gray-500 text-sm">
+        <span className={cn(isStreaming && "animate-pulse")}>{icon}</span>
+        <span>
+          {isComplete
+            ? `${label} complete`
+            : `Running ${label.toLowerCase()}...`}
+        </span>
+        {(isStreaming || isComplete) && (
+          <ChevronDownIcon className="ml-auto size-3.5 transition-transform group-data-[open]:rotate-180" />
+        )}
+      </CollapsibleTrigger>
+      {nestedMessage && (
+        <CollapsibleContent className="mt-1 border-gray-100 border-l-2 pl-3">
+          <MessageRender
+            id={id}
+            isLast={isLast}
+            message={nestedMessage}
+            status={isStreaming ? "streaming" : status}
+          />
+        </CollapsibleContent>
+      )}
+    </Collapsible>
+  );
+}
+
 export function SeotericMessages({
   messages,
   status,
@@ -195,15 +254,66 @@ export function SeotericMessages({
     <>
       {messages.map((message, messageIdx) => {
         const messageId = message.id || `message-${messageIdx}`;
+        const isLast = messageIdx === messages.length - 1;
         return (
           <Message from={message.role} key={messageId}>
             <MessageContent>
-              <MessageRender
-                id={messageId}
-                isLast={messageIdx === messages.length - 1}
-                message={message}
-                status={status}
-              />
+              {message.parts.map((part, idx) => {
+                const partId = `${messageId}-${idx}`;
+                const isLastPart = idx === message.parts.length - 1;
+
+                switch (part.type) {
+                  case "tool-businessReview":
+                    return (
+                      <SubagentTool
+                        icon={<BriefcaseIcon className="inline size-4" />}
+                        id={partId}
+                        isLast={isLast && isLastPart}
+                        key={partId}
+                        label="Business Review"
+                        part={part}
+                        status={status}
+                      />
+                    );
+
+                  case "tool-competitorAnalysis":
+                    return (
+                      <SubagentTool
+                        icon={<RadarIcon className="inline size-4" />}
+                        id={partId}
+                        isLast={isLast && isLastPart}
+                        key={partId}
+                        label="Competitor Analysis"
+                        part={part}
+                        status={status}
+                      />
+                    );
+
+                  case "tool-technicalAudit":
+                    return (
+                      <SubagentTool
+                        icon={<WrenchIcon className="inline size-4" />}
+                        id={partId}
+                        isLast={isLast && isLastPart}
+                        key={partId}
+                        label="Technical Audit"
+                        part={part}
+                        status={status}
+                      />
+                    );
+
+                  default:
+                    return (
+                      <MessageRender
+                        id={partId}
+                        isLast={isLast && isLastPart}
+                        key={partId}
+                        message={{ ...message, parts: [part] }}
+                        status={status}
+                      />
+                    );
+                }
+              })}
             </MessageContent>
           </Message>
         );
