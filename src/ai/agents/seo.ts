@@ -1,5 +1,6 @@
 import { type LanguageModel, ToolLoopAgent } from "ai";
 import { z } from "zod";
+import { MEMORY_KEYS } from "../memory-keys";
 import { existingRecommendationSchema, siteContextSchema } from "../schemas";
 import {
   createBusinessReviewSubagent,
@@ -27,6 +28,7 @@ import {
 import { scrapePageTool } from "../tools/scrape-page";
 
 interface SeoAgentConfig {
+  loadMemory: (key: string) => Promise<string | null>;
   model: LanguageModel;
   recallMemoriesTool: ReturnType<typeof createRecallMemoriesTool>;
   runPageSpeedTool?: ReturnType<typeof createRunPageSpeedTool>;
@@ -38,18 +40,25 @@ export function createSeoAgent({
   runPageSpeedTool,
   recallMemoriesTool,
   saveMemory,
+  loadMemory,
 }: SeoAgentConfig) {
   const businessReviewSubagent = createBusinessReviewSubagent({
     model,
     saveMemory,
+    recallMemoriesTool,
+    loadMemory: () => loadMemory(MEMORY_KEYS.BUSINESS_REVIEW),
   });
   const competitorAnalysisSubagent = createCompetitorAnalysisSubagent({
     model,
     saveMemory,
+    recallMemoriesTool,
+    loadMemory: () => loadMemory(MEMORY_KEYS.COMPETITOR_ANALYSIS),
   });
   const technicalAuditSubagent = createTechnicalAuditSubagent({
     model,
     saveMemory,
+    recallMemoriesTool,
+    loadMemory: () => loadMemory(MEMORY_KEYS.TECHNICAL_AUDIT),
     runPageSpeedTool,
   });
 
@@ -78,7 +87,9 @@ export function createSeoAgent({
     callOptionsSchema: siteContextSchema.extend({
       existingRecommendations: z.array(existingRecommendationSchema),
     }),
-    prepareCall: ({ options, ...settings }) => {
+    prepareCall: async ({ options, ...settings }) => {
+      const generalMemory = await loadMemory(MEMORY_KEYS.GENERAL);
+
       let instructions =
         settings.instructions +
         `\nSite context:
@@ -102,6 +113,10 @@ export function createSeoAgent({
       }
       if (options.siteGoogleLocationId !== undefined) {
         instructions += `\n- Google Location ID: ${options.siteGoogleLocationId}`;
+      }
+
+      if (generalMemory) {
+        instructions += `\n\n## Site memory:\n${generalMemory}`;
       }
 
       if (options.existingRecommendations.length > 0) {

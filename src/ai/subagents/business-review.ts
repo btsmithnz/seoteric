@@ -5,21 +5,27 @@ import {
   tool,
 } from "ai";
 import { z } from "zod";
+import { MEMORY_KEYS } from "../memory-keys";
 import { type SiteContext, siteContextSchema } from "../schemas";
 import { analyzePageTool } from "../tools/analyze-page";
 import { googleSerpTool } from "../tools/google-serp";
+import type { createRecallMemoriesTool } from "../tools/memory";
 import { scrapePageTool } from "../tools/scrape-page";
 import { fetchSitemapTool } from "../tools/sitemap";
 import { checkTrustSignalsTool } from "../tools/trust-signals";
 
 interface BusinessReviewSubagentConfig {
+  loadMemory: () => Promise<string | null>;
   model: LanguageModel;
+  recallMemoriesTool: ReturnType<typeof createRecallMemoriesTool>;
   saveMemory: (key: string, value: string) => Promise<void>;
 }
 
 export function createBusinessReviewSubagent({
   model,
   saveMemory,
+  recallMemoriesTool,
+  loadMemory,
 }: BusinessReviewSubagentConfig) {
   return new ToolLoopAgent({
     model,
@@ -46,9 +52,12 @@ Be factual and specific. Do not speculate or use filler. Base everything on tool
       fetchSitemap: fetchSitemapTool,
       scrapePage: scrapePageTool,
       checkTrustSignals: checkTrustSignalsTool,
+      recallMemories: recallMemoriesTool,
     },
     callOptionsSchema: siteContextSchema,
-    prepareCall: ({ options, ...settings }) => {
+    prepareCall: async ({ options, ...settings }) => {
+      const memory = await loadMemory();
+
       let instructions =
         settings.instructions +
         `\nSite context:
@@ -70,11 +79,15 @@ Be factual and specific. Do not speculate or use filler. Base everything on tool
         instructions += `\n- Google Location ID: ${options.siteGoogleLocationId}`;
       }
 
+      if (memory) {
+        instructions += `\n\n## Prior business review memory:\n${memory}`;
+      }
+
       return { ...settings, instructions };
     },
     onFinish: async (event) => {
       if (event.text) {
-        await saveMemory("business-review", event.text);
+        await saveMemory(MEMORY_KEYS.BUSINESS_REVIEW, event.text);
       }
     },
   });

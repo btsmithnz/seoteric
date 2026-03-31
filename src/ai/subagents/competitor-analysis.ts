@@ -5,20 +5,26 @@ import {
   tool,
 } from "ai";
 import { z } from "zod";
+import { MEMORY_KEYS } from "../memory-keys";
 import { type SiteContext, siteContextSchema } from "../schemas";
 import { analyzePageTool } from "../tools/analyze-page";
 import { fastSearchTool } from "../tools/fast-search";
+import type { createRecallMemoriesTool } from "../tools/memory";
 import { scrapePageTool } from "../tools/scrape-page";
 import { checkTrustSignalsTool } from "../tools/trust-signals";
 
 interface CompetitorAnalysisSubagentConfig {
+  loadMemory: () => Promise<string | null>;
   model: LanguageModel;
+  recallMemoriesTool: ReturnType<typeof createRecallMemoriesTool>;
   saveMemory: (key: string, value: string) => Promise<void>;
 }
 
 export function createCompetitorAnalysisSubagent({
   model,
   saveMemory,
+  recallMemoriesTool,
+  loadMemory,
 }: CompetitorAnalysisSubagentConfig) {
   return new ToolLoopAgent({
     model,
@@ -50,9 +56,12 @@ Be factual and specific. Do not speculate or use filler. Base everything on tool
       analyzePage: analyzePageTool,
       scrapePage: scrapePageTool,
       checkTrustSignals: checkTrustSignalsTool,
+      recallMemories: recallMemoriesTool,
     },
     callOptionsSchema: siteContextSchema,
-    prepareCall: ({ options, ...settings }) => {
+    prepareCall: async ({ options, ...settings }) => {
+      const memory = await loadMemory();
+
       let instructions =
         settings.instructions +
         `\nSite context:
@@ -74,11 +83,15 @@ Be factual and specific. Do not speculate or use filler. Base everything on tool
         instructions += `\n- Google Location ID: ${options.siteGoogleLocationId}`;
       }
 
+      if (memory) {
+        instructions += `\n\n## Prior competitor analysis memory:\n${memory}`;
+      }
+
       return { ...settings, instructions };
     },
     onFinish: async (event) => {
       if (event.text) {
-        await saveMemory("competitor-analysis", event.text);
+        await saveMemory(MEMORY_KEYS.COMPETITOR_ANALYSIS, event.text);
       }
     },
   });

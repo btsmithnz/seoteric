@@ -1,20 +1,25 @@
 import { embed } from "ai";
 import { v } from "convex/values";
-import { internal } from "./_generated/api";
+import { api, internal } from "./_generated/api";
 import {
   action,
-  internalAction,
   internalMutation,
   internalQuery,
+  query,
 } from "./_generated/server";
+import { getSite } from "./site";
 
-export const upsertMemory = internalAction({
+export const saveMemory = action({
   args: {
     siteId: v.id("sites"),
     key: v.string(),
     value: v.string(),
   },
   handler: async (ctx, args) => {
+    await ctx.runQuery(api.site.get, {
+      siteId: args.siteId,
+    });
+
     const { embedding } = await embed({
       model: "openai/text-embedding-3-small",
       value: `${args.key}: ${args.value}`,
@@ -60,17 +65,6 @@ export const upsertMemoryInternal = internalMutation({
   },
 });
 
-export const saveMemory = action({
-  args: {
-    siteId: v.id("sites"),
-    key: v.string(),
-    value: v.string(),
-  },
-  handler: async (ctx, args) => {
-    await ctx.runAction(internal.memories.upsertMemory, args);
-  },
-});
-
 export const searchMemories = action({
   args: {
     siteId: v.id("sites"),
@@ -78,6 +72,10 @@ export const searchMemories = action({
   },
   returns: v.array(v.object({ key: v.string(), value: v.string() })),
   handler: async (ctx, args): Promise<{ key: string; value: string }[]> => {
+    await ctx.runQuery(api.site.get, {
+      siteId: args.siteId,
+    });
+
     const { embedding } = await embed({
       model: "openai/text-embedding-3-small",
       value: args.query,
@@ -107,17 +105,31 @@ export const fetchResults = internalQuery({
   },
 });
 
-export const listByKey = internalQuery({
+export const getByKey = query({
   args: {
     siteId: v.id("sites"),
     key: v.string(),
   },
-  handler: (ctx, args) => {
+  handler: async (ctx, args) => {
+    await getSite(ctx, args.siteId);
     return ctx.db
       .query("memories")
       .withIndex("by_site_key", (q) =>
         q.eq("siteId", args.siteId).eq("key", args.key)
       )
+      .first();
+  },
+});
+
+export const listBySite = query({
+  args: {
+    siteId: v.id("sites"),
+  },
+  handler: async (ctx, args) => {
+    await getSite(ctx, args.siteId);
+    return ctx.db
+      .query("memories")
+      .withIndex("by_site", (q) => q.eq("siteId", args.siteId))
       .collect();
   },
 });

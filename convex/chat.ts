@@ -6,7 +6,7 @@ import type {
   CreateRecommendationOutput,
   UpdateRecommendationOutput,
 } from "@/ai/tools/recommendations";
-import { internal } from "./_generated/api";
+import { api, internal } from "./_generated/api";
 import type { Id } from "./_generated/dataModel";
 import {
   internalAction,
@@ -294,7 +294,7 @@ export const updateChatState = mutation({
           part.state === "output-available"
         ) {
           const output = part.output as UpdateMemoryOutput;
-          await ctx.scheduler.runAfter(0, internal.memories.upsertMemory, {
+          await ctx.scheduler.runAfter(0, api.memories.saveMemory, {
             siteId: res.site._id,
             key: output.key,
             value: output.value,

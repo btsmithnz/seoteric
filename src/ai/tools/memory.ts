@@ -1,5 +1,6 @@
 import { tool } from "ai";
 import { z } from "zod";
+import { MEMORY_KEYS } from "../memory-keys";
 
 export const updateMemoryTool = tool({
   description:
@@ -14,7 +15,7 @@ export const updateMemoryTool = tool({
   execute: (input) => {
     return {
       action: "updateMemory" as const,
-      key: "general",
+      key: MEMORY_KEYS.GENERAL,
       value: input.value,
     };
   },

@@ -90,6 +90,10 @@ export async function POST(req: Request) {
     saveMemory: async (key, value) => {
       await fetchAuthAction(api.memories.saveMemory, { siteId, key, value });
     },
+    loadMemory: async (key) => {
+      const doc = await fetchAuthQuery(api.memories.getByKey, { siteId, key });
+      return doc?.value ?? null;
+    },
   });
 
   const res = await seoAgent.stream({

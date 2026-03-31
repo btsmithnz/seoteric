@@ -5,6 +5,7 @@ import {
   tool,
 } from "ai";
 import { z } from "zod";
+import { MEMORY_KEYS } from "../memory-keys";
 import type { ExistingRecommendation } from "../schemas";
 import {
   existingRecommendationSchema,
@@ -15,6 +16,7 @@ import { analyzePageTool } from "../tools/analyze-page";
 import { googleSerpTool } from "../tools/google-serp";
 import { checkKeywordCannibalizationTool } from "../tools/keyword-cannibalization";
 import { checkUrlStatusTool } from "../tools/link-checker";
+import type { createRecallMemoriesTool } from "../tools/memory";
 import {
   type createRunPageSpeedTool,
   runPageSpeedTool as defaultRunPageSpeedTool,
@@ -26,7 +28,9 @@ import { fetchSitemapTool } from "../tools/sitemap";
 import { checkTrustSignalsTool } from "../tools/trust-signals";
 
 interface TechnicalAuditSubagentConfig {
+  loadMemory: () => Promise<string | null>;
   model: LanguageModel;
+  recallMemoriesTool: ReturnType<typeof createRecallMemoriesTool>;
   runPageSpeedTool?: ReturnType<typeof createRunPageSpeedTool>;
   saveMemory: (key: string, value: string) => Promise<void>;
 }
@@ -34,6 +38,8 @@ interface TechnicalAuditSubagentConfig {
 export function createTechnicalAuditSubagent({
   model,
   saveMemory,
+  recallMemoriesTool,
+  loadMemory,
   runPageSpeedTool = defaultRunPageSpeedTool,
 }: TechnicalAuditSubagentConfig) {
   return new ToolLoopAgent({
@@ -123,11 +129,14 @@ After completing the audit and creating recommendations, provide a brief executi
       googleSerp: googleSerpTool,
       scrapePage: scrapePageTool,
       createRecommendation: createRecommendationTool,
+      recallMemories: recallMemoriesTool,
     },
     callOptionsSchema: siteContextSchema.extend({
       existingRecommendations: z.array(existingRecommendationSchema),
     }),
-    prepareCall: ({ options, ...settings }) => {
+    prepareCall: async ({ options, ...settings }) => {
+      const memory = await loadMemory();
+
       let instructions =
         settings.instructions +
         `\nSite context:
@@ -163,11 +172,15 @@ ${options.existingRecommendations
   .join("\n")}`;
       }
 
+      if (memory) {
+        instructions += `\n\n## Prior technical audit memory:\n${memory}`;
+      }
+
       return { ...settings, instructions };
     },
     onFinish: async (event) => {
       if (event.text) {
-        await saveMemory("technical-audit", event.text);
+        await saveMemory(MEMORY_KEYS.TECHNICAL_AUDIT, event.text);
       }
     },
   });
